@@ -18,12 +18,14 @@ struct Model final : A::Geometry {
    LANGULUS_BASES(A::Geometry);
    LANGULUS_VERBS(Verbs::Create);
 
-private:
-
 public:
    Model(GeometryLibrary*, const Descriptor&);
    ~Model();
 
    void Create(Verb&);
    void Refresh();
+
+   NOD() const Geometry* GetLOD(const Math::LOD&) const;
 };
+
+#include "generators/Box.inl"

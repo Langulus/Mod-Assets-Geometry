@@ -15,18 +15,18 @@ namespace Geometry::Line
       TODO();
    }
 
-   /// Generate line positions																
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate line positions                                                
+   ///   @param instance - the geometry instance to save data in              
    void GeneratePOS(Model* instance) {
-      // A cube made out of triangles												
-      auto content = instance->GetData<Traits::Position>();
+      // A cube made out of triangles                                   
+      auto content = instance->GetData<Traits::Place>();
       if (content->Is<Line3>()) {
          const auto count = 1;
          content->Allocate(count);
-         *content << Line3(Vectors::Origin<real>, Vectors::Forward<real>);
+         *content << Line3(Vectors::Origin, Vectors::Forward);
          instance->GetView().mPCount = content->GetCount();
-         auto contentRange = instance->GetDataRange<Traits::Position>();
-         *contentRange = TComplexRange<Point3>(Vectors::Origin<real>, Vectors::Forward<real>);
+         auto contentRange = instance->GetDataRange<Traits::Place>();
+         *contentRange = TComplexRange<Point3>(Vectors::Origin, Vectors::Forward);
       }
       else TODO();
    }
@@ -59,30 +59,30 @@ namespace Geometry::Line
       TODO();
    }
 
-   /// LOD function																				
-   const Model* LOD(const Model* instance, const LodState&) {
+   /// LOD function                                                           
+   const Model* LOD(const Model* instance, const LOD&) {
       return instance;
    }
 
-   /// Signed distance function																
-   ///	@param instance - the generator													
-   ///	@param point - the sampling point												
-   ///	@return the distance to the geometry at the given point					
+   /// Signed distance function                                               
+   ///   @param instance - the generator                                      
+   ///   @param point - the sampling point                                    
+   ///   @return the distance to the geometry at the given point              
    real SDF(const Model*, const vec3& point) {
       return TLine<vec3>().SD(point);
    }
 
-   /// Set generators for the line																
+   /// Set generators for the line                                            
    void SetGenerators() {
       mSDF = Geometry::Line::SDF;
       mCodeGenerator = Geometry::Line::GenerateCODE;
    }
 
-   /// Default line definition																	
-   ///	@return true if the default definition exists									
+   /// Default line definition                                                
+   ///   @return true if the default definition exists                        
    bool DefaultCreate() {
       SetTopology<ALine>();
-      AddDataDeclaration<Traits::Position>(MetaData::Of<Line3>());
+      AddDataDeclaration<Traits::Place>(MetaOf<Line3>());
       return true;
    }
 

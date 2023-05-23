@@ -46,15 +46,15 @@ namespace Geometry::Cylinder
       TODO();
    }
 
-   /// LOD function for the cylinder														
+   /// LOD function for the cylinder                                          
    const Model* LOD(const Model*, const LodState&) {
       TODO();
    }
 
-   /// Signed distance function for a cylinder											
-   ///	@param instance - the generator													
-   ///	@param point - the sampling point												
-   ///	@return the distance to the cylinder at the given point					
+   /// Signed distance function for a cylinder                                 
+   ///   @param instance - the generator                                       
+   ///   @param point - the sampling point                                    
+   ///   @return the distance to the cylinder at the given point               
    real SDF(const Model*, const vec3& point) {
       return TCylinder<vec3>().SD(point);
    }

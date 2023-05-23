@@ -13,49 +13,49 @@
 namespace Geometry::Text
 {
 
-   ///  3	  2																					
-   ///	+---+			Each glyph's origin is at point 3 (0,0)						
-   ///	|  /|			The vertices are in the XY plane by default (Z=0)			
-   ///	| + |																						
-   ///	|/  |																						
-   ///	+---+																						
-   ///  1	  0																					
+   ///  3     2                                                               
+   ///   +---+         Each glyph's origin is at point 3 (0,0)                  
+   ///   |  /|         The vertices are in the XY plane by default (Z=0)         
+   ///   | + |                                                                  
+   ///   |/  |                                                                  
+   ///   +---+                                                                  
+   ///  1     0                                                               
 
-   /// Rect's constant occurences															
+   /// Rect's constant occurences                                             
    constexpr pcptr VertexCount = 4;
    constexpr pcptr TriangleCount = 2;
    constexpr pcptr IndexCount = TriangleCount * 3;
 
-   /// Glyph's unique vertices																
+   /// Glyph's unique vertices                                                
    const Point2 GlyphVertices[VertexCount] = {
-      {1, 1},				// Bottom-right corner									
-      {0, 1},				// Bottom-left corner									
-      {1, 0},				// Top-right corner										
-      {0, 0}				// Top-left corner										
+      {1, 1},            // Bottom-right corner                           
+      {0, 1},            // Bottom-left corner                           
+      {1, 0},            // Top-right corner                              
+      {0, 0}            // Top-left corner                              
    };
 
-   /// Indices for a single glyph made of triangles (counter-clockwise)			
+   /// Indices for a single glyph made of triangles (counter-clockwise)         
    const pcu32 TriangleIndices[IndexCount] = {
       0,2,1,2,3,1,
    };
 
-   /// Generate glyph positions																
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate glyph positions                                                
+   ///   @param instance - the geometry instance to save data in               
    void GeneratePOS(Model* instance) {
       if (!instance->CheckTopology<ATriangle>())
          TODO();
 
-      // Get important text traits													
+      // Get important text traits                                       
       const auto text = instance->GetTraitValue<Traits::Text, ::PCFW::Text>();
       const auto fontName = instance->GetTraitValue<Traits::Font, ::PCFW::Text>();
       const auto alignment = instance->GetTraitValue<Traits::Position, vec2>();
       const auto spacing = instance->GetTraitValue<Traits::Spacing, vec4>();
 
-      // Make sure the font is generated											
+      // Make sure the font is generated                                 
       auto font = instance->GetProducer()->GetFont(fontName);
       font->Generate();
 
-      // Generate positions															
+      // Generate positions                                             
       auto content = instance->GetData<Traits::Position>();
       if (content->Is<Point2>()) {
          content->Allocate(VertexCount * text.GetCount());
@@ -68,8 +68,8 @@ namespace Geometry::Text
             } / AFont::DefaultSpreadInPixels;
             const auto o = scanned - offset + vec2 {0, 0.5};
 
-            // A 2D rectangle for each visible glyph							
-            // Each rectangle is glyphSize / fontSize wide [0;1]			
+            // A 2D rectangle for each visible glyph                     
+            // Each rectangle is glyphSize / fontSize wide [0;1]         
             switch (c) {
             case ' ':
                LGLS_VERBOSE(pcLogSpecial << "Char ' ' with offset " << o);
@@ -113,15 +113,15 @@ namespace Geometry::Text
          << content->GetCount() << " points");
    }
 
-   /// Generate glyph normals																	
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate glyph normals                                                   
+   ///   @param instance - the geometry instance to save data in               
    void GenerateNOR(Model* instance) {
       if (!instance->CheckTopology<ATriangle>())
          TODO();
 
       const auto text = instance->GetTraitValue<Traits::Text, ::PCFW::Text>();
 
-      // Text made out of triangles													
+      // Text made out of triangles                                       
       auto content = instance->GetData<Traits::Aim>();
       if (content->Is<Normal>()) {
          content->Allocate(VertexCount * text.GetCount());
@@ -141,8 +141,8 @@ namespace Geometry::Text
       else TODO();
    }
 
-   /// Generate glyph texture coordinates													
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate glyph texture coordinates                                       
+   ///   @param instance - the geometry instance to save data in               
    void GenerateTEX(Model* instance) {
       if (!instance->CheckTopology<ATriangle>())
          TODO();
@@ -150,7 +150,7 @@ namespace Geometry::Text
       const auto text = instance->GetTraitValue<Traits::Text, ::PCFW::Text>();
       const auto fontName = instance->GetTraitValue<Traits::Font, ::PCFW::Text>();
 
-      // Make sure the font is generated											
+      // Make sure the font is generated                                 
       const auto font = instance->GetProducer()->GetFont(fontName);
       font->Generate();
 
@@ -159,10 +159,10 @@ namespace Geometry::Text
          font->GetWidth(), font->GetHeight()
       };
 
-      // Text made out of triangles													
+      // Text made out of triangles                                       
       auto content = instance->GetData<Traits::Sampler>();
       if (instance->GetTextureMapper() == Mapper::Custom) {
-         // Generate mapping															
+         // Generate mapping                                             
          if (content->Is<Sampler2>()) {
             Sampler2 uvmin {Sampler2::Max()};
             Sampler2 uvmax {Sampler2::Min()};
@@ -195,8 +195,8 @@ namespace Geometry::Text
       else TODO();
    }
 
-   /// Generate glyph indices																	
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate glyph indices                                                   
+   ///   @param instance - the geometry instance to save data in               
    void GenerateIDX(Model* instance) {
       if (!instance->CheckTopology<ATriangle>())
          TODO();
@@ -204,7 +204,7 @@ namespace Geometry::Text
       const auto text = instance->GetTraitValue<Traits::Text, ::PCFW::Text>();
       auto content = instance->GetData<Traits::Index>();
       if (content->Is<pcu32>()) {
-         // Text made out of triangles												
+         // Text made out of triangles                                    
          content->Allocate(IndexCount * text.GetCount());
          pcptr relevantCharIndex = 0;
          for (auto& c : text) {
@@ -226,27 +226,27 @@ namespace Geometry::Text
       instance->GetView().mICount = content->GetCount();
    }
 
-   /// Generate rectangle colors																
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate rectangle colors                                                
+   ///   @param instance - the geometry instance to save data in               
    void GenerateCOL(Model*) {
       TODO();
    }
 
-   /// Generate code for the rectangle														
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate code for the rectangle                                          
+   ///   @param instance - the geometry instance to save data in               
    void GenerateCODE(Model*) {
       TODO();
    }
 
-   /// Signed distance function																
-   ///	@param instance - the generator													
-   ///	@param point - the sampling point												
-   ///	@return the distance to the geometry at the given point					
+   /// Signed distance function                                                
+   ///   @param instance - the generator                                       
+   ///   @param point - the sampling point                                    
+   ///   @return the distance to the geometry at the given point               
    real SDF(const Model*, const vec3&) {
       TODO();
    }
 
-   /// Set generators for the rectangle														
+   /// Set generators for the rectangle                                          
    void SetGenerators() {
       mSDF = Geometry::Text::SDF;
       mCodeGenerator = Geometry::Text::GenerateCODE;
@@ -260,8 +260,8 @@ namespace Geometry::Text
       mIndexGenerator = Geometry::Text::GenerateIDX;
    }
 
-   /// Default rectangle definition																
-   ///	@return true if the default definition exists									
+   /// Default rectangle definition                                                
+   ///   @return true if the default definition exists                           
    bool DefaultCreate() {
       SetTopology<ATriangle>();
       SetTextureMapper(Mapper::Custom);

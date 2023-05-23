@@ -47,31 +47,31 @@ namespace Geometry::Tree
       TODO();
    }
 
-   /// LOD function																				
+   /// LOD function                                                           
    const Model* LOD(const Model* instance, const LOD&) {
       return instance;
    }
 
-   /// Signed distance function																
-   ///	@param instance - the generator													
-   ///	@param point - the sampling point												
-   ///	@return the distance to the geometry at the given point					
+   /// Signed distance function                                               
+   ///   @param instance - the generator                                      
+   ///   @param point - the sampling point                                    
+   ///   @return the distance to the geometry at the given point              
    Real SDF(const Model*, const Vec3&) {
       TODO();
    }
 
-   /// Set generators for the tree																
+   /// Set generators for the tree                                            
    void SetGenerators() {
       mSDF = Geometry::Tree::SDF;
       mCodeGenerator = Geometry::Tree::GenerateCODE;
    }
 
-   /// Default tree definition																	
-   ///	@return true if the default definition exists									
+   /// Default tree definition                                                
+   ///   @return true if the default definition exists                        
    bool DefaultCreate() {
       SetTopology<ATriangle>();
       SetTextureMapper(Mapper::Custom);
-      AddDataDeclaration<Traits::Position>(MetaData::Of<Triangle3>());
+      AddDataDeclaration<Traits::Place>(MetaData::Of<Triangle3>());
       AddDataDeclaration<Traits::Aim>(MetaData::Of<Normal>());
       AddDataDeclaration<Traits::Sampler>(MetaData::Of<Sampler2>());
       return true;

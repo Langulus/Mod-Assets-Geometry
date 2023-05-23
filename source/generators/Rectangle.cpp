@@ -11,15 +11,15 @@
 namespace Geometry::Rectangle
 {
 
-   ///  3	  2																					
-   ///	+---+			Each corner is at distance 0.5 from center					
-   ///	|  /|			The vertices are in the XY plane by default (Z=0)			
-   ///	| + |																						
-   ///	|/  |																						
-   ///	+---+																						
-   ///  1	  0																					
+   ///  3     2                                                               
+   ///   +---+         Each corner is at distance 0.5 from center               
+   ///   |  /|         The vertices are in the XY plane by default (Z=0)         
+   ///   | + |                                                                  
+   ///   |/  |                                                                  
+   ///   +---+                                                                  
+   ///  1     0                                                               
 
-   /// Rect's constant occurences															
+   /// Rect's constant occurences                                             
    constexpr Real Half = Real {1} / Real {2};
    constexpr pcptr VertexCount = 4;
    constexpr pcptr TriangleCount = 2;
@@ -27,40 +27,40 @@ namespace Geometry::Rectangle
    constexpr pcptr IndexCount = TriangleCount * 3;
    constexpr pcptr FaceCount = TriangleCount / 2;
 
-   /// Rect's unique vertices																	
+   /// Rect's unique vertices                                                   
    const Point3 RectVertices[VertexCount] = {
-      Point3( Half,  Half, 0),	// Bottom-right corner						
-      Point3(-Half,  Half, 0),	// Bottom-left corner						
-      Point3( Half, -Half, 0),	// Top-right corner							
-      Point3(-Half, -Half, 0)		// Top-left corner							
+      Point3( Half,  Half, 0),   // Bottom-right corner                  
+      Point3(-Half,  Half, 0),   // Bottom-left corner                  
+      Point3( Half, -Half, 0),   // Top-right corner                     
+      Point3(-Half, -Half, 0)      // Top-left corner                     
    };
 
-   /// Face mapping																				
+   /// Face mapping                                                            
    const Sampler2 FaceMapping[3] = {
       Sampler2(0, 0), 
       Sampler2(0, 1), 
       Sampler2(1, 0),
    };
 
-   /// Indices for the rect triangles (counter-clockwise)							
+   /// Indices for the rect triangles (counter-clockwise)                     
    const pcu32 TriangleIndices[TriangleCount][3] = {
       {0,2,1}, {2,3,1},
    };
 
-   /// Indices for the rect lines															
+   /// Indices for the rect lines                                             
    const pcu32 LineIndices[LineCount][2] = {
       {0,1}, {1,3}, {3,2}, {2,0},
    };
 
-   /// Generate rectangle positions															
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate rectangle positions                                             
+   ///   @param instance - the geometry instance to save data in               
    void GeneratePOS(CGeneratorGeometry* instance) {
       auto content = instance->GetData<Traits::Position>();
 
       if (instance->CheckTopology<ATriangle>()) {
-         // A rectangle made out of triangles									
+         // A rectangle made out of triangles                           
          if (content->Is<Triangle3>() || content->Is<Point3>()) {
-            // A 3D rectangle															
+            // A 3D rectangle                                             
             content->SetDataID<Triangle3>(true);
             content->Allocate(TriangleCount);
             *content << Triangle3(RectVertices, TriangleIndices[0]);
@@ -69,7 +69,7 @@ namespace Geometry::Rectangle
             *contentRange = TComplexRange<Point3>(RectVertices[3], RectVertices[0]);
          }
          else if (content->Is<Triangle2>() || content->Is<Point2>()) {
-            // A 2D rectangle															
+            // A 2D rectangle                                             
             content->SetDataID<Triangle2>(true);
             content->Allocate(TriangleCount);
             *content << Triangle2(RectVertices, TriangleIndices[0]);
@@ -80,7 +80,7 @@ namespace Geometry::Rectangle
          else TODO();
       }
       else if (instance->CheckTopology<ALine>()) {
-         // A rectangle made out of lines											
+         // A rectangle made out of lines                                 
          if (content->Is<Line3>() || content->Is<Point3>()) {
             content->SetDataID<Line3>(true);
             content->Allocate(LineCount);
@@ -104,7 +104,7 @@ namespace Geometry::Rectangle
          else TODO();
       }
       else if (instance->CheckTopology<APoint>()) {
-         // A rectangle made out of points										
+         // A rectangle made out of points                              
          if (content->Is<Point3>()) {
             content->Allocate(VertexCount);
             *content << RectVertices[0];
@@ -121,13 +121,13 @@ namespace Geometry::Rectangle
       instance->GetView().mPCount = content->GetCount();
    }
 
-   /// Generate rectangle normals															
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate rectangle normals                                             
+   ///   @param instance - the geometry instance to save data in               
    void GenerateNOR(CGeneratorGeometry* instance) {
       if (!instance->CheckTopology<ATriangle>())
          TODO();
 
-      // A rectangle made out of triangles										
+      // A rectangle made out of triangles                              
       auto content = instance->GetData<Traits::Aim>();
       if (content->Is<Normal>()) {
          content->Allocate(IndexCount);
@@ -139,17 +139,17 @@ namespace Geometry::Rectangle
       else TODO();
    }
 
-   /// Generate rectangle texture coordinates											
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate rectangle texture coordinates                                 
+   ///   @param instance - the geometry instance to save data in               
    void GenerateTEX(CGeneratorGeometry* instance) {
       auto content = instance->GetData<Traits::Sampler>();
 
       if (instance->CheckTopology<ATriangle>()) {
-         // A rectangle made out of triangles									
+         // A rectangle made out of triangles                           
          if (instance->GetTextureMapper() == Mapper::Model ||
              instance->GetTextureMapper() == Mapper::Plane
          ) {
-            // Generate model mapping												
+            // Generate model mapping                                    
             if (content->Is<Sampler3>()) {
                content->Allocate(IndexCount);
                for (pcptr i = 0; i < TriangleCount; ++i) {
@@ -173,7 +173,7 @@ namespace Geometry::Rectangle
             else TODO();
          }
          else if (instance->GetTextureMapper() == Mapper::Face) {
-            // Generate face mapping												
+            // Generate face mapping                                    
             if (content->Is<Sampler2>()) {
                content->Allocate(IndexCount);
                for (pcptr i = 0; i < IndexCount; ++i)
@@ -188,8 +188,8 @@ namespace Geometry::Rectangle
       else TODO();
    }
 
-   /// Generate rectangle indices coordinates											
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate rectangle indices coordinates                                 
+   ///   @param instance - the geometry instance to save data in               
    void GenerateIDX(CGeneratorGeometry* instance) {
       if (instance->CheckTopology<APoint>())
          TODO();
@@ -198,7 +198,7 @@ namespace Geometry::Rectangle
 
       if (content->Is<pcu32>()) {
          if (instance->CheckTopology<ATriangle>()) {
-            // A box made out of triangles										
+            // A box made out of triangles                              
             content->Allocate(IndexCount);
             for (pcptr i = 0; i < TriangleCount; ++i) {
                *content << TriangleIndices[i][0];
@@ -209,7 +209,7 @@ namespace Geometry::Rectangle
             *contentRange = TRange<pcu32>(0u, IndexCount - 1);
          }
          else if (instance->CheckTopology<ALine>()) {
-            // A box made out of lines												
+            // A box made out of lines                                    
             TODO();
          }
          else TODO();
@@ -219,34 +219,34 @@ namespace Geometry::Rectangle
       instance->GetView().mICount = content->GetCount();
    }
 
-   /// Generate rectangle colors																
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate rectangle colors                                                
+   ///   @param instance - the geometry instance to save data in               
    void GenerateCOL(CGeneratorGeometry*) {
       TODO();
    }
 
-   /// Generate code for the rectangle														
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate code for the rectangle                                          
+   ///   @param instance - the geometry instance to save data in               
    void GenerateCODE(CGeneratorGeometry*) {
       TODO();
    }
 
-   /// LOD function																				
+   /// LOD function                                                            
    const CGeneratorGeometry* LOD(const CGeneratorGeometry* instance, const LodState&) {
       return instance;
    }
 
-   /// Signed distance function																
-   ///	@param instance - the generator													
-   ///	@param point - the sampling point												
-   ///	@return the distance to the geometry at the given point					
+   /// Signed distance function                                                
+   ///   @param instance - the generator                                       
+   ///   @param point - the sampling point                                    
+   ///   @return the distance to the geometry at the given point               
    real SDF(const CGeneratorGeometry*, const vec3& point) {
       return TBox<vec3>().SD(point);
    }
 
 } // namespace Geometry::Rectangle
 
-/// Set generators for the rectangle														
+/// Set generators for the rectangle                                          
 void CGeometryRectangle::SetGenerators() {
    mSDF = Geometry::Rectangle::SDF;
    mCodeGenerator = Geometry::Rectangle::GenerateCODE;
@@ -260,8 +260,8 @@ void CGeometryRectangle::SetGenerators() {
    mIndexGenerator = Geometry::Rectangle::GenerateIDX;
 }
 
-/// Default rectangle definition																
-///	@return true if the default definition exists									
+/// Default rectangle definition                                                
+///   @return true if the default definition exists                           
 bool CGeometryRectangle::DefaultCreate() {
    SetTopology<ATriangle>();
    SetTextureMapper(Mapper::Plane);

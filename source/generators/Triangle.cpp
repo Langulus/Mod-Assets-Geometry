@@ -19,7 +19,7 @@ namespace Geometry::Triangle
       auto content = instance->GetData<Traits::Position>();
 
       if (instance->CheckTopology<ATriangle>()) {
-         // A triangle made out of triangles										
+         // A triangle made out of triangles                              
          if (content->Is<Triangle3>()) {
             content->Allocate(1);
             *content << Triangle3(
@@ -34,11 +34,11 @@ namespace Geometry::Triangle
          else TODO();
       }
       else if (instance->CheckTopology<ALine>()) {
-         // A triangle made out of lines											
+         // A triangle made out of lines                                 
          TODO();
       }
       else if (instance->CheckTopology<APoint>()) {
-         // A triangle made out of points											
+         // A triangle made out of points                                 
          TODO();
       }
       else TODO();
@@ -49,7 +49,7 @@ namespace Geometry::Triangle
    void GenerateNOR(Model* instance) {
       auto content = instance->GetData<Traits::Aim>();
       if (instance->CheckTopology<ATriangle>()) {
-         // A rectangle made out of triangles									
+         // A rectangle made out of triangles                           
          if (content->Is<Normal>()) {
             content->Allocate(3);
             *content << Normal(Vectors::Backward<real>);
@@ -67,7 +67,7 @@ namespace Geometry::Triangle
    void GenerateTEX(Model* instance) {
       auto content = instance->GetData<Traits::Sampler>();
       if (instance->CheckTopology<ATriangle>()) {
-         // A rectangle made out of triangles									
+         // A rectangle made out of triangles                           
          if (content->Is<Sampler2>()) {
             content->Allocate(3);
             *content << Sampler2(0, 0);
@@ -80,11 +80,11 @@ namespace Geometry::Triangle
          else TODO();
       }
       else if (instance->CheckTopology<ALine>()) {
-         // A triangle made out of lines											
+         // A triangle made out of lines                                 
          TODO();
       }
       else if (instance->CheckTopology<APoint>()) {
-         // A triangle made out of points											
+         // A triangle made out of points                                 
          TODO();
       }
       else TODO();
@@ -110,27 +110,27 @@ namespace Geometry::Triangle
       TODO();
    }
 
-   /// LOD function																				
+   /// LOD function                                                            
    const Model* LOD(const Model* instance, const LodState&) {
       return instance;
    }
 
-   /// Signed distance function																
-   ///	@param instance - the generator													
-   ///	@param point - the sampling point												
-   ///	@return the distance to the geometry at the given point					
+   /// Signed distance function                                                
+   ///   @param instance - the generator                                       
+   ///   @param point - the sampling point                                    
+   ///   @return the distance to the geometry at the given point               
    real SDF(const Model*, const vec3& point) {
       return TTriangle<vec3>().SD(point);
    }
 
-   /// Set generators for the triangle															
+   /// Set generators for the triangle                                             
    void SetGenerators() {
       mSDF = Geometry::Triangle::SDF;
       mCodeGenerator = Geometry::Triangle::GenerateCODE;
    }
 
-   /// Default triangle definition																
-   ///	@return true if the default definition exists									
+   /// Default triangle definition                                                
+   ///   @return true if the default definition exists                           
    bool DefaultCreate() {
       SetTopology<ATriangle>();
       SetTextureMapper(Mapper::Face);

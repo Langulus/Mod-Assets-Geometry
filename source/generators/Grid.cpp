@@ -13,11 +13,11 @@ namespace Geometry::Grid
 
    constexpr real Half = real(1) / real(2);
 
-   /// Generate vertex positions for the grid											
-   ///	@param instance - the geometry instance to save data in					
+   /// Generate vertex positions for the grid                                 
+   ///   @param instance - the geometry instance to save data in               
    void GeneratePOS(Model* instance) {
-      // Calculate vertex count - tesselation in this context means 		
-      // how many times a sector in the grid is divided in half			
+      // Calculate vertex count - tesselation in this context means       
+      // how many times a sector in the grid is divided in half         
       const vec4 resolution = pcPow(real(2), instance->GetTesselation());
       const auto xsteps = pcptr(resolution[0]);
       const auto ysteps = pcptr(resolution[1]);
@@ -26,14 +26,14 @@ namespace Geometry::Grid
       auto content = instance->GetData<Traits::Position>();
 
       if (instance->CheckTopology<ALine>()) {
-         // Generate a 3D grid of lines											
+         // Generate a 3D grid of lines                                 
          const auto count = (xsteps + 1) * (ysteps + zsteps + 2) + (ysteps + 1) * (zsteps + 1);
          if (content->Is<Line3>()) {
             content->Allocate(count);
             for (pcptr x = 0; x <= xsteps; ++x) {
                const auto real_x = real(x);
 
-               // xsteps*ysteps														
+               // xsteps*ysteps                                          
                for (pcptr y = 0; y <= ysteps; ++y) {
                   const vec2 xy {
                      -Half + real_x * sep[0],
@@ -46,7 +46,7 @@ namespace Geometry::Grid
                   };
                }
 
-               // xsteps*zsteps														
+               // xsteps*zsteps                                          
                for (pcptr z = 0; z <= zsteps; ++z) {
                   const auto xx = -Half + real_x * sep[0];
                   const auto zz = -Half + real(z) * sep[2];
@@ -58,7 +58,7 @@ namespace Geometry::Grid
                }
             }
 
-            // ysteps*zsteps															
+            // ysteps*zsteps                                             
             for (pcptr y = 0; y <= ysteps; ++y) {
                const auto real_y = real(y);
 
@@ -83,7 +83,7 @@ namespace Geometry::Grid
          else TODO();
       }
       else if (instance->CheckTopology<APoint>()) {
-         // Generate a 3D grid of points											
+         // Generate a 3D grid of points                                 
          if (content->Is<Point3>()) {
             const auto count = xsteps * ysteps * zsteps;
             content->Allocate(count);
@@ -139,21 +139,21 @@ namespace Geometry::Grid
       TODO();
    }
 
-   /// LOD function																				
-   ///	@param instance - the generator instance										
+   /// LOD function                                                            
+   ///   @param instance - the generator instance                              
    const Model* LOD(const Model* instance, const LodState&) {
       return instance;
    }
 
-   /// Signed distance function																
-   ///	@param instance - the generator													
-   ///	@param point - the sampling point												
-   ///	@return the distance to the geometry at the given point					
+   /// Signed distance function                                                
+   ///   @param instance - the generator                                       
+   ///   @param point - the sampling point                                    
+   ///   @return the distance to the geometry at the given point               
    real SDF(const Model*, const vec3&) {
       TODO();
    }
 
-   /// Set generators for the grid																
+   /// Set generators for the grid                                                
    void SetGenerators() {
       mVertexGenerator = Geometry::Grid::GeneratePOS;
       mNormalGenerator = Geometry::Grid::GenerateNOR;
@@ -167,8 +167,8 @@ namespace Geometry::Grid
       mCodeGenerator = Geometry::Grid::GenerateCODE;
    }
 
-   /// Default grid definition																	
-   ///	@return true if the default definition exists									
+   /// Default grid definition                                                   
+   ///   @return true if the default definition exists                           
    bool DefaultCreate() {
       SetTesselation(4);
       SetTopology<ALine>();

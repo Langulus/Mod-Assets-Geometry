@@ -11,53 +11,53 @@
 namespace Geometry::Zode
 {
 
-   /// A zode (or a zenith node) is a radial segment, and the number of			
-   /// segments decides the radial size of the zode (360 / ZodeSegments)		
+   /// A zode (or a zenith node) is a radial segment, and the number of         
+   /// segments decides the radial size of the zode (360 / ZodeSegments)      
    constexpr pcptr ZodeSegments = 4;
 
-   /// Generate zode positions																
-   ///	@param instance - the geometry to generate for								
+   /// Generate zode positions                                                
+   ///   @param instance - the geometry to generate for                        
    void GeneratePOS(Model* instance) {
-      //	An example zode with tesselation of 3									
-      // The zode is always on the XY plane, at Z=0							
-      //																						
-      //					(0.5,0)	 ________________	 (0,0.5)						
-      //		div 3 ___________	 \/\/\/\/\/\/\/\/			15 triangles		
-      //		div 2 ____________  \/\/\/\/\/\/\/			13 triangles		
-      //		div 3 _____________	\/\/\/\/\/\/			11 triangles		
-      //		div 1 ______________	 \/\/\/\/\/				 9 triangles		
-      //		div 3 _______________  \/\/\/\/				 7 triangles		
-      //		div 2 ________________	\/\/\/				 5 triangles		
-      //		div 3 _________________	 \/\/					 3 triangles		
-      //										  \/					 1 triangle			
-      //										origin										
-      //																						
-      // Tesselation of 0 sums up to 1 strips, 3 points (3*1)				
-      // Tesselation of 1 sums up to 2 strips, 6 points (3*2)				
-      // Tesselation of 2 sums up to 4 strips, 15 points (3*5)				
-      // Tesselation of 3 sums up to 8 strips, 45 points (3*15)			
-      //																						
+      //   An example zode with tesselation of 3                           
+      // The zode is always on the XY plane, at Z=0                     
+      //                                                                  
+      //               (0.5,0)    ________________    (0,0.5)                  
+      //      div 3 ___________    \/\/\/\/\/\/\/\/         15 triangles      
+      //      div 2 ____________  \/\/\/\/\/\/\/         13 triangles      
+      //      div 3 _____________   \/\/\/\/\/\/         11 triangles      
+      //      div 1 ______________    \/\/\/\/\/             9 triangles      
+      //      div 3 _______________  \/\/\/\/             7 triangles      
+      //      div 2 ________________   \/\/\/             5 triangles      
+      //      div 3 _________________    \/\/                3 triangles      
+      //                                \/                1 triangle         
+      //                              origin                              
+      //                                                                  
+      // Tesselation of 0 sums up to 1 strips, 3 points (3*1)            
+      // Tesselation of 1 sums up to 2 strips, 6 points (3*2)            
+      // Tesselation of 2 sums up to 4 strips, 15 points (3*5)            
+      // Tesselation of 3 sums up to 8 strips, 45 points (3*15)         
+      //                                                                  
       auto offset = instance->GetTraitValue<Traits::Position, vec3>();
       const auto distance = offset.Length();
       offset = offset / distance;
 
-      // Create the orientation matrix, that will align to the sphere	
+      // Create the orientation matrix, that will align to the sphere   
       mat4 orient;
       if (offset.Abs() == Vectors::Up<real>.xyz()) {
-         // If the offset is parallel to up vector, use right vector		
-         // to avoid degeneracy														
+         // If the offset is parallel to up vector, use right vector      
+         // to avoid degeneracy                                          
          orient = mat4::LookAt(offset, Vectors::Right<real>);
       }
       else {
-         // Otherwise use a standard up vector									
+         // Otherwise use a standard up vector                           
          orient = mat4::LookAt(offset, Vectors::Up<real>);
       }
       orient.SetPosition(offset * real(0.5));
 
-      // This rotator is used to spin each segment								
+      // This rotator is used to spin each segment                        
       const auto rotator = mat4::RotationAxis(offset, pcD2R(real(360) / real(ZodeSegments)));
 
-      // Calculate point count based on tesselation							
+      // Calculate point count based on tesselation                     
       auto tesselation = instance->GetTesselation();
       const auto strips = pcptr(std::pow(pcptr(2), tesselation));
       const auto rows = strips + 1;
@@ -65,7 +65,7 @@ namespace Geometry::Zode
       const auto step = (HALFPI<real> / distance) / real(strips);
       const auto dir = vec3(step, -step, 0);
 
-      // Generate the unique points for all segments							
+      // Generate the unique points for all segments                     
       auto content = instance->GetData<Traits::Position>();
       if (content->Is<Point3>()) {
          Point3 pmin {Point3::Max()};
@@ -92,12 +92,12 @@ namespace Geometry::Zode
       }
       else TODO();
 
-      // Save the positions															
+      // Save the positions                                             
       instance->GetView().mPCount = content->GetCount();
    }
 
-   /// Generate zode normals																	
-   ///	@param instance - the geometry to generate for								
+   /// Generate zode normals                                                   
+   ///   @param instance - the geometry to generate for                        
    void GenerateNOR(Model* instance) {
       const auto positions = instance->GetData<Traits::Position>();
       if (!positions || positions->IsEmpty())
@@ -128,8 +128,8 @@ namespace Geometry::Zode
       }
    }
 
-   /// Generate texture coordinates															
-   ///	@param instance - the geometry to generate for								
+   /// Generate texture coordinates                                             
+   ///   @param instance - the geometry to generate for                        
    void GenerateTEX(Model* instance) {
       const auto positions = instance->GetData<Traits::Position>();
       if (!positions || positions->IsEmpty())
@@ -176,8 +176,8 @@ namespace Geometry::Zode
       TODO();
    }
 
-   /// Generate zode indices																	
-   ///	@param instance - the geometry to generate indices for					
+   /// Generate zode indices                                                   
+   ///   @param instance - the geometry to generate indices for               
    void GenerateIDX(Model* instance) {
       auto tesselation = instance->GetTesselation();
       const auto strips = pcu32(std::pow(2, tesselation));
@@ -185,57 +185,57 @@ namespace Geometry::Zode
 
       if (content->Is<pcu32>()) {
          if (instance->CheckTopology<ATriangleStrip>()) {
-            // A zode made of triangle strips									
+            // A zode made of triangle strips                           
             const auto indicesPerSegment = strips + pcSum(strips) * 2 + (strips - 1) * 2;
             const auto verticesPerSegment = pcSum(strips + 1);
             content->Allocate(indicesPerSegment * ZodeSegments + 2 * (ZodeSegments - 1));
 
-            // Generate indices for all segments								
+            // Generate indices for all segments                        
             for (pcu32 index = 0; index < ZodeSegments; ++index) {
-               // Generate strips for this segment								
+               // Generate strips for this segment                        
                const auto segmentStart = index * verticesPerSegment;
                for (pcu32 strip = 0; strip < strips; ++strip) {
-                  // High is [														
-                  //		startingVertex + strip + 1;							
-                  //		startingVertex + strip * 2 + 3						
-                  // )																	
-                  //																		
-                  //		\/\/\/\/\/\/\/\/\/\/\/		strip from the zode	
-                  //																		
-                  // Low is [															
-                  //		startingVertex;											
-                  //		startingVertex + strip + 1								
-                  //	)																	
-                  //																		
+                  // High is [                                          
+                  //      startingVertex + strip + 1;                     
+                  //      startingVertex + strip * 2 + 3                  
+                  // )                                                   
+                  //                                                      
+                  //      \/\/\/\/\/\/\/\/\/\/\/      strip from the zode   
+                  //                                                      
+                  // Low is [                                             
+                  //      startingVertex;                                 
+                  //      startingVertex + strip + 1                        
+                  //   )                                                   
+                  //                                                      
                   const auto loVertex = segmentStart + pcSum(strip);
                   const auto hiVertex = loVertex + strip + 1;
                   const auto loMax = hiVertex;
                   const auto hiMax = hiVertex + strip + 2;
 
-                  // Place the first triangle									
+                  // Place the first triangle                           
                   *content << hiMax - 1;
                   *content << loMax - 1;
 
-                  // Then place the rest of the triangles					
+                  // Then place the rest of the triangles               
                   for (pcu32 triangle = 1; triangle <= (strip + 1) * 2; ++triangle) {
                      if ((triangle % 2) == 1) {
-                        // Top vertex												
+                        // Top vertex                                    
                         *content << hiMax - (triangle + 1) / 2;
                      }
                      else {
-                        // Bottom vertex											
+                        // Bottom vertex                                 
                         *content << loMax - triangle / 2;
                      }
                   }
 
-                  // We add degenerate triangle in order to link strips	
+                  // We add degenerate triangle in order to link strips   
                   if (strip < strips - 1) {
                      *content << content->Get<pcu32>(content->GetCount() - 1);
                      *content << hiMax;
                   }
                }
 
-               // We add a degenerate triangle in order to link regions	
+               // We add a degenerate triangle in order to link regions   
                if (index < ZodeSegments - 1) {
                   *content << content->Get<pcu32>(content->GetCount() - 1);
                   *content << segmentStart + verticesPerSegment;
@@ -246,19 +246,19 @@ namespace Geometry::Zode
             *contentRange = TRange<pcu32>(0u, content->GetCount() - 1);
          }
          else if (instance->CheckTopology<ATriangle>()) {
-            // A zode made of a triangle list									
+            // A zode made of a triangle list                           
             TODO();
          }
          else if (instance->CheckTopology<ALine>()) {
-            // A zode made of a line list											
+            // A zode made of a line list                                 
             TODO();
          }
          else if (instance->CheckTopology<ALineStrip>()) {
-            // A zode made of a line strip										
+            // A zode made of a line strip                              
             TODO();
          }
          else if (instance->CheckTopology<APoint>()) {
-            // A zode made out of points. No indices required.				
+            // A zode made out of points. No indices required.            
             return;
          }
          else TODO();
@@ -268,21 +268,21 @@ namespace Geometry::Zode
       instance->GetView().mICount = content->GetCount();
    }
 
-   /// Generate zode code																		
-   ///	@param instance - the geometry to generate code for						
+   /// Generate zode code                                                      
+   ///   @param instance - the geometry to generate code for                  
    void GenerateCODE(Model*) {
       TODO();
    }
 
-   /// Signed distance function																
-   ///	@param instance - the generator													
-   ///	@param point - the sampling point												
-   ///	@return the distance to the geometry at the given point					
+   /// Signed distance function                                                
+   ///   @param instance - the generator                                       
+   ///   @param point - the sampling point                                    
+   ///   @return the distance to the geometry at the given point               
    real SDF(const Model*, const vec3& point) {
       return TTriangle<vec3>().SD(point);
    }
 
-   /// Set generators for the zode																
+   /// Set generators for the zode                                                
    void SetGenerators() {
       mVertexGenerator = Geometry::Zode::GeneratePOS;
       mNormalGenerator = Geometry::Zode::GenerateNOR;
@@ -299,8 +299,8 @@ namespace Geometry::Zode
       mLodGenerator = nullptr;
    }
 
-   /// Default zode definition																	
-   ///	@return true if the default definition exists									
+   /// Default zode definition                                                   
+   ///   @return true if the default definition exists                           
    bool DefaultCreate() {
       SetTopology<ATriangleStrip>();
       SetTextureMapper(Mapper::Plane);

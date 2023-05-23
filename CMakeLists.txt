@@ -5,7 +5,6 @@ project(LangulusModAssetsGeometry)
 add_library(LangulusModAssetsGeometry SHARED
     source/GeometryLibrary.cpp
     source/Model.cpp
-    source/generators/Box.cpp
     source/generators/Cylinder.cpp
     source/generators/Frustum.cpp
     source/generators/Grid.cpp

@@ -1,9 +1,6 @@
 #pragma once
 #include <PCFW.hpp>
 
-PC_DECLARE_VERB(Tesselate, Tesselate, "Subdivide a surface or volume");
-PC_DECLARE_VERB(Displace, Displace, "Apply a displacement to a surface or volume");
-
 using namespace PCFW;
 
 class MContent;
@@ -100,32 +97,3 @@ protected:
 	LodGenerator mLodGenerator;
 	SdfFunction mSDF;
 };
-
-
-/// Convenience macro for defining geometry generator interfaces					
-#define PC_DEFINE_GEOMETRY(iface)\
-	class iface : public CGeneratorGeometry {\
-		REFLECT(iface);\
-	public:\
-		iface(MContent* manager)\
-			: CGeneratorGeometry{ MetaData::Of<iface>(), manager } {\
-			static_assert(sizeof(iface) == sizeof(CGeneratorGeometry), "Size mismatch"); \
-			SetGenerators(); \
-		}\
-		iface(iface&&) noexcept = default;\
-		iface& operator = (iface&&) noexcept = default;\
-		bool DefaultCreate() override;\
-		void SetGenerators();\
-	};
-
-PC_DEFINE_GEOMETRY(CGeometryBox);
-PC_DEFINE_GEOMETRY(CGeometryCylinder);
-PC_DEFINE_GEOMETRY(CGeometryFrustum);
-PC_DEFINE_GEOMETRY(CGeometrySphere);
-PC_DEFINE_GEOMETRY(CGeometryGrid);
-PC_DEFINE_GEOMETRY(CGeometryLine);
-PC_DEFINE_GEOMETRY(CGeometryRectangle);
-PC_DEFINE_GEOMETRY(CGeometryText);
-PC_DEFINE_GEOMETRY(CGeometryTree);
-PC_DEFINE_GEOMETRY(CGeometryTriangle);
-PC_DEFINE_GEOMETRY(CGeometryZode);

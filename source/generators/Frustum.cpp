@@ -47,30 +47,30 @@ namespace Geometry::Frustum
       TODO();
    }
 
-   const Model* LOD(const Model* instance, const LodState&) {
+   const Model* LOD(const Model* instance, const LOD&) {
       return instance;
    }
 
-   /// Signed distance function for a frustum											
-   ///	@param instance - the generator													
-   ///	@param point - the sampling point												
-   ///	@return the distance to the frustum at the given point					
+   /// Signed distance function for a frustum                                 
+   ///   @param instance - the generator                                      
+   ///   @param point - the sampling point                                    
+   ///   @return the distance to the frustum at the given point               
    real SDF(const Model*, const vec3& point) {
       return TFrustum<vec3>().SD(point);
    }
 
-   /// Set generators for the frustum															
-   void Model::SetGenerators() {
+   /// Set generators for the frustum                                         
+   void SetGenerators() {
       mSDF = Geometry::Frustum::SDF;
       mCodeGenerator = Geometry::Frustum::GenerateCODE;
    }
 
-   /// Default frustum definition																
-   ///	@return true if the default definition exists									
-   bool Model::DefaultCreate() {
+   /// Default frustum definition                                             
+   ///   @return true if the default definition exists                        
+   bool DefaultCreate() {
       SetTopology<ATriangle>();
       SetTextureMapper(Mapper::Cubic);
-      AddDataDeclaration<Traits::Position>(MetaData::Of<Triangle3>());
+      AddDataDeclaration<Traits::Place>(MetaData::Of<Triangle3>());
       AddDataDeclaration<Traits::Aim>(MetaData::Of<Normal>());
       AddDataDeclaration<Traits::Sampler>(MetaData::Of<Sampler2>());
       return true;
