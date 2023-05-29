@@ -18,4 +18,5 @@ using namespace Langulus::Math;
 struct GeometryLibrary;
 struct Model;
 
-constexpr Real Half = Real {1} / Real {2};
+template<CT::Real T = Real>
+constexpr T Half = T {1} / T {2};

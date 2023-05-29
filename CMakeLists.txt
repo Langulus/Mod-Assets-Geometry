@@ -5,13 +5,8 @@ project(LangulusModAssetsGeometry)
 add_library(LangulusModAssetsGeometry SHARED
     source/GeometryLibrary.cpp
     source/Model.cpp
-    source/generators/Cylinder.cpp
-    source/generators/Grid.cpp
-    source/generators/Line.cpp
-    source/generators/Rectangle.cpp
     source/generators/Sphere.cpp
     source/generators/Text.cpp
-    source/generators/Tree.cpp
     source/generators/Triangle.cpp
     source/generators/Zode.cpp
 )

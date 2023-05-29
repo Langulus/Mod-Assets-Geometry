@@ -24,27 +24,27 @@ namespace GeometryBox
    constexpr Count FaceCount = TriangleCount / 2;
 
    /// Box's unique vertices                                                  
-   const Point3 Vertices[VertexCount] = {
+   constexpr Point3 Vertices[VertexCount] = {
       // Left face (-X)                                                 
-      Point3(-Half, -Half,  Half),
-      Point3(-Half, -Half, -Half),
-      Point3(-Half,  Half,  Half),
-      Point3(-Half,  Half, -Half),
+      Point3 {-Half<>, -Half<>,  Half<>},
+      Point3 {-Half<>, -Half<>, -Half<>},
+      Point3 {-Half<>,  Half<>,  Half<>},
+      Point3 {-Half<>,  Half<>, -Half<>},
       // Right face (+X)                                                
-      Point3(Half, -Half, -Half),
-      Point3(Half, -Half,  Half),
-      Point3(Half,  Half,  Half),
-      Point3(Half,  Half, -Half)
+      Point3 { Half<>, -Half<>, -Half<>},
+      Point3 { Half<>, -Half<>,  Half<>},
+      Point3 { Half<>,  Half<>,  Half<>},
+      Point3 { Half<>,  Half<>, -Half<>}
    };
 
    /// Face mapping                                                           
-   const Sampler2 FaceMapping[FaceCount] = {
-      Sampler2(0, 0), Sampler2(0, 1), Sampler2(1, 0),
-      Sampler2(1, 0), Sampler2(0, 1), Sampler2(1, 1)
+   constexpr Sampler2 FaceMapping[FaceCount] = {
+      Sampler2 {0, 0}, Sampler2 {0, 1}, Sampler2 {1, 0},
+      Sampler2 {1, 0}, Sampler2 {0, 1}, Sampler2 {1, 1}
    };
 
    /// Indices for the 12 box triangles                                       
-   const uint32_t Indices[TriangleCount][3] = {
+   constexpr uint32_t Indices[TriangleCount][3] = {
       // Left face                                                      
       {0,1,2},  {2,1,3},
       // Right face                                                     

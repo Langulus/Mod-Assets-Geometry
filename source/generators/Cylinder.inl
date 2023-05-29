@@ -7,7 +7,7 @@
 ///                                                                           
 #pragma once
 #include "../Model.hpp"
-#include <Math/Primitives/TFrustum.hpp>
+#include <Math/Primitives/TCylinder.hpp>
 #include <Math/Primitives/TTriangle.hpp>
 #include <Math/Primitives/TLine.hpp>
 #include <Math/Mapping.hpp>
@@ -15,15 +15,16 @@
 
 
 ///                                                                           
-///    Frustum mesh generators                                                
+///    Cylinder mesh generators                                               
 ///                                                                           
 ///   @tparam T - the primitve to use for point type and dimensions           
 ///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
 ///                                                                           
-template<CT::Frustum T, CT::Topology TOPOLOGY = A::Triangle>
+template<CT::Cylinder T, CT::Topology TOPOLOGY = A::Triangle>
 struct Generate {
    using PointType = typename T::PointType;
    static constexpr Count Dimensions = T::MemberCount;
+   static_assert(Dimensions >= 3, "Cylinder should be at least 3D");
 
    NOD() static Normalized Default(Descriptor&&);
    NOD() static Normalized Detail(const Model*, const LOD&);
@@ -38,60 +39,58 @@ struct Generate {
    static void Colors(Model*);
 };
 
-#define GENERATE() template<CT::Frustum T, CT::Topology TOPOLOGY> \
+#define GENERATE() template<CT::Cylinder T, CT::Topology TOPOLOGY> \
    void Generate<T, TOPOLOGY>::
 
 
-/// Default frustum generation                                                
+/// Default cylinder generation                                               
 ///   @param descriptor - the descriptor to use                               
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
-template<CT::Frustum T, CT::Topology TOPOLOGY>
+template<CT::Cylinder T, CT::Topology TOPOLOGY>
 Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
    Normalized d {descriptor};
-   d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      // A frustum made out of triangles                                
+      // A cylinder made out of triangles                               
+      d.SetDefaultTrait<Traits::MapMode>(
+         MapMode::Cube);
       d.SetDefaultTrait<Traits::Topology>(
          MetaData::Of<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
          MetaData::Of<TTriangle<PointType>>());
       d.SetDefaultTrait<Traits::Sampler>(
          MetaData::Of<Sampler2>());
-
-      if constexpr (Dimensions >= 3) {
-         d.SetDefaultTrait<Traits::Aim>(
-            MetaData::Of<Normal>());
-      }
+      d.SetDefaultTrait<Traits::Aim>(
+         MetaData::Of<Normal>());
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
-      // A frustum made out of lines                                    
+      // A cylinder made out of lines                                   
       d.SetDefaultTrait<Traits::Topology>(
          MetaData::Of<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
          MetaData::Of<TLine<PointType>>());
    }
-   else LANGULUS_ERROR("Unsupported topology for frustum");
+   else LANGULUS_ERROR("Unsupported topology for cylinder");
 
    return Abandon(d);
 }
 
-/// Generate frustum level of detail, giving a LOD state                      
-///   @param model - the frustum generator                                    
+/// Generate cylinder level of detail, giving a LOD state                     
+///   @param model - the cylinder generator                                   
 ///   @param lod - the LOD state to generate                                  
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
-template<CT::Frustum T, CT::Topology TOPOLOGY>
+template<CT::Cylinder T, CT::Topology TOPOLOGY>
 Normalized Generate<T, TOPOLOGY>::Detail(const Model* model, const LOD&) {
    return model->GetDescriptor();
 }
 
-/// Generate positions for a frustum                                          
+/// Generate positions for a cylinder                                         
 ///   @param model - the model to fill                                        
 GENERATE() Positions(Model* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      // A frustum made out of triangles                                
+      // A cylinder made out of triangles                               
       using E = TTriangle<PointType>;
       TAny<E> data;
       data.Reserve(TriangleCount);
@@ -100,17 +99,17 @@ GENERATE() Positions(Model* model) {
       model->Commit<Traits::Place>(Abandon(data));
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
-      // A frustum made out of lines                                    
+      // A cylinder made out of lines                                   
       LANGULUS_ERROR("TODO");
    }
-   else LANGULUS_ERROR("Unsupported topology for frustum positions");
+   else LANGULUS_ERROR("Unsupported topology for cylinder positions");
 }
 
-/// Generate normals for a frustum                                            
+/// Generate normals for a cylinder                                           
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Normals(Model* model) {
    static_assert(Dimensions >= 3,
-      "Can't generate normals for frustum of this many dimensions");
+      "Can't generate normals for cylinder of this many dimensions");
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       constexpr Normal l {Cardinal::Left};
@@ -131,15 +130,15 @@ GENERATE() Normals(Model* model) {
 
       model->template Commit<Traits::Aim>(Abandon(data));
    }
-   else LANGULUS_ERROR("Unsupported topology for frustum normals");
+   else LANGULUS_ERROR("Unsupported topology for cylinder normals");
 }
 
-/// Generate indices for a frustum                                            
+/// Generate indices for a cylinder                                           
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Indices(Model* model) {
    TAny<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      // A frustum made out of triangles                                
+      // A cylinder made out of triangles                               
       data.Reserve(IndexCount);
       for (Offset i = 0; i < TriangleCount; ++i) {
          data << Indices[i][0];
@@ -148,15 +147,15 @@ GENERATE() Indices(Model* model) {
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
-      // A frustum made out of lines                                    
+      // A cylinder made out of lines                                   
       TODO();
    }
-   else LANGULUS_ERROR("Unsupported topology for frustum indices");
+   else LANGULUS_ERROR("Unsupported topology for cylinder indices");
 
    model->template Commit<Traits::Index>(Abandon(data));
 }
 
-/// Generate texture coordinates for a frustum                                
+/// Generate texture coordinates for a cylinder                               
 ///   @param model - the geometry instance to save data in                    
 GENERATE() TextureCoords(Model* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -186,7 +185,7 @@ GENERATE() TextureCoords(Model* model) {
    else if constexpr (CT::Line<TOPOLOGY>) {
       TODO();
    }
-   else LANGULUS_ERROR("Unsupported topology for frustum texture coordinates");
+   else LANGULUS_ERROR("Unsupported topology for cylinder texture coordinates");
 }
 
 GENERATE() TextureIDs(Model*) {
