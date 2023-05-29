@@ -9,24 +9,23 @@
 #include "GeometryLibrary.hpp"
 
 
-/// GUI system construction                                                   
-///   @param producer - the system producer                                   
-///   @param descriptor - instructions for configuring the GUI                
-Model::Model(GUI* producer, const Descriptor& descriptor)
-   : A::UI::System {MetaOf<GUISystem>(), descriptor}
+/// Geometry construction                                                     
+///   @param producer - the producer                                          
+///   @param descriptor - instructions for generator                          
+Model::Model(GeometryLibrary* producer, const Descriptor& descriptor)
+   : A::Geometry {MetaOf<Model>(), descriptor}
    , ProducedFrom {producer, descriptor}
    , mItems {this}
    , mFonts {this} {
 
 }
 
-/// GUI system destruction                                                    
+/// Geometry destruction                                                      
 Model::~Model() {
-   if (mContext)
-      ImGui::DestroyContext(mContext);
+
 }
 
-/// Produce GUI elements and fonts                                            
+/// Produce geometry data                                                     
 ///   @param verb - creation verb to satisfy                                  
 void Model::Create(Verb& verb) {
    mItems.Create(verb);

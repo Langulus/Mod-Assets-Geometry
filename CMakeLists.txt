@@ -6,7 +6,6 @@ add_library(LangulusModAssetsGeometry SHARED
     source/GeometryLibrary.cpp
     source/Model.cpp
     source/generators/Cylinder.cpp
-    source/generators/Frustum.cpp
     source/generators/Grid.cpp
     source/generators/Line.cpp
     source/generators/Rectangle.cpp

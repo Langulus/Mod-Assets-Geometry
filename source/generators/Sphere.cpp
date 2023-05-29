@@ -12,62 +12,60 @@ namespace Geometry::Sphere
 {
 
    ///                                                                        
-   ///   PLATONIC ICOSAHEDRON                                                   
+   ///   PLATONIC ICOSAHEDRON                                                 
    ///                                                                        
-   /// Icosahedron's constant occurences                                       
-   constexpr real Half = real(1) / real(2);
+   /// Icosahedron's constant occurences                                      
+   constexpr Real IcosahedronX = 1 / (2 * Sqrt(Real {5}));
+   constexpr Real IcosahedronZ = 2 / (2 * Sqrt(Real {5}));
 
-   constexpr real IcosahedronX = 1 / (2 * pcSqrt(real(5)));
-   constexpr real IcosahedronZ = 2 / (2 * pcSqrt(real(5)));
-
-   constexpr pcptr VertexCount = 12;
-   constexpr pcptr TriangleCount = 20;
-   constexpr pcptr TriangleIndexCount = TriangleCount * 3;
+   constexpr Count VertexCount = 12;
+   constexpr Count TriangleCount = 20;
+   constexpr Count TriangleIndexCount = TriangleCount * 3;
 
    /// Icosahedron's unique vertices                                          
-   const vec3 IcosahedronVertices[VertexCount] = {
-      vec3(-IcosahedronX,   0, IcosahedronZ),
-      vec3(IcosahedronX, 0, IcosahedronZ),
-      vec3(-IcosahedronX, 0, -IcosahedronZ),
-      vec3(IcosahedronX, 0, -IcosahedronZ),
-      vec3(0, IcosahedronZ, IcosahedronX),
-      vec3(0, IcosahedronZ, -IcosahedronX),
-      vec3(0, -IcosahedronZ, IcosahedronX),
-      vec3(0, -IcosahedronZ, -IcosahedronX),
-      vec3(IcosahedronZ, IcosahedronX, 0),
-      vec3(-IcosahedronZ, IcosahedronX, 0),
-      vec3(IcosahedronZ, -IcosahedronX, 0),
-      vec3(-IcosahedronZ, -IcosahedronX, 0)
+   const Vec3 IcosahedronVertices[VertexCount] = {
+      { -IcosahedronX,  0,             IcosahedronZ},
+      {  IcosahedronX,  0,             IcosahedronZ},
+      { -IcosahedronX,  0,            -IcosahedronZ},
+      {  IcosahedronX,  0,            -IcosahedronZ},
+      {  0,             IcosahedronZ,  IcosahedronX},
+      {  0,             IcosahedronZ, -IcosahedronX},
+      {  0,            -IcosahedronZ,  IcosahedronX},
+      {  0,            -IcosahedronZ, -IcosahedronX},
+      {  IcosahedronZ,  IcosahedronX, 0},
+      { -IcosahedronZ,  IcosahedronX, 0},
+      {  IcosahedronZ, -IcosahedronX, 0},
+      { -IcosahedronZ, -IcosahedronX, 0}
    };
 
    /// Icosahedron's unique texture coords                                    
-   const vec3 IcosahedronUVW[VertexCount] = {
-      IcosahedronVertices[0] + Half,
-      IcosahedronVertices[1] + Half,
-      IcosahedronVertices[2] + Half,
-      IcosahedronVertices[3] + Half,
-      IcosahedronVertices[4] + Half,
-      IcosahedronVertices[5] + Half,
-      IcosahedronVertices[6] + Half,
-      IcosahedronVertices[7] + Half,
-      IcosahedronVertices[8] + Half,
-      IcosahedronVertices[9] + Half,
+   const Vec3 IcosahedronUVW[VertexCount] = {
+      IcosahedronVertices[0]  + Half,
+      IcosahedronVertices[1]  + Half,
+      IcosahedronVertices[2]  + Half,
+      IcosahedronVertices[3]  + Half,
+      IcosahedronVertices[4]  + Half,
+      IcosahedronVertices[5]  + Half,
+      IcosahedronVertices[6]  + Half,
+      IcosahedronVertices[7]  + Half,
+      IcosahedronVertices[8]  + Half,
+      IcosahedronVertices[9]  + Half,
       IcosahedronVertices[10] + Half,
       IcosahedronVertices[11] + Half
    };
 
-   /// Indices for the 20 icosahedron faces                                    
-   const pcu32 IcosahedronIndices[TriangleCount][3] = {
+   /// Indices for the 20 icosahedron faces                                   
+   const uin32_t IcosahedronIndices[TriangleCount][3] = {
       {0,4,1},  {0,9,4},  {9,5,4},  {4,5,8},  {4,8,1},
       {8,10,1}, {8,3,10}, {5,3,8},  {5,2,3},  {2,7,3},
       {7,10,3}, {7,6,10}, {7,11,6}, {11,0,6}, {0,1,6},
       {6,1,10}, {9,0,11}, {9,11,2}, {9,2,5},  {7,2,11}
    };
 
-   /// Generate geosphere vertices                                             
-   ///   @param instance - the geometry to generate positions for               
+   /// Generate geosphere vertices                                            
+   ///   @param instance - the geometry to generate positions for             
    void GeneratePOS(Model* instance) {
-      // A geosphere made out of triangles/lines/points                  
+      // A geosphere made out of triangles/lines/points                 
       // Note, that this geometry is always indexed                     
       auto content = instance->GetData<Traits::Position>();
       if (instance->CheckTopology<ATriangle>()) {
@@ -152,7 +150,7 @@ namespace Geometry::Sphere
             *contentRange = TRange<pcu32>(0u, TriangleIndexCount - 1);
          }
          else if (instance->CheckTopology<ALine>()) {
-            // A geosphere made out of lines                              
+            // A geosphere made out of lines                            
             TODO();
          }
          else if (instance->CheckTopology<APoint>()) {
@@ -173,31 +171,31 @@ namespace Geometry::Sphere
    }
 
    /// Tesselate the geosphere                                                
-   ///   @param instance - the geometry to tesselate                           
+   ///   @param instance - the geometry to tesselate                          
    void Tesselate(Model* instance) {
-      // Use the standard tesselation first                              
+      // Use the standard tesselation first                             
       CGeneratorGeometry::DefaultTesselator(instance);
 
-      // And since this is a sphere - normalize positions & samplers      
+      // And since this is a sphere - normalize positions & samplers    
       instance->Normalize(Traits::Position::ID, true);
       instance->Normalize(Traits::Sampler::ID, true);
    }
 
-   /// LOD function for a geosphere                                             
-   ///   @param instance - the geometry to get LOD of                           
-   ///   @param lod - lod state and info required to compute the LOD            
+   /// LOD function for a geosphere                                           
+   ///   @param instance - the geometry to get LOD of                         
+   ///   @param lod - lod state and info required to compute the LOD          
    ///   @return the resulting LOD content                                    
    const Model* LOD(const Model* instance, const LodState& lod) {
       if (lod.mLODIndex == 0) {
-         // On zero LOD index, we're at optimal distance, so we return   
-         // the original unmodified geometry                              
+         // On zero LOD index, we're at optimal distance, so we return  
+         // the original unmodified geometry                            
          return instance;
       }
 
       const auto tesselation = instance->GetTesselation();
       if (tesselation > 0 && lod.mLODIndex < 0) {
-         // Find a lower tesselation of the geosphere, because the LOD   
-         // is for an object that is further away                        
+         // Find a lower tesselation of the geosphere, because the LOD  
+         // is for an object that is further away                       
          auto newTesselation = tesselation + lod.mLODIndex;
          if (newTesselation < 0)
             newTesselation = 0;
@@ -221,52 +219,52 @@ namespace Geometry::Sphere
       }
       else if (lod.mLODIndex > 0) {
          // LOD is for a sphere that is very close. At this point the   
-         // sphere turns into a plane to the observer. For optimization   
-         // purposes, this plane is made of four triangular patches      
-         // that are centered on the camera, and facing outwards the      
-         // sphere. These so called 'zodes' are designed to be indexed   
+         // sphere turns into a plane to the observer. For optimization 
+         // purposes, this plane is made of four triangular patches     
+         // that are centered on the camera, and facing outwards the    
+         // sphere. These so called 'zodes' are designed to be indexed  
          // from the center towards the edges and are optimized         
          // especially for planet & convex terrain rendering            
 
          // Calculate the angle between the tangents to the sphere      
          const auto cosTheta = 1 / (1 + lod.GetNormalizedDistance());
 
-         // Calculate the visible spherical cap area, and the required   
-         // number of such areas to cover the whole sphere               
+         // Calculate the visible spherical cap area, and the required  
+         // number of such areas to cover the whole sphere              
          const auto taurr = TAU<real> * lod.mRadius * lod.mRadius;
          const auto area = 2 * taurr * (real(1) - cosTheta);
          const auto areaFraction = pcAbs(area / taurr) * 2;
          const auto areasToCover = pcCeil(1 / areaFraction);
 
          // Make a stepping normal that is somewhat snapped to the      
-         // theta this way we will avoid generating content on each      
-         // small reorientation                                          
+         // theta this way we will avoid generating content on each     
+         // small reorientation                                         
          const auto intersection = lod.mView.GetPosition() - lod.mModel.GetPosition();
          if (intersection.Length() == 0)
             return instance;
          const auto steppingNormal = (intersection.Normalize() * areasToCover).Round();
 
-         // Clone only the descriptor and change type                     
+         // Clone only the descriptor and change type                   
          auto newContent = instance->GetConstruct().CloneAs<CGeometryZode>();
-         // Set the place around which the zode is centered               
+         // Set the place around which the zode is centered             
          newContent <<= Trait::From<Traits::Position>(steppingNormal);
-         // Set the size of the sphere in order to calculate curvature   
+         // Set the size of the sphere in order to calculate curvature  
          newContent <<= Trait::From<Traits::Scale>(lod.mModel.GetScale());
-         // Set the topology                                             
+         // Set the topology                                            
          newContent <<= Trait::From<Traits::Topology>(ATriangleStrip::ID);
-         // Set the tesselation                                          
+         // Set the tesselation                                         
          newContent <<= Trait::From<Traits::Tesselation>(tesselation + pcptr(lod.mLODIndex) / 2);
          pcLogFuncVerbose << "Creating LOD: " << newContent;
 
-         // The octave gets progressively lower until we reach state      
+         // The octave gets progressively lower until we reach state    
          //real octave = 0;
          //newContent.Value(TraitID_Octave::Meta(), octave);
          //octave = pcLerp(octave, real(lod.mOctave), lodIndex / real(6));
          //newContent.SetTrait<TraitID_Octave>(pcptr(octave));
 
-         // Overwrite the tesselation                                    
+         // Overwrite the tesselation                                   
 
-         // Create content generator for all four parts                  
+         // Create content generator for all four parts                 
          Any result;
          if (!instance->GetProducer()->Generate<CGeometryZode>(newContent, result) || result.IsEmpty()) {
             pcLogFuncError << "Can't produce LOD(" << lod.mLODIndex << ") for " << instance;
@@ -279,15 +277,15 @@ namespace Geometry::Sphere
       return instance;
    }
 
-   /// Signed distance function for a geosphere                                 
-   ///   @param instance - the generator                                       
+   /// Signed distance function for a geosphere                               
+   ///   @param instance - the generator                                      
    ///   @param point - the sampling point                                    
-   ///   @return the distance to the geosphere at the given point               
+   ///   @return the distance to the geosphere at the given point             
    real SDF(const Model*, const vec3& point) {
       return TSphere<vec3>().SD(point);
    }
 
-   /// Set generators for the sphere                                             
+   /// Set generators for the sphere                                          
    void SetGenerators() {
       mVertexGenerator = Geometry::Sphere::GeneratePOS;
       mTesselator = Geometry::Sphere::Tesselate;
@@ -304,8 +302,8 @@ namespace Geometry::Sphere
       mCodeGenerator = Geometry::Sphere::GenerateCODE;
    }
 
-   /// Default sphere definition                                                   
-   ///   @return true if the default definition exists                           
+   /// Default sphere definition                                              
+   ///   @return true if the default definition exists                        
    bool DefaultCreate() {
       SetTopology<ATriangle>();
       SetTextureMapper(Mapper::Model);

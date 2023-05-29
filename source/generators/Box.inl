@@ -14,9 +14,6 @@
 #include <Math/Colors.hpp>
 
 
-///                                                                           
-///   PLATONIC BOX                                                            
-///                                                                           
 namespace GeometryBox
 {
 
@@ -66,11 +63,19 @@ namespace GeometryBox
 
 
 ///                                                                           
-///    Box data generators                                                    
+///    Box mesh generators                                                    
+///                                                                           
+///   @tparam T - the box primitve to use for point type and dimensions       
+///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
 ///                                                                           
 template<CT::Box T, CT::Topology TOPOLOGY = A::Triangle>
 struct Generate {
-   static void Default(Model*);
+   using PointType = typename T::PointType;
+   static constexpr Count Dimensions = T::MemberCount;
+
+   NOD() static Normalized Default(Descriptor&&);
+   NOD() static Normalized Detail(const Model*, const LOD&);
+
    static void Indices(Model*);
    static void Positions(Model*);
    static void Normals(Model*);
@@ -79,7 +84,6 @@ struct Generate {
    static void Instances(Model*);
    static void Rotations(Model*);
    static void Colors(Model*);
-   static const Model* Detail(Model*, const LOD&);
 };
 
 #define GENERATE() template<CT::Box T, CT::Topology TOPOLOGY> \
@@ -87,14 +91,55 @@ struct Generate {
 
 
 /// Default box generation                                                    
-///   @param model - the model to fill                                        
-GENERATE() Default(Model* model) {
-   model->SetTopology<TOPOLOGY>();
-   model->SetTextureMapper(Mapper::Cube);
-   AddDataDeclaration<Traits::Position>(MetaData::Of<Triangle3>());
-   AddDataDeclaration<Traits::Aim>(MetaData::Of<Normal>());
-   AddDataDeclaration<Traits::Sampler>(MetaData::Of<Sampler2>());
-   return true;
+///   @param descriptor - the descriptor to use                               
+///   @return a newly generated descriptor, with missing traits being set to  
+///           their defaults                                                  
+template<CT::Box T, CT::Topology TOPOLOGY>
+Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
+   Normalized d {descriptor};
+   d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
+
+   if constexpr (CT::Triangle<TOPOLOGY>) {
+      // A box made out of triangles                                    
+      d.SetDefaultTrait<Traits::Topology>(
+         MetaData::Of<TOPOLOGY>());
+      d.SetDefaultTrait<Traits::Place>(
+         MetaData::Of<TTriangle<PointType>>());
+      d.SetDefaultTrait<Traits::Sampler>(
+         MetaData::Of<Sampler2>());
+
+      if constexpr (Dimensions >= 3) {
+         d.SetDefaultTrait<Traits::Aim>(
+            MetaData::Of<Normal>());
+      }
+   }
+   else if constexpr (CT::Line<TOPOLOGY>) {
+      // A box made out of lines                                        
+      d.SetDefaultTrait<Traits::Topology>(
+         MetaData::Of<TOPOLOGY>());
+      d.SetDefaultTrait<Traits::Place>(
+         MetaData::Of<TLine<PointType>>());
+   }
+   else if constexpr (CT::Point<TOPOLOGY>) {
+      // A box made out of points                                       
+      d.SetDefaultTrait<Traits::Topology>(
+         MetaData::Of<TOPOLOGY>());
+      d.SetDefaultTrait<Traits::Place>(
+         MetaData::Of<PointType>());
+   }
+   else LANGULUS_ERROR("Unsupported topology for box");
+
+   return Abandon(d);
+}
+
+/// Generate box level of detail, giving a LOD state                          
+///   @param model - the box generator                                        
+///   @param lod - the LOD state to generate                                  
+///   @return a newly generated descriptor, for the LOD model you can use it  
+///           to generate the new geometry                                    
+template<CT::Box T, CT::Topology TOPOLOGY>
+Normalized Generate<T, TOPOLOGY>::Detail(const Model* model, const LOD&) {
+   return model->GetDescriptor();
 }
 
 /// Generate positions for a box                                              
@@ -104,7 +149,7 @@ GENERATE() Positions(Model* model) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
-      using E = TTriangle<typename T::PointType>;
+      using E = TTriangle<PointType>;
       TAny<E> data;
       data.Reserve(TriangleCount);
       for (Offset i = 0; i < TriangleCount; ++i)
@@ -126,7 +171,7 @@ GENERATE() Positions(Model* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Normals(Model* model) {
    using namespace GeometryBox;
-   static_assert(T::MemberCount >= 3,
+   static_assert(Dimensions >= 3,
       "Can't generate normals for box of this many dimensions");
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -155,8 +200,8 @@ GENERATE() Normals(Model* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Indices(Model* model) {
    using namespace GeometryBox;
-   TAny<uint32_t> data;
 
+   TAny<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
       data.Reserve(IndexCount);
@@ -297,15 +342,6 @@ GENERATE() Colors(Model* model) {
       TODO();
    }
    else LANGULUS_ERROR("Unsupported topology for box colors");
-}
-
-/// Generate box level of detail, giving a LOD state                          
-///   @param model - the box generator                                        
-///   @param lod - the LOD state to generate                                  
-///   @return the new LOD content                                             
-template<CT::Box T, CT::Topology TOPOLOGY>
-const Model* Generate<T, TOPOLOGY>::Detail(const Model* model, const LOD& lod) {
-   return instance;
 }
 
 #undef GENERATE
