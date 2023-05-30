@@ -5,18 +5,24 @@
 /// Distributed under GNU General Public License v3+                          
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
+#pragma once
 #include "../Model.hpp"
+#include <Math/Primitives/TSphere.hpp>
+#include <Math/Primitives/TTriangle.hpp>
+#include <Math/Primitives/TLine.hpp>
+#include <Math/Mapping.hpp>
+#include <Math/Colors.hpp>
 
 
-namespace Geometry::Sphere
+namespace GeometrySphere
 {
 
    ///                                                                        
    ///   PLATONIC ICOSAHEDRON                                                 
    ///                                                                        
    /// Icosahedron's constant occurences                                      
-   constexpr Real IcosahedronX = 1 / (2 * Sqrt(Real {5}));
-   constexpr Real IcosahedronZ = 2 / (2 * Sqrt(Real {5}));
+   SAFETY_CONSTEXPR() Real IcosahedronX = 1 / (2 * Sqrt(Real {5}));
+   SAFETY_CONSTEXPR() Real IcosahedronZ = 2 / (2 * Sqrt(Real {5}));
 
    constexpr Count VertexCount = 12;
    constexpr Count TriangleCount = 20;
@@ -40,18 +46,18 @@ namespace Geometry::Sphere
 
    /// Icosahedron's unique texture coords                                    
    const Vec3 IcosahedronUVW[VertexCount] = {
-      IcosahedronVertices[0]  + Half,
-      IcosahedronVertices[1]  + Half,
-      IcosahedronVertices[2]  + Half,
-      IcosahedronVertices[3]  + Half,
-      IcosahedronVertices[4]  + Half,
-      IcosahedronVertices[5]  + Half,
-      IcosahedronVertices[6]  + Half,
-      IcosahedronVertices[7]  + Half,
-      IcosahedronVertices[8]  + Half,
-      IcosahedronVertices[9]  + Half,
-      IcosahedronVertices[10] + Half,
-      IcosahedronVertices[11] + Half
+      IcosahedronVertices[0]  + Half<>,
+      IcosahedronVertices[1]  + Half<>,
+      IcosahedronVertices[2]  + Half<>,
+      IcosahedronVertices[3]  + Half<>,
+      IcosahedronVertices[4]  + Half<>,
+      IcosahedronVertices[5]  + Half<>,
+      IcosahedronVertices[6]  + Half<>,
+      IcosahedronVertices[7]  + Half<>,
+      IcosahedronVertices[8]  + Half<>,
+      IcosahedronVertices[9]  + Half<>,
+      IcosahedronVertices[10] + Half<>,
+      IcosahedronVertices[11] + Half<>
    };
 
    /// Indices for the 20 icosahedron faces                                   
@@ -61,6 +67,9 @@ namespace Geometry::Sphere
       {7,10,3}, {7,6,10}, {7,11,6}, {11,0,6}, {0,1,6},
       {6,1,10}, {9,0,11}, {9,11,2}, {9,2,5},  {7,2,11}
    };
+
+} // namespace GeometrySphere
+
 
    /// Generate geosphere vertices                                            
    ///   @param instance - the geometry to generate positions for             
@@ -312,5 +321,3 @@ namespace Geometry::Sphere
       AddDataDeclaration<Traits::Sampler>(MetaData::Of<Sampler3>());
       return true;
    }
-
-} // namespace Geometry::Geosphere

@@ -5,53 +5,61 @@
 /// Distributed under GNU General Public License v3+                          
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
+#pragma once
 #include "../Model.hpp"
+#include <Math/Primitives/TBox.hpp>
+#include <Math/Primitives/TTriangle.hpp>
+#include <Math/Primitives/TLine.hpp>
+#include <Math/Mapping.hpp>
+#include <Math/Colors.hpp>
 
 #define LGLS_VERBOSE(a) //a
 
 
-namespace Geometry::Text
+namespace GeometryText
 {
 
    ///  3     2                                                               
-   ///   +---+         Each glyph's origin is at point 3 (0,0)                  
-   ///   |  /|         The vertices are in the XY plane by default (Z=0)         
-   ///   | + |                                                                  
-   ///   |/  |                                                                  
-   ///   +---+                                                                  
+   ///   +---+         Each glyph's origin is at point 3 (0,0)                
+   ///   |  /|         The vertices are in the XY plane by default (Z=0)      
+   ///   | + |                                                                
+   ///   |/  |                                                                
+   ///   +---+                                                                
    ///  1     0                                                               
 
    /// Rect's constant occurences                                             
-   constexpr pcptr VertexCount = 4;
-   constexpr pcptr TriangleCount = 2;
-   constexpr pcptr IndexCount = TriangleCount * 3;
+   constexpr Count VertexCount = 4;
+   constexpr Count TriangleCount = 2;
+   constexpr Count IndexCount = TriangleCount * 3;
 
    /// Glyph's unique vertices                                                
-   const Point2 GlyphVertices[VertexCount] = {
-      {1, 1},            // Bottom-right corner                           
-      {0, 1},            // Bottom-left corner                           
-      {1, 0},            // Top-right corner                              
+   constexpr Point2 Vertices[VertexCount] = {
+      {1, 1},           // Bottom-right corner                          
+      {0, 1},           // Bottom-left corner                           
+      {1, 0},           // Top-right corner                             
       {0, 0}            // Top-left corner                              
    };
 
-   /// Indices for a single glyph made of triangles (counter-clockwise)         
-   const pcu32 TriangleIndices[IndexCount] = {
+   /// Indices for a single glyph made of triangles (counter-clockwise)       
+   const uint32_t Indices[IndexCount] = {
       0,2,1,2,3,1,
    };
 
-   /// Generate glyph positions                                                
-   ///   @param instance - the geometry instance to save data in               
+} // namespace GeometryText
+
+   /// Generate glyph positions                                               
+   ///   @param instance - the geometry instance to save data in              
    void GeneratePOS(Model* instance) {
       if (!instance->CheckTopology<ATriangle>())
          TODO();
 
-      // Get important text traits                                       
+      // Get important text traits                                      
       const auto text = instance->GetTraitValue<Traits::Text, ::PCFW::Text>();
       const auto fontName = instance->GetTraitValue<Traits::Font, ::PCFW::Text>();
       const auto alignment = instance->GetTraitValue<Traits::Position, vec2>();
       const auto spacing = instance->GetTraitValue<Traits::Spacing, vec4>();
 
-      // Make sure the font is generated                                 
+      // Make sure the font is generated                                
       auto font = instance->GetProducer()->GetFont(fontName);
       font->Generate();
 
@@ -270,5 +278,3 @@ namespace Geometry::Text
       AddDataDeclaration<Traits::Index>(MetaData::Of<pcu32>());
       return true;
    }
-
-} // namespace Geometry::Text

@@ -5,10 +5,6 @@ project(LangulusModAssetsGeometry)
 add_library(LangulusModAssetsGeometry SHARED
     source/GeometryLibrary.cpp
     source/Model.cpp
-    source/generators/Sphere.cpp
-    source/generators/Text.cpp
-    source/generators/Triangle.cpp
-    source/generators/Zode.cpp
 )
 
 target_link_libraries(LangulusModAssetsGeometry 
