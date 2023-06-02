@@ -30,3 +30,10 @@ void Model::Create(Verb& verb) {
 void Model::Refresh() {
 
 }
+
+/// Get level of detail model                                                 
+///   @param lod - the level of detail state to generate LOD from             
+///   @return the new geometry                                                
+const A::Geometry* Model::GetLOD(const LOD& lod) const {
+   TODO();
+}

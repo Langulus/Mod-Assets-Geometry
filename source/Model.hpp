@@ -25,7 +25,7 @@ public:
    void Create(Verb&);
    void Refresh();
 
-   NOD() const Geometry* GetLOD(const Math::LOD&) const;
+   NOD() const A::Geometry* GetLOD(const Math::LOD&) const;
 };
 
 #include "generators/Box.inl"
