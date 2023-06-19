@@ -56,20 +56,20 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
       d.SetDefaultTrait<Traits::MapMode>(
          MapMode::Cube);
       d.SetDefaultTrait<Traits::Topology>(
-         MetaData::Of<TOPOLOGY>());
+         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
-         MetaData::Of<TTriangle<PointType>>());
+         MetaOf<TTriangle<PointType>>());
       d.SetDefaultTrait<Traits::Sampler>(
-         MetaData::Of<Sampler2>());
+         MetaOf<Sampler2>());
       d.SetDefaultTrait<Traits::Aim>(
-         MetaData::Of<Normal>());
+         MetaOf<Normal>());
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A cylinder made out of lines                                   
       d.SetDefaultTrait<Traits::Topology>(
-         MetaData::Of<TOPOLOGY>());
+         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
-         MetaData::Of<TLine<PointType>>());
+         MetaOf<TLine<PointType>>());
    }
    else LANGULUS_ERROR("Unsupported topology for cylinder");
 

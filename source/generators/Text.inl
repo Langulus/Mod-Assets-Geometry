@@ -273,8 +273,8 @@ namespace GeometryText
    bool DefaultCreate() {
       SetTopology<ATriangle>();
       SetTextureMapper(Mapper::Custom);
-      AddDataDeclaration<Traits::Position>(MetaData::Of<Point2>());
-      AddDataDeclaration<Traits::Sampler>(MetaData::Of<Sampler2>());
-      AddDataDeclaration<Traits::Index>(MetaData::Of<pcu32>());
+      AddDataDeclaration<Traits::Position>(MetaOf<Point2>());
+      AddDataDeclaration<Traits::Sampler>(MetaOf<Sampler2>());
+      AddDataDeclaration<Traits::Index>(MetaOf<pcu32>());
       return true;
    }

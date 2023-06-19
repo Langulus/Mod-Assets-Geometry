@@ -7,7 +7,7 @@ PC_MONOPOLIZE_MEMORY(0);
 ///	@param system - the system that owns the module									
 ///	@param handle - the module handle													
 MContent::MContent(CRuntime* system, PCLIB handle)
-	: AModuleContent {MetaData::Of<MContent>(), system, handle}
+	: AModuleContent {MetaOf<MContent>(), system, handle}
 	, mModels {this}
 	, mSounds {this}
 	, mTextures {this}

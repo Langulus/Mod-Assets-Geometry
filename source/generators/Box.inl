@@ -102,30 +102,30 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
       d.SetDefaultTrait<Traits::Topology>(
-         MetaData::Of<TOPOLOGY>());
+         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
-         MetaData::Of<TTriangle<PointType>>());
+         MetaOf<TTriangle<PointType>>());
       d.SetDefaultTrait<Traits::Sampler>(
-         MetaData::Of<Sampler2>());
+         MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
          d.SetDefaultTrait<Traits::Aim>(
-            MetaData::Of<Normal>());
+            MetaOf<Normal>());
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A box made out of lines                                        
       d.SetDefaultTrait<Traits::Topology>(
-         MetaData::Of<TOPOLOGY>());
+         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
-         MetaData::Of<TLine<PointType>>());
+         MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A box made out of points                                       
       d.SetDefaultTrait<Traits::Topology>(
-         MetaData::Of<TOPOLOGY>());
+         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
-         MetaData::Of<PointType>());
+         MetaOf<PointType>());
    }
    else LANGULUS_ERROR("Unsupported topology for box");
 

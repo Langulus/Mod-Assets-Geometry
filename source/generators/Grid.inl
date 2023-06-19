@@ -22,9 +22,9 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
    if constexpr (CT::Line<TOPOLOGY>) {
       // A grid made out of lines                                       
       d.SetDefaultTrait<Traits::Topology>(
-         MetaData::Of<TOPOLOGY>());
+         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
-         MetaData::Of<TLine<PointType>>());
+         MetaOf<TLine<PointType>>());
    }
    else LANGULUS_ERROR("Unsupported topology for line");
    return Abandon(d);

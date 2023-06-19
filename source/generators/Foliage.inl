@@ -50,9 +50,9 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
    if constexpr (CT::Triangles<TOPOLOGY>) {
       // Foliage made out of triangles                                  
       d.SetDefaultTrait<Traits::Topology>(
-         MetaData::Of<TOPOLOGY>());
+         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
-         MetaData::Of<TTriangle<PointType>>());
+         MetaOf<TTriangle<PointType>>());
    }
    else LANGULUS_ERROR("Unsupported topology for line");
 

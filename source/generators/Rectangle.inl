@@ -273,7 +273,7 @@ void CGeometryRectangle::SetGenerators() {
 bool CGeometryRectangle::DefaultCreate() {
    SetTopology<ATriangle>();
    SetTextureMapper(Mapper::Plane);
-   AddDataDeclaration<Traits::Position>(MetaData::Of<Triangle2>());
-   AddDataDeclaration<Traits::Sampler>(MetaData::Of<Sampler2>());
+   AddDataDeclaration<Traits::Position>(MetaOf<Triangle2>());
+   AddDataDeclaration<Traits::Sampler>(MetaOf<Sampler2>());
    return true;
 }

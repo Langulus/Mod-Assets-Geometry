@@ -54,23 +54,23 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A frustum made out of triangles                                
       d.SetDefaultTrait<Traits::Topology>(
-         MetaData::Of<TOPOLOGY>());
+         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
-         MetaData::Of<TTriangle<PointType>>());
+         MetaOf<TTriangle<PointType>>());
       d.SetDefaultTrait<Traits::Sampler>(
-         MetaData::Of<Sampler2>());
+         MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
          d.SetDefaultTrait<Traits::Aim>(
-            MetaData::Of<Normal>());
+            MetaOf<Normal>());
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A frustum made out of lines                                    
       d.SetDefaultTrait<Traits::Topology>(
-         MetaData::Of<TOPOLOGY>());
+         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
-         MetaData::Of<TLine<PointType>>());
+         MetaOf<TLine<PointType>>());
    }
    else LANGULUS_ERROR("Unsupported topology for frustum");
 

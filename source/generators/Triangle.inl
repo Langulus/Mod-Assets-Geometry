@@ -136,8 +136,8 @@ void SetGenerators() {
 bool DefaultCreate() {
    SetTopology<ATriangle>();
    SetTextureMapper(Mapper::Face);
-   AddDataDeclaration<Traits::Position>(MetaData::Of<Triangle3>());
-   AddDataDeclaration<Traits::Aim>(MetaData::Of<Normal>());
-   AddDataDeclaration<Traits::Sampler>(MetaData::Of<Sampler2>());
+   AddDataDeclaration<Traits::Position>(MetaOf<Triangle3>());
+   AddDataDeclaration<Traits::Aim>(MetaOf<Normal>());
+   AddDataDeclaration<Traits::Sampler>(MetaOf<Sampler2>());
    return true;
 }

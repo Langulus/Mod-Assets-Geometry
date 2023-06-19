@@ -309,9 +309,9 @@ namespace Geometry::Zode
    bool DefaultCreate() {
       SetTopology<ATriangleStrip>();
       SetTextureMapper(Mapper::Plane);
-      AddDataDeclaration<Traits::Position>(MetaData::Of<Point3>());
-      AddDataDeclaration<Traits::Aim>(MetaData::Of<Normal>());
-      AddDataDeclaration<Traits::Sampler>(MetaData::Of<Sampler2>());
+      AddDataDeclaration<Traits::Position>(MetaOf<Point3>());
+      AddDataDeclaration<Traits::Aim>(MetaOf<Normal>());
+      AddDataDeclaration<Traits::Sampler>(MetaOf<Sampler2>());
       return true;
    }
 

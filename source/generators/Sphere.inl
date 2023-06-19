@@ -316,8 +316,8 @@ namespace GeometrySphere
    bool DefaultCreate() {
       SetTopology<ATriangle>();
       SetTextureMapper(Mapper::Model);
-      AddDataDeclaration<Traits::Position>(MetaData::Of<Triangle3>());
-      AddDataDeclaration<Traits::Aim>(MetaData::Of<Normal>());
-      AddDataDeclaration<Traits::Sampler>(MetaData::Of<Sampler3>());
+      AddDataDeclaration<Traits::Position>(MetaOf<Triangle3>());
+      AddDataDeclaration<Traits::Aim>(MetaOf<Normal>());
+      AddDataDeclaration<Traits::Sampler>(MetaOf<Sampler3>());
       return true;
    }

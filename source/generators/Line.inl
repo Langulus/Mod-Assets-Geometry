@@ -49,9 +49,9 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines (duh)                                 
       d.SetDefaultTrait<Traits::Topology>(
-         MetaData::Of<TOPOLOGY>());
+         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
-         MetaData::Of<TLine<PointType>>());
+         MetaOf<TLine<PointType>>());
    }
    else LANGULUS_ERROR("Unsupported topology for line");
 
