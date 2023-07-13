@@ -20,3 +20,5 @@ struct Model;
 
 template<CT::Real T = Real>
 constexpr T Half = T {1} / T {2};
+
+LANGULUS_DEFINE_TRAIT(Tesselation, "Tesselation level, usually an integer");

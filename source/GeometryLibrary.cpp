@@ -10,7 +10,7 @@
 LANGULUS_DEFINE_MODULE(
    GeometryLibrary, 9, "AssetsGeometry",
    "Geometry reader, writer and generator", "",
-   GeometryLibrary, Model
+   GeometryLibrary, Model, Traits::Tesselation
 )
 
 /// Module construction                                                       
