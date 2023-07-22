@@ -219,7 +219,7 @@ namespace GeometrySphere
 
          // Create content generator                                    
          Any result;
-         if (!instance->GetProducer()->Generate<CGeometrySphere>(newContent, result) || result.IsEmpty()) {
+         if (!instance->GetProducer()->Generate<CGeometrySphere>(newContent, result) || !result) {
             pcLogFuncError << "Can't produce LOD(" << lod.mLODIndex << ") for " << instance;
             return instance;
          }
@@ -275,7 +275,7 @@ namespace GeometrySphere
 
          // Create content generator for all four parts                 
          Any result;
-         if (!instance->GetProducer()->Generate<CGeometryZode>(newContent, result) || result.IsEmpty()) {
+         if (!instance->GetProducer()->Generate<CGeometryZode>(newContent, result) || !result) {
             pcLogFuncError << "Can't produce LOD(" << lod.mLODIndex << ") for " << instance;
             return instance;
          }

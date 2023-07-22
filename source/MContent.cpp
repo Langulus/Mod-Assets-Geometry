@@ -32,7 +32,7 @@ void MContent::Update(PCTime) {
 /// Create content generators																	
 ///	@param verb - the creation verb														
 void MContent::Create(Verb& verb) {
-	if (verb.GetArgument().IsEmpty())
+	if (!verb)
 		return;
 
 	// Create content generators...													

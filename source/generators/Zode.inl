@@ -105,7 +105,7 @@ namespace Geometry::Zode
    ///   @param instance - the geometry to generate for                       
    void GenerateNOR(Model* instance) {
       const auto positions = instance->GetData<Traits::Position>();
-      if (!positions || positions->IsEmpty())
+      if (!positions || !*positions)
          throw Except::Content();
 
       if (positions->Is<Point3>()) {
@@ -137,7 +137,7 @@ namespace Geometry::Zode
    ///   @param instance - the geometry to generate for                       
    void GenerateTEX(Model* instance) {
       const auto positions = instance->GetData<Traits::Position>();
-      if (!positions || positions->IsEmpty())
+      if (!positions || !*positions)
          throw Except::Content();
 
       if (positions->Is<Point3>()) {
