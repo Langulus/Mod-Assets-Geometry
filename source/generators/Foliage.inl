@@ -6,7 +6,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "../Model.hpp"
+#include "../Mesh.hpp"
 #include <Math/Primitives/TTriangle.hpp>
 #include <Math/Mapping.hpp>
 
@@ -23,16 +23,16 @@ struct Generate {
    static constexpr Count Dimensions = T::MemberCount;
 
    NOD() static Normalized Default(Descriptor&&);
-   NOD() static Normalized Detail(const Model*, const LOD&);
+   NOD() static Normalized Detail(const Mesh*, const LOD&);
 
-   static void Indices(Model*);
-   static void Positions(Model*);
-   static void Normals(Model*);
-   static void TextureCoords(Model*);
-   static void TextureIDs(Model*);
-   static void Instances(Model*);
-   static void Rotations(Model*);
-   static void Colors(Model*);
+   static void Indices(Mesh*);
+   static void Positions(Mesh*);
+   static void Normals(Mesh*);
+   static void TextureCoords(Mesh*);
+   static void TextureIDs(Mesh*);
+   static void Instances(Mesh*);
+   static void Rotations(Mesh*);
+   static void Colors(Mesh*);
 };
 
 #define GENERATE() template<CT::Foliage T, CT::Topology TOPOLOGY> \
@@ -65,47 +65,47 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Foliage T, CT::Topology TOPOLOGY>
-Normalized Generate<T, TOPOLOGY>::Detail(const Model* model, const LOD&) {
+Normalized Generate<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
    return model->GetDescriptor();
 }
 
 /// Generate positions for foliage                                            
 ///   @param model - the model to fill                                        
-GENERATE() Positions(Model* model) {
+GENERATE() Positions(Mesh* model) {
    TODO();
 }
 
 /// Generate normals for foliage                                              
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Model* model) {
+GENERATE() Normals(Mesh* model) {
    TODO();
 }
 
 /// Generate indices for foliage                                              
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Model* model) {
+GENERATE() Indices(Mesh* model) {
    TODO();
 }
 
 /// Generate texture coordinates for foliage                                  
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Model* model) {
+GENERATE() TextureCoords(Mesh* model) {
    TODO();
 }
 
-GENERATE() TextureIDs(Model*) {
+GENERATE() TextureIDs(Mesh*) {
    TODO();
 }
 
-GENERATE() Instances(Model*) {
+GENERATE() Instances(Mesh*) {
    TODO();
 }
 
-GENERATE() Rotations(Model*) {
+GENERATE() Rotations(Mesh*) {
    TODO();
 }
 
-GENERATE() Colors(Model* model) {
+GENERATE() Colors(Mesh* model) {
    TODO();
 }
 

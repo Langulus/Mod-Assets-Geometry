@@ -10,22 +10,22 @@
 
 
 ///                                                                           
-///   A model asset                                                           
+///   A mesh asset                                                            
 ///                                                                           
-struct Model final : A::Geometry {
+struct Mesh final : A::Mesh {
    LANGULUS(ABSTRACT) false;
-   LANGULUS(PRODUCER) GeometryLibrary;
-   LANGULUS_BASES(A::Geometry);
+   LANGULUS(PRODUCER) MeshLibrary;
+   LANGULUS_BASES(A::Mesh);
    LANGULUS_VERBS(Verbs::Create);
 
 public:
-   Model(GeometryLibrary*, const Descriptor&);
-   ~Model();
+   Mesh(MeshLibrary*, const Descriptor&);
+   ~Mesh();
 
    void Create(Verb&);
    void Refresh();
 
-   NOD() const A::Geometry* GetLOD(const Math::LOD&) const;
+   NOD() Ref<A::Mesh> GetLOD(const Math::LOD&) const;
 };
 
 #include "generators/Box.inl"

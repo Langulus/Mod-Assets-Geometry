@@ -3,8 +3,8 @@ project(LangulusModAssetsGeometry)
 
 # Build the module                                                          
 add_library(LangulusModAssetsGeometry SHARED
-    source/GeometryLibrary.cpp
-    source/Model.cpp
+    source/MeshLibrary.cpp
+    source/Mesh.cpp
 )
 
 target_link_libraries(LangulusModAssetsGeometry 

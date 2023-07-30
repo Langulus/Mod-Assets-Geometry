@@ -6,7 +6,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "../Model.hpp"
+#include "../Mesh.hpp"
 #include <Math/Primitives/TTriangle.hpp>
 #include <Math/Primitives/TLine.hpp>
 #include <Math/Mapping.hpp>
@@ -22,7 +22,7 @@ namespace Geometry::Zode
 
    /// Generate zode positions                                                
    ///   @param instance - the geometry to generate for                       
-   void GeneratePOS(Model* instance) {
+   void GeneratePOS(Mesh* instance) {
       // An example zode with tesselation of 3                          
       // The zode is always on the XY plane, at Z=0                     
       //                                                                
@@ -103,7 +103,7 @@ namespace Geometry::Zode
 
    /// Generate zode normals                                                  
    ///   @param instance - the geometry to generate for                       
-   void GenerateNOR(Model* instance) {
+   void GenerateNOR(Mesh* instance) {
       const auto positions = instance->GetData<Traits::Position>();
       if (!positions || !*positions)
          throw Except::Content();
@@ -135,7 +135,7 @@ namespace Geometry::Zode
 
    /// Generate texture coordinates                                           
    ///   @param instance - the geometry to generate for                       
-   void GenerateTEX(Model* instance) {
+   void GenerateTEX(Mesh* instance) {
       const auto positions = instance->GetData<Traits::Position>();
       if (!positions || !*positions)
          throw Except::Content();
@@ -165,25 +165,25 @@ namespace Geometry::Zode
       }
    }
 
-   void GenerateTID(Model*) {
+   void GenerateTID(Mesh*) {
       TODO();
    }
 
-   void GenerateINS(Model*) {
+   void GenerateINS(Mesh*) {
       TODO();
    }
 
-   void GenerateROT(Model*) {
+   void GenerateROT(Mesh*) {
       TODO();
    }
 
-   void GenerateCOL(Model*) {
+   void GenerateCOL(Mesh*) {
       TODO();
    }
 
    /// Generate zode indices                                                  
    ///   @param instance - the geometry to generate indices for               
-   void GenerateIDX(Model* instance) {
+   void GenerateIDX(Mesh* instance) {
       auto tesselation = instance->GetTesselation();
       const auto strips = pcu32(std::pow(2, tesselation));
       auto content = instance->GetData<Traits::Index>();
@@ -275,7 +275,7 @@ namespace Geometry::Zode
 
    /// Generate zode code                                                     
    ///   @param instance - the geometry to generate code for                  
-   void GenerateCODE(Model*) {
+   void GenerateCODE(Mesh*) {
       TODO();
    }
 
@@ -283,7 +283,7 @@ namespace Geometry::Zode
    ///   @param instance - the generator                                      
    ///   @param point - the sampling point                                    
    ///   @return the distance to the geometry at the given point              
-   real SDF(const Model*, const vec3& point) {
+   real SDF(const Mesh*, const vec3& point) {
       return TTriangle<vec3>().SD(point);
    }
 

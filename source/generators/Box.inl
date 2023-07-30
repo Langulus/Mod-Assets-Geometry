@@ -6,7 +6,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "../Model.hpp"
+#include "../Mesh.hpp"
 #include <Math/Primitives/TBox.hpp>
 #include <Math/Primitives/TTriangle.hpp>
 #include <Math/Primitives/TLine.hpp>
@@ -74,16 +74,16 @@ struct Generate {
    static constexpr Count Dimensions = T::MemberCount;
 
    NOD() static Normalized Default(Descriptor&&);
-   NOD() static Normalized Detail(const Model*, const LOD&);
+   NOD() static Normalized Detail(const Mesh*, const LOD&);
 
-   static void Indices(Model*);
-   static void Positions(Model*);
-   static void Normals(Model*);
-   static void TextureCoords(Model*);
-   static void TextureIDs(Model*);
-   static void Instances(Model*);
-   static void Rotations(Model*);
-   static void Colors(Model*);
+   static void Indices(Mesh*);
+   static void Positions(Mesh*);
+   static void Normals(Mesh*);
+   static void TextureCoords(Mesh*);
+   static void TextureIDs(Mesh*);
+   static void Instances(Mesh*);
+   static void Rotations(Mesh*);
+   static void Colors(Mesh*);
 };
 
 #define GENERATE() template<CT::Box T, CT::Topology TOPOLOGY> \
@@ -138,13 +138,13 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Box T, CT::Topology TOPOLOGY>
-Normalized Generate<T, TOPOLOGY>::Detail(const Model* model, const LOD&) {
+Normalized Generate<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
    return model->GetDescriptor();
 }
 
 /// Generate positions for a box                                              
 ///   @param model - the model to fill                                        
-GENERATE() Positions(Model* model) {
+GENERATE() Positions(Mesh* model) {
    using namespace GeometryBox;
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -169,7 +169,7 @@ GENERATE() Positions(Model* model) {
 
 /// Generate normals for a box                                                
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Model* model) {
+GENERATE() Normals(Mesh* model) {
    using namespace GeometryBox;
    static_assert(Dimensions >= 3,
       "Can't generate normals for box of this many dimensions");
@@ -198,7 +198,7 @@ GENERATE() Normals(Model* model) {
 
 /// Generate indices for a box                                                
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Model* model) {
+GENERATE() Indices(Mesh* model) {
    using namespace GeometryBox;
 
    TAny<uint32_t> data;
@@ -226,11 +226,11 @@ GENERATE() Indices(Model* model) {
 
 /// Generate texture coordinates for a box                                    
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Model* model) {
+GENERATE() TextureCoords(Mesh* model) {
    using namespace GeometryBox;
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      if (model->GetTextureMapper() == MapMode::Model) {
+      if (model->GetTextureMapper() == MapMode::Mesh) {
          // Generate model mapping                                      
          TAny<Sampler3> data;
          data.Reserve(IndexCount);
@@ -263,19 +263,19 @@ GENERATE() TextureCoords(Model* model) {
    else LANGULUS_ERROR("Unsupported topology for box texture coordinates");
 }
 
-GENERATE() TextureIDs(Model*) {
+GENERATE() TextureIDs(Mesh*) {
    TODO();
 }
 
-GENERATE() Instances(Model*) {
+GENERATE() Instances(Mesh*) {
    TODO();
 }
 
-GENERATE() Rotations(Model*) {
+GENERATE() Rotations(Mesh*) {
    TODO();
 }
 
-GENERATE() Colors(Model* model) {
+GENERATE() Colors(Mesh* model) {
    using namespace GeometryBox;
 
    if constexpr (CT::Triangle<TOPOLOGY>) {

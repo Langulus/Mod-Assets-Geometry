@@ -6,7 +6,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "../Model.hpp"
+#include "../Mesh.hpp"
 #include <Math/Primitives/TBox.hpp>
 #include <Math/Primitives/TTriangle.hpp>
 #include <Math/Primitives/TLine.hpp>
@@ -49,7 +49,7 @@ namespace GeometryText
 
    /// Generate glyph positions                                               
    ///   @param instance - the geometry instance to save data in              
-   void GeneratePOS(Model* instance) {
+   void GeneratePOS(Mesh* instance) {
       if (!instance->CheckTopology<ATriangle>())
          TODO();
 
@@ -123,7 +123,7 @@ namespace GeometryText
 
    /// Generate glyph normals                                                   
    ///   @param instance - the geometry instance to save data in               
-   void GenerateNOR(Model* instance) {
+   void GenerateNOR(Mesh* instance) {
       if (!instance->CheckTopology<ATriangle>())
          TODO();
 
@@ -151,7 +151,7 @@ namespace GeometryText
 
    /// Generate glyph texture coordinates                                       
    ///   @param instance - the geometry instance to save data in               
-   void GenerateTEX(Model* instance) {
+   void GenerateTEX(Mesh* instance) {
       if (!instance->CheckTopology<ATriangle>())
          TODO();
 
@@ -205,7 +205,7 @@ namespace GeometryText
 
    /// Generate glyph indices                                                   
    ///   @param instance - the geometry instance to save data in               
-   void GenerateIDX(Model* instance) {
+   void GenerateIDX(Mesh* instance) {
       if (!instance->CheckTopology<ATriangle>())
          TODO();
 
@@ -236,13 +236,13 @@ namespace GeometryText
 
    /// Generate rectangle colors                                                
    ///   @param instance - the geometry instance to save data in               
-   void GenerateCOL(Model*) {
+   void GenerateCOL(Mesh*) {
       TODO();
    }
 
    /// Generate code for the rectangle                                          
    ///   @param instance - the geometry instance to save data in               
-   void GenerateCODE(Model*) {
+   void GenerateCODE(Mesh*) {
       TODO();
    }
 
@@ -250,7 +250,7 @@ namespace GeometryText
    ///   @param instance - the generator                                       
    ///   @param point - the sampling point                                    
    ///   @return the distance to the geometry at the given point               
-   real SDF(const Model*, const vec3&) {
+   real SDF(const Mesh*, const vec3&) {
       TODO();
    }
 

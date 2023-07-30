@@ -15,8 +15,8 @@ using namespace Langulus::Anyness;
 using namespace Langulus::Entity;
 using namespace Langulus::Math;
 
-struct GeometryLibrary;
-struct Model;
+struct MeshLibrary;
+struct Mesh;
 
 template<CT::Real T = Real>
 constexpr T Half = T {1} / T {2};

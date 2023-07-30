@@ -6,7 +6,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "../Model.hpp"
+#include "../Mesh.hpp"
 #include <Math/Primitives/TBox.hpp>
 #include <Math/Primitives/TTriangle.hpp>
 #include <Math/Primitives/TLine.hpp>
@@ -154,7 +154,7 @@ namespace GeometryRect
 
       if (instance->CheckTopology<ATriangle>()) {
          // A rectangle made out of triangles                           
-         if (instance->GetTextureMapper() == Mapper::Model ||
+         if (instance->GetTextureMapper() == Mapper::Mesh ||
              instance->GetTextureMapper() == Mapper::Plane
          ) {
             // Generate model mapping                                    

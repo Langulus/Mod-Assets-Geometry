@@ -6,7 +6,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "../Model.hpp"
+#include "../Mesh.hpp"
 #include <Math/Primitives/TSphere.hpp>
 #include <Math/Primitives/TTriangle.hpp>
 #include <Math/Primitives/TLine.hpp>
@@ -73,7 +73,7 @@ namespace GeometrySphere
 
    /// Generate geosphere vertices                                            
    ///   @param instance - the geometry to generate positions for             
-   void GeneratePOS(Model* instance) {
+   void GeneratePOS(Mesh* instance) {
       // A geosphere made out of triangles/lines/points                 
       // Note, that this geometry is always indexed                     
       auto content = instance->GetData<Traits::Position>();
@@ -94,7 +94,7 @@ namespace GeometrySphere
 
    /// Generate geosphere normals                                             
    ///   @param instance - the geometry to generate normals for               
-   void GenerateNOR(Model* instance) {
+   void GenerateNOR(Mesh* instance) {
       auto content = instance->GetData<Traits::Aim>();
       if (instance->CheckTopology<ATriangle>()) {
          if (content->Is<Normal>()) {
@@ -111,7 +111,7 @@ namespace GeometrySphere
 
    /// Generate geosphere texture coordinates                                 
    ///   @param instance - the geometry to generate texture coordinates for   
-   void GenerateTEX(Model* instance) {
+   void GenerateTEX(Mesh* instance) {
       auto content = instance->GetData<Traits::Sampler>();
       if (instance->CheckTopology<ATriangle>()) {
          if (content->Is<Sampler3>()) {
@@ -126,25 +126,25 @@ namespace GeometrySphere
       else TODO();
    }
 
-   void GenerateTID(Model*) {
+   void GenerateTID(Mesh*) {
       TODO();
    }
 
-   void GenerateINS(Model*) {
+   void GenerateINS(Mesh*) {
       TODO();
    }
 
-   void GenerateROT(Model*) {
+   void GenerateROT(Mesh*) {
       TODO();
    }
 
-   void GenerateCOL(Model*) {
+   void GenerateCOL(Mesh*) {
       TODO();
    }
 
    /// Generate geosphere indices                                             
    ///   @param instance - the geometry to generate indices for               
-   void GenerateIDX(Model* instance) {
+   void GenerateIDX(Mesh* instance) {
       auto content = instance->GetData<Traits::Index>();
       if (instance->CheckTopology<ATriangle>()) {
          if (content->Is<pcu32>()) {
@@ -175,13 +175,13 @@ namespace GeometrySphere
 
    /// Generate geosphere code                                                
    ///   @param instance - the geometry to generate indices for               
-   void GenerateCODE(Model*) {
+   void GenerateCODE(Mesh*) {
       TODO();
    }
 
    /// Tesselate the geosphere                                                
    ///   @param instance - the geometry to tesselate                          
-   void Tesselate(Model* instance) {
+   void Tesselate(Mesh* instance) {
       // Use the standard tesselation first                             
       CGeneratorGeometry::DefaultTesselator(instance);
 
@@ -194,7 +194,7 @@ namespace GeometrySphere
    ///   @param instance - the geometry to get LOD of                         
    ///   @param lod - lod state and info required to compute the LOD          
    ///   @return the resulting LOD content                                    
-   const Model* LOD(const Model* instance, const LodState& lod) {
+   const Mesh* LOD(const Mesh* instance, const LodState& lod) {
       if (lod.mLODIndex == 0) {
          // On zero LOD index, we're at optimal distance, so we return  
          // the original unmodified geometry                            
@@ -280,7 +280,7 @@ namespace GeometrySphere
             return instance;
          }
 
-         return result.As<Model*>();
+         return result.As<Mesh*>();
       }
 
       return instance;
@@ -290,7 +290,7 @@ namespace GeometrySphere
    ///   @param instance - the generator                                      
    ///   @param point - the sampling point                                    
    ///   @return the distance to the geosphere at the given point             
-   real SDF(const Model*, const vec3& point) {
+   real SDF(const Mesh*, const vec3& point) {
       return TSphere<vec3>().SD(point);
    }
 
@@ -315,7 +315,7 @@ namespace GeometrySphere
    ///   @return true if the default definition exists                        
    bool DefaultCreate() {
       SetTopology<ATriangle>();
-      SetTextureMapper(Mapper::Model);
+      SetTextureMapper(Mapper::Mesh);
       AddDataDeclaration<Traits::Position>(MetaOf<Triangle3>());
       AddDataDeclaration<Traits::Aim>(MetaOf<Normal>());
       AddDataDeclaration<Traits::Sampler>(MetaOf<Sampler3>());

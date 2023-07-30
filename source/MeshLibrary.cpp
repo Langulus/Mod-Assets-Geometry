@@ -5,32 +5,32 @@
 /// Distributed under GNU General Public License v3+                          
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
-#include "GeometryLibrary.hpp"
+#include "MeshLibrary.hpp"
 
 LANGULUS_DEFINE_MODULE(
-   GeometryLibrary, 9, "AssetsGeometry",
-   "Geometry reader, writer and generator", "",
-   GeometryLibrary, Model, Traits::Tesselation
+   MeshLibrary, 9, "AssetsGeometry",
+   "Mesh reader, writer and generator", "",
+   MeshLibrary, Mesh, Traits::Tesselation
 )
 
 /// Module construction                                                       
 ///   @param runtime - the runtime that owns the module                       
 ///   @param descriptor - instructions for configuring the module             
-GeometryLibrary::GeometryLibrary(Runtime* runtime, const Descriptor&)
-   : A::AssetModule {MetaOf<GeometryLibrary>(), runtime}
-   , mModels {this} {
+MeshLibrary::MeshLibrary(Runtime* runtime, const Descriptor&)
+   : A::AssetModule {MetaOf<MeshLibrary>(), runtime}
+   , mMeshes {this} {
    Logger::Verbose(Self(), "Initializing...");
    Logger::Verbose(Self(), "Initialized");
 }
 
 /// Module update routine                                                     
 ///   @param dt - time from last update                                       
-void GeometryLibrary::Update(Time) {
+void MeshLibrary::Update(Time) {
 
 }
 
-/// Create/Destroy GUI systems                                                
+/// Create/Destroy meshes                                                     
 ///   @param verb - the creation/destruction verb                             
-void GeometryLibrary::Create(Verb& verb) {
-   mModels.Create(verb);
+void MeshLibrary::Create(Verb& verb) {
+   mMeshes.Create(verb);
 }

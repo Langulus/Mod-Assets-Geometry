@@ -5,35 +5,35 @@
 /// Distributed under GNU General Public License v3+                          
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
-#include "Model.hpp"
-#include "GeometryLibrary.hpp"
+#include "Mesh.hpp"
+#include "MeshLibrary.hpp"
 
 
-/// Geometry construction                                                     
+/// Mesh construction                                                         
 ///   @param producer - the producer                                          
 ///   @param descriptor - instructions for generator                          
-Model::Model(GeometryLibrary* producer, const Descriptor& descriptor)
-   : A::Geometry {MetaOf<Model>(), producer, descriptor} {}
+Mesh::Mesh(MeshLibrary* producer, const Descriptor& descriptor)
+   : A::Mesh {MetaOf<::Mesh>(), producer, descriptor} {}
 
-/// Geometry destruction                                                      
-Model::~Model() {
+/// Mesh destruction                                                          
+Mesh::~Mesh() {
 
 }
 
 /// Produce geometry data                                                     
 ///   @param verb - creation verb to satisfy                                  
-void Model::Create(Verb& verb) {
+void Mesh::Create(Verb& verb) {
 
 }
 
 /// React on environmental change                                             
-void Model::Refresh() {
+void Mesh::Refresh() {
 
 }
 
-/// Get level of detail model                                                 
+/// Get level of detail mesh                                                  
 ///   @param lod - the level of detail state to generate LOD from             
 ///   @return the new geometry                                                
-const A::Geometry* Model::GetLOD(const LOD& lod) const {
+Ref<A::Mesh> Mesh::GetLOD(const LOD& lod) const {
    TODO();
 }

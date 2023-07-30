@@ -6,7 +6,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "../Model.hpp"
+#include "../Mesh.hpp"
 #include <Math/Primitives/TLine.hpp>
 #include <Math/Primitives/TPoint.hpp>
 
@@ -87,16 +87,16 @@ struct Generate {
    static constexpr Count Dimensions = T::MemberCount;
 
    NOD() static Normalized Default(Descriptor&&);
-   NOD() static Normalized Detail(const Model*, const LOD&);
+   NOD() static Normalized Detail(const Mesh*, const LOD&);
 
-   static void Indices(Model*);
-   static void Positions(Model*);
-   static void Normals(Model*);
-   static void TextureCoords(Model*);
-   static void TextureIDs(Model*);
-   static void Instances(Model*);
-   static void Rotations(Model*);
-   static void Colors(Model*);
+   static void Indices(Mesh*);
+   static void Positions(Mesh*);
+   static void Normals(Mesh*);
+   static void TextureCoords(Mesh*);
+   static void TextureIDs(Mesh*);
+   static void Instances(Mesh*);
+   static void Rotations(Mesh*);
+   static void Colors(Mesh*);
 };
 
 #include "Grid.inl"

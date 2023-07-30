@@ -36,13 +36,13 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Grid T, CT::Topology TOPOLOGY>
-Normalized Generate<T, TOPOLOGY>::Detail(const Model* model, const LOD&) {
+Normalized Generate<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
    return model->GetDescriptor();
 }
 
 /// Generate positions for a grid                                             
 ///   @param model - the model to fill                                        
-GENERATE() Positions(Model* model) {
+GENERATE() Positions(Mesh* model) {
    // Calculate vertex count - tesselation in this context means        
    // how many times a sector in the grid is divided in half            
    const vec4 resolution = pcPow(real(2), instance->GetTesselation());
@@ -136,35 +136,35 @@ GENERATE() Positions(Model* model) {
 
 /// Generate normals for a grid                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Model* model) {
+GENERATE() Normals(Mesh* model) {
    TODO();
 }
 
 /// Generate indices for a grid                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Model* model) {
+GENERATE() Indices(Mesh* model) {
    TODO();
 }
 
 /// Generate texture coordinates for a grid                                   
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Model* model) {
+GENERATE() TextureCoords(Mesh* model) {
    TODO();
 }
 
-GENERATE() TextureIDs(Model*) {
+GENERATE() TextureIDs(Mesh*) {
    TODO();
 }
 
-GENERATE() Instances(Model*) {
+GENERATE() Instances(Mesh*) {
    TODO();
 }
 
-GENERATE() Rotations(Model*) {
+GENERATE() Rotations(Mesh*) {
    TODO();
 }
 
-GENERATE() Colors(Model* model) {
+GENERATE() Colors(Mesh* model) {
    TODO();
 }
 

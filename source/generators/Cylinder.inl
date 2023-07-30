@@ -6,7 +6,7 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "../Model.hpp"
+#include "../Mesh.hpp"
 #include <Math/Primitives/TCylinder.hpp>
 #include <Math/Primitives/TTriangle.hpp>
 #include <Math/Primitives/TLine.hpp>
@@ -27,16 +27,16 @@ struct Generate {
    static_assert(Dimensions >= 3, "Cylinder should be at least 3D");
 
    NOD() static Normalized Default(Descriptor&&);
-   NOD() static Normalized Detail(const Model*, const LOD&);
+   NOD() static Normalized Detail(const Mesh*, const LOD&);
 
-   static void Indices(Model*);
-   static void Positions(Model*);
-   static void Normals(Model*);
-   static void TextureCoords(Model*);
-   static void TextureIDs(Model*);
-   static void Instances(Model*);
-   static void Rotations(Model*);
-   static void Colors(Model*);
+   static void Indices(Mesh*);
+   static void Positions(Mesh*);
+   static void Normals(Mesh*);
+   static void TextureCoords(Mesh*);
+   static void TextureIDs(Mesh*);
+   static void Instances(Mesh*);
+   static void Rotations(Mesh*);
+   static void Colors(Mesh*);
 };
 
 #define GENERATE() template<CT::Cylinder T, CT::Topology TOPOLOGY> \
@@ -82,13 +82,13 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
-Normalized Generate<T, TOPOLOGY>::Detail(const Model* model, const LOD&) {
+Normalized Generate<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
    return model->GetDescriptor();
 }
 
 /// Generate positions for a cylinder                                         
 ///   @param model - the model to fill                                        
-GENERATE() Positions(Model* model) {
+GENERATE() Positions(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
       using E = TTriangle<PointType>;
@@ -107,7 +107,7 @@ GENERATE() Positions(Model* model) {
 
 /// Generate normals for a cylinder                                           
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Model* model) {
+GENERATE() Normals(Mesh* model) {
    static_assert(Dimensions >= 3,
       "Can't generate normals for cylinder of this many dimensions");
 
@@ -135,7 +135,7 @@ GENERATE() Normals(Model* model) {
 
 /// Generate indices for a cylinder                                           
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Model* model) {
+GENERATE() Indices(Mesh* model) {
    TAny<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
@@ -157,9 +157,9 @@ GENERATE() Indices(Model* model) {
 
 /// Generate texture coordinates for a cylinder                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Model* model) {
+GENERATE() TextureCoords(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      if (model->GetTextureMapper() == MapMode::Model) {
+      if (model->GetTextureMapper() == MapMode::Mesh) {
          // Generate model mapping                                      
          TAny<Sampler3> data;
          data.Reserve(IndexCount);
@@ -188,19 +188,19 @@ GENERATE() TextureCoords(Model* model) {
    else LANGULUS_ERROR("Unsupported topology for cylinder texture coordinates");
 }
 
-GENERATE() TextureIDs(Model*) {
+GENERATE() TextureIDs(Mesh*) {
    TODO();
 }
 
-GENERATE() Instances(Model*) {
+GENERATE() Instances(Mesh*) {
    TODO();
 }
 
-GENERATE() Rotations(Model*) {
+GENERATE() Rotations(Mesh*) {
    TODO();
 }
 
-GENERATE() Colors(Model* model) {
+GENERATE() Colors(Mesh* model) {
    TODO();
 }
 

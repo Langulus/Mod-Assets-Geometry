@@ -6,18 +6,18 @@
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
 #pragma once
-#include "../Model.hpp"
+#include "../Mesh.hpp"
 #include <Math/Primitives/TTriangle.hpp>
 #include <Math/Primitives/TLine.hpp>
 #include <Math/Mapping.hpp>
 #include <Math/Colors.hpp>
 
 
-void GenerateIDX(Model*) {
+void GenerateIDX(Mesh*) {
    TODO();
 }
 
-void GeneratePOS(Model* instance) {
+void GeneratePOS(Mesh* instance) {
    auto content = instance->GetData<Traits::Position>();
 
    if (instance->CheckTopology<ATriangle>()) {
@@ -48,7 +48,7 @@ void GeneratePOS(Model* instance) {
    instance->GetView().mPCount = content->GetCount();
 }
 
-void GenerateNOR(Model* instance) {
+void GenerateNOR(Mesh* instance) {
    auto content = instance->GetData<Traits::Aim>();
    if (instance->CheckTopology<ATriangle>()) {
       // A rectangle made out of triangles                           
@@ -66,7 +66,7 @@ void GenerateNOR(Model* instance) {
    else TODO();
 }
 
-void GenerateTEX(Model* instance) {
+void GenerateTEX(Mesh* instance) {
    auto content = instance->GetData<Traits::Sampler>();
    if (instance->CheckTopology<ATriangle>()) {
       // A rectangle made out of triangles                           
@@ -92,28 +92,28 @@ void GenerateTEX(Model* instance) {
    else TODO();
 }
 
-void GenerateTID(Model*) {
+void GenerateTID(Mesh*) {
    TODO();
 }
 
-void GenerateINS(Model*) {
+void GenerateINS(Mesh*) {
    TODO();
 }
 
-void GenerateROT(Model*) {
+void GenerateROT(Mesh*) {
    TODO();
 }
 
-void GenerateCOL(Model*) {
+void GenerateCOL(Mesh*) {
    TODO();
 }
 
-void GenerateCODE(Model*) {
+void GenerateCODE(Mesh*) {
    TODO();
 }
 
 /// LOD function                                                            
-const Model* LOD(const Model* instance, const LodState&) {
+const Mesh* LOD(const Mesh* instance, const LodState&) {
    return instance;
 }
 
@@ -121,7 +121,7 @@ const Model* LOD(const Model* instance, const LodState&) {
 ///   @param instance - the generator                                       
 ///   @param point - the sampling point                                    
 ///   @return the distance to the geometry at the given point               
-real SDF(const Model*, const vec3& point) {
+real SDF(const Mesh*, const vec3& point) {
    return TTriangle<vec3>().SD(point);
 }
 
