@@ -17,30 +17,72 @@
 ///                                                                           
 ///    Cylinder mesh generators                                               
 ///                                                                           
-///   @tparam T - the primitve to use for point type and dimensions           
+///   @tparam T - the primitive to use for point type and dimensions          
 ///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
 ///                                                                           
 template<CT::Cylinder T, CT::Topology TOPOLOGY = A::Triangle>
-struct Generate {
+struct GenerateCylinder {
    using PointType = typename T::PointType;
+   using ScalarType = TypeOf<PointType>;
    static constexpr Count Dimensions = T::MemberCount;
+   static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
+
    static_assert(Dimensions >= 3, "Cylinder should be at least 3D");
 
-   NOD() static Normalized Default(Descriptor&&);
-   NOD() static Normalized Detail(const Mesh*, const LOD&);
+   static constexpr Count VertexCount = 8;
+   static constexpr Count TriangleCount = 12;
+   static constexpr Count IndexCount = TriangleCount * 3;
+   static constexpr Count FaceCount = TriangleCount / 2;
+
+   /// 3D cylinder unique vertices                                            
+   static constexpr PointType Vertices[VertexCount] = {
+      // Left face (-X)                                                 
+      PointType {-Half, -Half,  Half},
+      PointType {-Half, -Half, -Half},
+      PointType {-Half,  Half,  Half},
+      PointType {-Half,  Half, -Half},
+      // Right face (+X)                                                
+      PointType { Half, -Half, -Half},
+      PointType { Half, -Half,  Half},
+      PointType { Half,  Half,  Half},
+      PointType { Half,  Half, -Half}
+   };
+
+   /// Face mapping                                                           
+   static constexpr Sampler2 FaceMapping[FaceCount] = {
+      Sampler2 {0, 0}, Sampler2 {0, 1}, Sampler2 {1, 0},
+      Sampler2 {1, 0}, Sampler2 {0, 1}, Sampler2 {1, 1}
+   };
+
+   /// Indices for the 12 box triangles                                       
+   static constexpr uint32_t TriangleIndices[TriangleCount][3] = {
+      // Left face                                                      
+      {0,1,2},  {2,1,3},
+      // Right face                                                     
+      {4,5,6},  {4,6,7},
+      // Top face                                                       
+      {2,3,6},  {6,3,7},
+      // Bottom face                                                    
+      {1,0,5},  {1,5,4},
+      // Forward face                                                   
+      {2,6,5},  {2,5,0},
+      // Backward face                                                  
+      {7,3,4},  {4,3,1}
+   };
+
+   NOD() static Construct Default(Descriptor&&);
+   NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
    static void Normals(Mesh*);
    static void TextureCoords(Mesh*);
-   static void TextureIDs(Mesh*);
+   static void Materials(Mesh*);
    static void Instances(Mesh*);
-   static void Rotations(Mesh*);
-   static void Colors(Mesh*);
 };
 
 #define GENERATE() template<CT::Cylinder T, CT::Topology TOPOLOGY> \
-   void Generate<T, TOPOLOGY>::
+   void GenerateCylinder<T, TOPOLOGY>::
 
 
 /// Default cylinder generation                                               
@@ -48,7 +90,7 @@ struct Generate {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
-Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
+Construct GenerateCylinder<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
    Normalized d {descriptor};
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -82,8 +124,8 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
-Normalized Generate<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetDescriptor();
+Construct GenerateCylinder<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+   return model->GetNormalized();
 }
 
 /// Generate positions for a cylinder                                         
@@ -95,7 +137,7 @@ GENERATE() Positions(Mesh* model) {
       TAny<E> data;
       data.Reserve(TriangleCount);
       for (Offset i = 0; i < TriangleCount; ++i)
-         data << E {Vertices, Indices[i]};
+         data << E {Vertices, TriangleIndices[i]};
       model->Commit<Traits::Place>(Abandon(data));
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
@@ -141,9 +183,9 @@ GENERATE() Indices(Mesh* model) {
       // A cylinder made out of triangles                               
       data.Reserve(IndexCount);
       for (Offset i = 0; i < TriangleCount; ++i) {
-         data << Indices[i][0];
-         data << Indices[i][1];
-         data << Indices[i][2];
+         data << TriangleIndices[i][0];
+         data << TriangleIndices[i][1];
+         data << TriangleIndices[i][2];
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
@@ -159,14 +201,14 @@ GENERATE() Indices(Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() TextureCoords(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      if (model->GetTextureMapper() == MapMode::Mesh) {
+      if (model->GetTextureMapper() == MapMode::Model) {
          // Generate model mapping                                      
          TAny<Sampler3> data;
          data.Reserve(IndexCount);
          for (Offset i = 0; i < TriangleCount; ++i) {
-            data << Vertices[Indices[i][0]] + Half;
-            data << Vertices[Indices[i][1]] + Half;
-            data << Vertices[Indices[i][2]] + Half;
+            data << Vertices[TriangleIndices[i][0]] + Half;
+            data << Vertices[TriangleIndices[i][1]] + Half;
+            data << Vertices[TriangleIndices[i][2]] + Half;
          }
 
          model->template Commit<Traits::Sampler>(Abandon(data));
@@ -188,19 +230,11 @@ GENERATE() TextureCoords(Mesh* model) {
    else LANGULUS_ERROR("Unsupported topology for cylinder texture coordinates");
 }
 
-GENERATE() TextureIDs(Mesh*) {
+GENERATE() Materials(Mesh*) {
    TODO();
 }
 
 GENERATE() Instances(Mesh*) {
-   TODO();
-}
-
-GENERATE() Rotations(Mesh*) {
-   TODO();
-}
-
-GENERATE() Colors(Mesh* model) {
    TODO();
 }
 

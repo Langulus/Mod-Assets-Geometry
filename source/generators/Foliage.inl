@@ -11,32 +11,46 @@
 #include <Math/Mapping.hpp>
 
 
+namespace Langulus::A
+{
+   /// An abstract foliage                                                    
+   struct Foliage {
+      LANGULUS(ABSTRACT) true;
+   };
+}
+
+namespace Langulus::CT
+{
+   /// Concept for distinguishing box primitives                              
+   template<class... T>
+   concept Foliage = ((DerivedFrom<T, A::Foliage>) && ...);
+}
+
+
 ///                                                                           
 ///    Foliage mesh generators                                                
 ///                                                                           
-///   @tparam T - the primitve to use for point type and dimensions           
+///   @tparam T - the primitive to use for point type and dimensions          
 ///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
 ///                                                                           
 template<CT::Foliage T, CT::Topology TOPOLOGY = A::Triangle>
-struct Generate {
+struct GenerateFoliage {
    using PointType = typename T::PointType;
    static constexpr Count Dimensions = T::MemberCount;
 
-   NOD() static Normalized Default(Descriptor&&);
-   NOD() static Normalized Detail(const Mesh*, const LOD&);
+   NOD() static Construct Default(Descriptor&&);
+   NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
    static void Normals(Mesh*);
    static void TextureCoords(Mesh*);
-   static void TextureIDs(Mesh*);
+   static void Materials(Mesh*);
    static void Instances(Mesh*);
-   static void Rotations(Mesh*);
-   static void Colors(Mesh*);
 };
 
 #define GENERATE() template<CT::Foliage T, CT::Topology TOPOLOGY> \
-   void Generate<T, TOPOLOGY>::
+   void GenerateFoliage<T, TOPOLOGY>::
 
 
 /// Default foliage generation                                                
@@ -44,10 +58,10 @@ struct Generate {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Foliage T, CT::Topology TOPOLOGY>
-Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
+Construct GenerateFoliage<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
    Normalized d {descriptor};
 
-   if constexpr (CT::Triangles<TOPOLOGY>) {
+   if constexpr (CT::Triangle<TOPOLOGY>) {
       // Foliage made out of triangles                                  
       d.SetDefaultTrait<Traits::Topology>(
          MetaOf<TOPOLOGY>());
@@ -65,8 +79,8 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Foliage T, CT::Topology TOPOLOGY>
-Normalized Generate<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetDescriptor();
+Construct GenerateFoliage<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+   return model->GetNormalized();
 }
 
 /// Generate positions for foliage                                            
@@ -93,19 +107,11 @@ GENERATE() TextureCoords(Mesh* model) {
    TODO();
 }
 
-GENERATE() TextureIDs(Mesh*) {
+GENERATE() Materials(Mesh*) {
    TODO();
 }
 
 GENERATE() Instances(Mesh*) {
-   TODO();
-}
-
-GENERATE() Rotations(Mesh*) {
-   TODO();
-}
-
-GENERATE() Colors(Mesh* model) {
    TODO();
 }
 

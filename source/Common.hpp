@@ -18,7 +18,7 @@ using namespace Langulus::Math;
 struct MeshLibrary;
 struct Mesh;
 
-template<CT::Real T = Real>
-constexpr T Half = T {1} / T {2};
-
 LANGULUS_DEFINE_TRAIT(Tesselation, "Tesselation level, usually an integer");
+
+#define VERBOSE_MESHES(...) Logger::Verbose(Self(), __VA_ARGS__)
+#define VERBOSE_MESHES_TAB(...) const auto tab = Logger::Verbose(Self(), __VA_ARGS__, Logger::Tabs {})

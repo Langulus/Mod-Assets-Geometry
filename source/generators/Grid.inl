@@ -9,7 +9,7 @@
 #include "Grid.hpp"
 
 #define GENERATE() template<CT::Grid T, CT::Topology TOPOLOGY> \
-   void Generate<T, TOPOLOGY>::
+   void GeneratorGrid<T, TOPOLOGY>::
 
 
 /// Default grid generation                                                   
@@ -17,14 +17,12 @@
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Grid T, CT::Topology TOPOLOGY>
-Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
+Construct GeneratorGrid<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
    Normalized d {descriptor};
    if constexpr (CT::Line<TOPOLOGY>) {
       // A grid made out of lines                                       
-      d.SetDefaultTrait<Traits::Topology>(
-         MetaOf<TOPOLOGY>());
-      d.SetDefaultTrait<Traits::Place>(
-         MetaOf<TLine<PointType>>());
+      d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
+      d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
    }
    else LANGULUS_ERROR("Unsupported topology for line");
    return Abandon(d);
@@ -36,8 +34,8 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Grid T, CT::Topology TOPOLOGY>
-Normalized Generate<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetDescriptor();
+Construct GeneratorGrid<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+   return model->GetNormalized();
 }
 
 /// Generate positions for a grid                                             
@@ -45,28 +43,29 @@ Normalized Generate<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 GENERATE() Positions(Mesh* model) {
    // Calculate vertex count - tesselation in this context means        
    // how many times a sector in the grid is divided in half            
-   const vec4 resolution = pcPow(real(2), instance->GetTesselation());
-   const auto xsteps = pcptr(resolution[0]);
-   const auto ysteps = pcptr(resolution[1]);
-   const auto zsteps = pcptr(resolution[2]);
-   const auto sep = vec3 {1} / vec3 {real(xsteps), real(ysteps), real(zsteps)};
+   unsigned tesselation = 0;
+   model->GetNormalized().ExtractTrait<Traits::Tesselation>(tesselation);
+   const Vec3u steps {Pow(2u, tesselation)};
+   const auto sep = ScalarType {1} / PointType {steps};
 
-   if constexpr (CT::Line<TOPOLOGY>) {
+   if constexpr (CT::Triangle<TOPOLOGY>) {
+      TODO();
+   }
+   else if constexpr (CT::Line<TOPOLOGY>) {
       // A grid made out of lines                                       
-      const auto count = (xsteps + 1) * (ysteps + zsteps + 2) + (ysteps + 1) * (zsteps + 1);
-      using Scalar = TypeOf<PointType>;
+      const auto count = (steps[0] + 1) * (steps[1] + steps[2] + 2) + (steps[1] + 1) * (steps[2] + 1);
       using E = TLine<PointType>;
       TAny<E> data;
       data.Reserve(count);
 
-      for (Offset x = 0; x <= xsteps; ++x) {
-         const Scalar real_x {x};
+      for (Offset x = 0; x <= steps[0]; ++x) {
+         const ScalarType real_x = static_cast<ScalarType>(x);
 
          // xsteps*ysteps                                               
-         for (Offset y = 0; y <= ysteps; ++y) {
-            const vec2 xy {
+         for (Offset y = 0; y <= steps[1]; ++y) {
+            const Vec2 xy {
                -Half + real_x * sep[0],
-               -Half + real(y) * sep[1]
+               -Half + static_cast<ScalarType>(y) * sep[1]
             };
 
             data << E {Vec3 {xy, -Half}, Vec3 {xy, +Half}};
@@ -74,9 +73,9 @@ GENERATE() Positions(Mesh* model) {
 
          if constexpr (Dimensions >= 3) {
             // xsteps*zsteps                                            
-            for (Offset z = 0; z <= zsteps; ++z) {
-               const Scalar xx = -Half + real_x * sep[0];
-               const Scalar zz = -Half + real(z) * sep[2];
+            for (Offset z = 0; z <= steps[2]; ++z) {
+               const ScalarType xx = -Half + real_x * sep[0];
+               const ScalarType zz = -Half + static_cast<ScalarType>(z) * sep[2];
 
                data << E {Vec3 {xx, -Half, zz}, Vec3 {xx, +Half, zz}};
             }
@@ -85,13 +84,13 @@ GENERATE() Positions(Mesh* model) {
 
       if constexpr (Dimensions >= 3) {
          // ysteps*zsteps                                               
-         for (Offset y = 0; y <= ysteps; ++y) {
-            const Scalar real_y {y};
+         for (Offset y = 0; y <= steps[1]; ++y) {
+            const ScalarType real_y = static_cast<ScalarType>(y);
 
-            for (Offset z = 0; z <= zsteps; ++z) {
+            for (Offset z = 0; z <= steps[2]; ++z) {
                const Vec2 yz {
                   -Half + real_y * sep[1],
-                  -Half + real(z) * sep[2]
+                  -Half + static_cast<ScalarType>(z) * sep[2]
                };
 
                data << E {Vec3 {-Half, yz}, Vec3 {+Half, yz}};
@@ -103,68 +102,58 @@ GENERATE() Positions(Mesh* model) {
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // Generate a grid of points                                      
-      const auto count = xsteps * ysteps * zsteps;
-      using Scalar = TypeOf<PointType>;
+      const auto count = steps[0] * steps[1] * steps[2];
       TAny<PointType> data;
       data.Reserve(count);
 
-      for (Offset x = 0; x < xsteps; ++x) {
-         const Scalar xx {x};
+      for (Offset x = 0; x < steps[0]; ++x) {
+         const ScalarType xx = static_cast<ScalarType>(x);
 
-         for (Offset y = 0; y < ysteps; ++y) {
-            const Scalar yy {y};
+         for (Offset y = 0; y < steps[1]; ++y) {
+            const ScalarType yy = static_cast<ScalarType>(y);
 
             if constexpr (Dimensions >= 3) {
-               for (Offset z = 0; z < zsteps; ++z) {
-                  const Scalar zz {z};
+               for (Offset z = 0; z < steps[2]; ++z) {
+                  const ScalarType zz = static_cast<ScalarType>(z);
 
                   // A point in XYZ                                     
-                  data << E {xx, yy, zz} * sep - Half<Scalar>;
+                  data << PointType {xx, yy, zz} * sep - Half;
                }
             }
             else {
                // A point in XY                                         
-               data << E {xx, yy} * sep - Half<Scalar>;
+               data << PointType {xx, yy} * sep - Half;
             }
          }
       }
 
       model->Commit<Traits::Place>(Abandon(data));
    }
-   else LANGULUS_ERROR("Unsupported topology for grid positions");
 }
 
 /// Generate normals for a grid                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Mesh* model) {
+GENERATE() Normals(Mesh*) {
    TODO();
 }
 
 /// Generate indices for a grid                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Mesh* model) {
+GENERATE() Indices(Mesh*) {
    TODO();
 }
 
 /// Generate texture coordinates for a grid                                   
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Mesh* model) {
+GENERATE() TextureCoords(Mesh*) {
    TODO();
 }
 
-GENERATE() TextureIDs(Mesh*) {
+GENERATE() Materials(Mesh*) {
    TODO();
 }
 
 GENERATE() Instances(Mesh*) {
-   TODO();
-}
-
-GENERATE() Rotations(Mesh*) {
-   TODO();
-}
-
-GENERATE() Colors(Mesh* model) {
    TODO();
 }
 

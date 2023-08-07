@@ -11,7 +11,7 @@
 
 
 ///                                                                           
-///   Geometry library module                                                 
+///   Mesh reading, writing, and generation module                            
 ///                                                                           
 struct MeshLibrary final : A::AssetModule {
    LANGULUS(ABSTRACT) false;
@@ -19,15 +19,19 @@ struct MeshLibrary final : A::AssetModule {
    LANGULUS_VERBS(Verbs::Create);
 
 private:
-   // Mesh library                                                     
-   TFactoryUnique<Mesh> mMeshes;
+   // Where meshes are read and written to                              
+   Path mMeshFolder;
+   // Mesh library                                                      
+   TFactoryUnique<::Mesh> mMeshes;
    // Data folder, where models will be saved or loaded from            
-   Ptr<A::Folder> mFolder;
+   Ref<A::Folder> mFolder;
 
 public:
    MeshLibrary(Runtime*, const Descriptor&);
 
    void Update(Time);
    void Create(Verb&);
+
+   const A::Folder* GetFolder() const noexcept;
 };
 

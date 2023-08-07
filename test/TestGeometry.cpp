@@ -7,6 +7,7 @@
 ///                                                                           
 #include "Main.hpp"
 #include <Entity/Thing.hpp>
+#include <Math/Primitives/TBox.hpp>
 #include <catch2/catch.hpp>
 
 /// See https://github.com/catchorg/Catch2/blob/devel/docs/tostring.md        
@@ -15,7 +16,7 @@ CATCH_TRANSLATE_EXCEPTION(::Langulus::Exception const& ex) {
    return ::std::string {Token {serialized}};
 }
 
-SCENARIO("Geometry creation", "[geometry]") {
+SCENARIO("Mesh creation", "[mesh]") {
    Allocator::State memoryState;
 
    for (int repeat = 0; repeat != 10; ++repeat) {
@@ -27,11 +28,12 @@ SCENARIO("Geometry creation", "[geometry]") {
          // Create runtime at the root                                  
          root.CreateRuntime();
 
-         // Load module                                                 
+         // Load modules                                                
+         root.LoadMod("FileSystem");
          root.LoadMod("AssetsGeometry");
 
-         WHEN("The geometry is generated") {
-            TODO();
+         WHEN("The mesh is created via tokens") {
+            auto producedMesh = root.CreateUnitToken("Mesh", Math::Box2 {});
 
             // Update once                                              
             root.Update(Time::zero());
@@ -39,7 +41,24 @@ SCENARIO("Geometry creation", "[geometry]") {
             THEN("Various traits change") {
                root.DumpHierarchy();
 
-               REQUIRE(true);
+               REQUIRE(producedMesh.GetCount() == 1);
+               REQUIRE(producedMesh.CastsTo<A::Mesh>());
+               REQUIRE(producedMesh.IsSparse());
+            }
+         }
+
+         WHEN("The mesh is created via abstractions") {
+            auto producedMesh = root.CreateUnit<A::Mesh>(Math::Box2 {});
+
+            // Update once                                              
+            root.Update(Time::zero());
+
+            THEN("Various traits change") {
+               root.DumpHierarchy();
+
+               REQUIRE(producedMesh.GetCount() == 1);
+               REQUIRE(producedMesh.CastsTo<A::Mesh>(1));
+               REQUIRE(producedMesh.IsSparse());
             }
          }
 

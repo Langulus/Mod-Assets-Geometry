@@ -13,29 +13,27 @@
 ///                                                                           
 ///    Line mesh generators                                                   
 ///                                                                           
-///   @tparam T - the primitve to use for point type and dimensions           
+///   @tparam T - the primitive to use for point type and dimensions          
 ///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
 ///                                                                           
 template<CT::Line T, CT::Topology TOPOLOGY = A::Triangle>
-struct Generate {
+struct GenerateLine {
    using PointType = typename T::PointType;
    static constexpr Count Dimensions = T::MemberCount;
 
-   NOD() static Normalized Default(Descriptor&&);
-   NOD() static Normalized Detail(const Mesh*, const LOD&);
+   NOD() static Construct Default(Descriptor&&);
+   NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
    static void Normals(Mesh*);
    static void TextureCoords(Mesh*);
-   static void TextureIDs(Mesh*);
+   static void Materials(Mesh*);
    static void Instances(Mesh*);
-   static void Rotations(Mesh*);
-   static void Colors(Mesh*);
 };
 
 #define GENERATE() template<CT::Line T, CT::Topology TOPOLOGY> \
-   void Generate<T, TOPOLOGY>::
+   void GenerateLine<T, TOPOLOGY>::
 
 
 /// Default line generation                                                   
@@ -43,7 +41,7 @@ struct Generate {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Line T, CT::Topology TOPOLOGY>
-Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
+Construct GenerateLine<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
    Normalized d {descriptor};
 
    if constexpr (CT::Line<TOPOLOGY>) {
@@ -64,8 +62,8 @@ Normalized Generate<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Line T, CT::Topology TOPOLOGY>
-Normalized Generate<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetDescriptor();
+Construct GenerateLine<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+   return model->GetNormalized();
 }
 
 /// Generate positions for a line                                             
@@ -75,7 +73,7 @@ GENERATE() Positions(Mesh* model) {
       // A line made out of lines                                       
       using E = TLine<PointType>;
       TAny<E> data;
-      data << E {Vectors::Origin, Vectors::Forward};
+      data << E {Cardinal::Origin, Cardinal::Forward};
       model->Commit<Traits::Place>(Abandon(data));
    }
    else LANGULUS_ERROR("Unsupported topology for line positions");
@@ -99,19 +97,11 @@ GENERATE() TextureCoords(Mesh* model) {
    TODO();
 }
 
-GENERATE() TextureIDs(Mesh*) {
+GENERATE() Materials(Mesh*) {
    TODO();
 }
 
 GENERATE() Instances(Mesh*) {
-   TODO();
-}
-
-GENERATE() Rotations(Mesh*) {
-   TODO();
-}
-
-GENERATE() Colors(Mesh* model) {
    TODO();
 }
 

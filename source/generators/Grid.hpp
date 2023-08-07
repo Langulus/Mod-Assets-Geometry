@@ -13,29 +13,22 @@
 template<CT::Vector T>
 struct TGrid;
 
-namespace Langulus
+namespace Langulus::A
 {
-   namespace A
-   {
+   /// An abstract grid                                                       
+   struct Grid : A::Primitive {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) TGrid<Vec3>;
+      LANGULUS_BASES(A::Primitive);
+   };
+}
 
-      /// An abstract grid                                                    
-      struct Grid {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) TGrid<Vec3>;
-      };
-
-   } // namespace Langulus::A
-
-   namespace CT
-   {
-
-      /// Concept for distinguishing grids                                    
-      template<class... T>
-      concept Grid = (DerivedFrom<T, A::Grid> && ...);
-
-   } // namespace Langulus::CT
-
-} // namespace Langulus
+namespace Langulus::CT
+{
+   /// Concept for distinguishing grids                                       
+   template<class... T>
+   concept Grid = ((DerivedFrom<T, A::Grid>) && ...);
+}
 
 
 ///                                                                        |  
@@ -50,8 +43,8 @@ namespace Langulus
 ///  /       /       /| |                 to each other direction          |  
 /// +-------+-------+ | +---                                               |  
 /// | |/    | |/    | |/|  ^                                               |  
-/// | +-----|-+-----|-+ |  | mCellSize.y                                   |  
-/// |/      |/      |/| |  v                                               |  
+/// | +-----|-*-----|-+ |  | mCellSize.y                                   |  
+/// |/      |/origin|/| |  v                                               |  
 /// +-------+-------+ | +---                                               |  
 /// | |/    | |/    | |/                                                   |  
 /// | +-----|-+-----|-+---                                                 |  
@@ -74,29 +67,32 @@ struct TGrid : A::Grid {
    TVector<Count, MemberCount> mExtent {5};
 };
 
+using Grid2 = TGrid<Vec2>;
+using Grid3 = TGrid<Vec3>;
+
 
 ///                                                                           
 ///    Grid mesh generators                                                   
 ///                                                                           
-///   @tparam T - the primitve to use for point type and dimensions           
+///   @tparam T - the primitive to use for point type and dimensions          
 ///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
 ///                                                                           
-template<CT::Grid T, CT::Topology TOPOLOGY = A::Triangle>
-struct Generate {
+template<CT::Grid T, CT::Topology TOPOLOGY = A::Line>
+struct GeneratorGrid {
    using PointType = typename T::PointType;
+   using ScalarType = TypeOf<PointType>;
    static constexpr Count Dimensions = T::MemberCount;
+   static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
-   NOD() static Normalized Default(Descriptor&&);
-   NOD() static Normalized Detail(const Mesh*, const LOD&);
+   NOD() static Construct Default(Descriptor&&);
+   NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
    static void Normals(Mesh*);
    static void TextureCoords(Mesh*);
-   static void TextureIDs(Mesh*);
+   static void Materials(Mesh*);
    static void Instances(Mesh*);
-   static void Rotations(Mesh*);
-   static void Colors(Mesh*);
 };
 
 #include "Grid.inl"
