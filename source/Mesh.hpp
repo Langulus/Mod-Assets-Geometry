@@ -7,6 +7,12 @@
 ///                                                                           
 #pragma once
 #include "Common.hpp"
+#include <Math/Primitives/TBox.hpp>
+#include <Math/Primitives/TTriangle.hpp>
+#include <Math/Primitives/TLine.hpp>
+#include <Math/Primitives/TCylinder.hpp>
+#include <Math/Mapping.hpp>
+#include <Math/Colors.hpp>
 
 // Unfortunately, due to compiler bugs in MSVC and Clang, we can't      
 // generalize these generators yet. Some day...                         
@@ -30,6 +36,8 @@ public:
    void Refresh();
    void Create(Verb&);
 
+   bool Generate(TMeta, Offset = 0);
+
    NOD() Ref<A::Mesh> GetLOD(const LOD&) const;
 
 private:
@@ -40,11 +48,13 @@ private:
    void FillGeneratorsInner();
    void LoadFile(const Any&);
 
-   // Signature for a generator function                                
-   using FGenerate = void (*) (Mesh*);
-
    // Generator functions for each supported type of data               
-   TUnorderedMap<TMeta, FGenerate> mGenerators;
+   using FGenerator = void (*) (Mesh*);
+   TUnorderedMap<TMeta, FGenerator> mGenerators;
+
+   // LOD generator function                                            
+   using FLOD = Construct (*) (const Mesh*, const LOD&);
+   FLOD mLODgenerator {};
 };
 
 
@@ -57,6 +67,7 @@ void Mesh::FillGeneratorsInner() {
    mGenerators[Traits::Sampler::GetTrait()] = GENERATOR::TextureCoords;
    mGenerators[Traits::Material::GetTrait()] = GENERATOR::Materials;
    mGenerators[Traits::Transform::GetTrait()] = GENERATOR::Instances;
+   mLODgenerator = GENERATOR::Detail;
 }
 
 ///                                                                           

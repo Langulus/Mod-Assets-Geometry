@@ -78,7 +78,7 @@ using Grid3 = TGrid<Vec3>;
 ///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
 ///                                                                           
 template<CT::Grid T, CT::Topology TOPOLOGY = A::Line>
-struct GeneratorGrid {
+struct GenerateGrid {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
    static constexpr Count Dimensions = T::MemberCount;

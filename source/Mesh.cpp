@@ -78,11 +78,44 @@ void Mesh::Create(Verb& verb) {
 
 }
 
+/// Generate data                                                             
+///   @param trait - the trait to generate                                    
+///   @param index - trait group to generate                                  
+///   @return true if data was generated                                      
+bool Mesh::Generate(TMeta trait, Offset index) {
+   auto found = GetDataListMap().Find(trait);
+   if (found) {
+      auto& data = GetDataListMap().GetValue(found);
+      if (data.GetCount() > index)
+         return true;
+   }
+
+   found = mGenerators.Find(trait);
+   if (found) {
+      mGenerators.GetValue(found)(this);
+      found = GetDataListMap().Find(trait);
+      if (found) {
+         auto& data = GetDataListMap().GetValue(found);
+         if (data.GetCount() > index)
+            return true;
+      }
+   }
+
+   return false;
+}
+
 /// Get level of detail mesh                                                  
 ///   @param lod - the level of detail state to generate LOD from             
 ///   @return the new geometry                                                
 Ref<A::Mesh> Mesh::GetLOD(const LOD& lod) const {
-   TODO();
+   if (mLODgenerator) {
+      // Generate a request, and fulfill it                             
+      Verbs::Create creator {mLODgenerator(this, lod)};
+      static_cast<MeshLibrary*>(mProducer)->Create(creator);
+      return creator->template As<A::Mesh*>();
+   }
+
+   return const_cast<Mesh*>(this);
 }
 
 /// Create mesh generator by analyzing A::Primitive                           
@@ -93,10 +126,10 @@ void Mesh::FromPrimitive(const Block& data) {
 
    mGenerators.Clear();
 
-   if       (FillGenerators<GeneratorBox,  Box2>(data));
-   else if  (FillGenerators<GeneratorBox,  Box3>(data));
-   else if  (FillGenerators<GeneratorGrid, Grid2>(data));
-   else if  (FillGenerators<GeneratorGrid, Grid3>(data));
+   if       (FillGenerators<GenerateBox,  Box2>(data));
+   else if  (FillGenerators<GenerateBox,  Box3>(data));
+   else if  (FillGenerators<GenerateGrid, Grid2>(data));
+   else if  (FillGenerators<GenerateGrid, Grid3>(data));
    else TODO();
 }
 

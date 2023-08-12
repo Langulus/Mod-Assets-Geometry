@@ -9,7 +9,7 @@
 #include "Grid.hpp"
 
 #define GENERATE() template<CT::Grid T, CT::Topology TOPOLOGY> \
-   void GeneratorGrid<T, TOPOLOGY>::
+   void GenerateGrid<T, TOPOLOGY>::
 
 
 /// Default grid generation                                                   
@@ -17,7 +17,7 @@
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Grid T, CT::Topology TOPOLOGY>
-Construct GeneratorGrid<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
+Construct GenerateGrid<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
    Normalized d {descriptor};
    if constexpr (CT::Line<TOPOLOGY>) {
       // A grid made out of lines                                       
@@ -34,8 +34,8 @@ Construct GeneratorGrid<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Grid T, CT::Topology TOPOLOGY>
-Construct GeneratorGrid<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNormalized();
+Construct GenerateGrid<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+   return model->GetNormalized().MakeConstruct<A::Mesh>();
 }
 
 /// Generate positions for a grid                                             

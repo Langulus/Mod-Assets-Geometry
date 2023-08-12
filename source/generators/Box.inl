@@ -21,7 +21,7 @@
 ///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
 ///                                                                           
 template<CT::Box T, CT::Topology TOPOLOGY = A::Triangle>
-struct GeneratorBox {
+struct GenerateBox {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
    static constexpr Count Dimensions = T::MemberCount;
@@ -132,7 +132,7 @@ struct GeneratorBox {
 };
 
 #define GENERATE() template<CT::Box T, CT::Topology TOPOLOGY> \
-   void GeneratorBox<T, TOPOLOGY>::
+   void GenerateBox<T, TOPOLOGY>::
 
 
 /// Default box generation                                                    
@@ -140,7 +140,7 @@ struct GeneratorBox {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Box T, CT::Topology TOPOLOGY>
-Construct GeneratorBox<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
+Construct GenerateBox<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
    Normalized d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
@@ -183,8 +183,8 @@ Construct GeneratorBox<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Box T, CT::Topology TOPOLOGY>
-Construct GeneratorBox<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNormalized();
+Construct GenerateBox<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+   return model->GetNormalized().MakeConstruct<A::Mesh>();
 }
 
 /// Generate positions for a box                                              
