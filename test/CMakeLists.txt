@@ -1,5 +1,3 @@
-project(LangulusModAssetsGeometryTest)
-
 add_executable(LangulusModAssetsGeometryTest
 	Main.cpp
 	TestGeometry.cpp

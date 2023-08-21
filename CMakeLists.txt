@@ -1,7 +1,12 @@
 cmake_minimum_required(VERSION 3.24)
-project(LangulusModAssetsGeometry)
+project(LangulusModAssetsGeometry
+    VERSION         1.0.0
+    DESCRIPTION     "Langulus plug-in module for generating and managing geometry assets"
+    HOMEPAGE_URL    https://langulus.com
+    LANGUAGES       CXX
+)
 
-# Build the module                                                          
+# Build the module                                                              
 add_library(LangulusModAssetsGeometry SHARED
     source/MeshLibrary.cpp
     source/Mesh.cpp
