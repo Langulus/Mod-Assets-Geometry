@@ -3,7 +3,6 @@ project(LangulusModAssetsGeometry
     VERSION         1.0.0
     DESCRIPTION     "Langulus plug-in module for generating and managing geometry assets"
     HOMEPAGE_URL    https://langulus.com
-    LANGUAGES       CXX
 )
 
 # Build the module                                                              

@@ -32,6 +32,7 @@ SCENARIO("Mesh creation", "[mesh]") {
          root.LoadMod("FileSystem");
          root.LoadMod("AssetsGeometry");
 
+      #if LANGULUS_FEATURE(MANAGED_REFLECTION)
          WHEN("The mesh is created via tokens") {
             auto producedMesh = root.CreateUnitToken("Mesh", Math::Box2 {});
 
@@ -46,6 +47,7 @@ SCENARIO("Mesh creation", "[mesh]") {
                REQUIRE(producedMesh.IsSparse());
             }
          }
+      #endif
 
          WHEN("The mesh is created via abstractions") {
             auto producedMesh = root.CreateUnit<A::Mesh>(Math::Box2 {});
