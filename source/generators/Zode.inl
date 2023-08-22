@@ -109,9 +109,9 @@ struct GenerateZode {
 ///   @param model - the model to fill                                        
 GENERATE() Positions(Mesh* model) {
    PointType offset;
-   model->GetNormalized().ExtractTrait<Traits::Place>(offset);
+   model->GetNeat().ExtractTrait<Traits::Place>(offset);
    unsigned tesselation = 0;
-   model->GetNormalized().ExtractTrait<Traits::Tesselation>(tesselation);
+   model->GetNeat().ExtractTrait<Traits::Tesselation>(tesselation);
 
    const auto distance = offset.Length();
    offset = offset / distance;
@@ -179,7 +179,7 @@ GENERATE() Normals(Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Indices(Mesh* model) {
    unsigned tesselation = 0;
-   model->GetNormalized().ExtractTrait<Traits::Tesselation>(tesselation);
+   model->GetNeat().ExtractTrait<Traits::Tesselation>(tesselation);
    const auto strips = Pow(2u, tesselation);
    TAny<uint32_t> data;
 

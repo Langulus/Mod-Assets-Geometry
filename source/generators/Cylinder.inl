@@ -91,7 +91,7 @@ struct GenerateCylinder {
 ///           their defaults                                                  
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
 Construct GenerateCylinder<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Normalized d {descriptor};
+   Neat d {descriptor};
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
@@ -125,7 +125,7 @@ Construct GenerateCylinder<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
 Construct GenerateCylinder<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNormalized();
+   return model->GetNeat();
 }
 
 /// Generate positions for a cylinder                                         

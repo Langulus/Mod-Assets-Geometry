@@ -131,7 +131,7 @@ struct GenerateLabel {
 ///           their defaults                                                  
 template<CT::Label T, CT::Topology TOPOLOGY>
 Construct GenerateLabel<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Normalized d {descriptor};
+   Neat d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -173,14 +173,14 @@ Construct GenerateLabel<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///   @return the same descriptor, labels don't have LOD                      
 template<CT::Label T, CT::Topology TOPOLOGY>
 Construct GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) {
-   return model->GetNormalized();
+   return model->GetNeat();
 }
 
 /// Generate positions for label                                              
 ///   @param model - the model to fill                                        
 GENERATE() Positions(Mesh* model) {
    T label;
-   model->GetNormalized().ExtractData(label);
+   model->GetNeat().ExtractData(label);
    TAny<PointType> data;
    data.Reserve(VertexCount * label.mText.GetCount());
 
@@ -220,7 +220,7 @@ GENERATE() Positions(Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Indices(Mesh* model) {
    T label;
-   model->GetNormalized().ExtractData(label);
+   model->GetNeat().ExtractData(label);
    TAny<uint32_t> data;
    data.Reserve(IndexCount * label.mText.GetCount());
 
@@ -241,7 +241,7 @@ GENERATE() Indices(Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Normals(Mesh* model) {
    T label;
-   model->GetNormalized().ExtractData(label);
+   model->GetNeat().ExtractData(label);
    constexpr Normal n = Cardinal::Backward<ScalarType>;
    TAny<Normal> data;
    data.Reserve(VertexCount * label.mText.GetCount());
@@ -261,7 +261,7 @@ GENERATE() Normals(Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() TextureCoords(Mesh* model) {
    T label;
-   model->GetNormalized().ExtractData(label);
+   model->GetNeat().ExtractData(label);
 
    const Vec4 size {
       label.mFont->GetAtlasSize(),

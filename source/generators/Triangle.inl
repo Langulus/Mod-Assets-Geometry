@@ -65,7 +65,7 @@ struct GenerateTriangle {
 ///           their defaults                                                  
 template<CT::Triangle T, CT::Topology TOPOLOGY>
 Construct GenerateTriangle<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Normalized d {descriptor};
+   Neat d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -108,7 +108,7 @@ Construct GenerateTriangle<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Triangle T, CT::Topology TOPOLOGY>
 Construct GenerateTriangle<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNormalized();
+   return model->GetNeat();
 }
 
 /// Generate positions for triangle                                           

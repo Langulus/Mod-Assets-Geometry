@@ -18,7 +18,7 @@
 ///           their defaults                                                  
 template<CT::Grid T, CT::Topology TOPOLOGY>
 Construct GenerateGrid<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Normalized d {descriptor};
+   Neat d {descriptor};
    if constexpr (CT::Line<TOPOLOGY>) {
       // A grid made out of lines                                       
       d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
@@ -35,7 +35,7 @@ Construct GenerateGrid<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Grid T, CT::Topology TOPOLOGY>
 Construct GenerateGrid<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNormalized().MakeConstruct<A::Mesh>();
+   return model->GetNeat().MakeConstruct<A::Mesh>();
 }
 
 /// Generate positions for a grid                                             
@@ -44,7 +44,7 @@ GENERATE() Positions(Mesh* model) {
    // Calculate vertex count - tesselation in this context means        
    // how many times a sector in the grid is divided in half            
    unsigned tesselation = 0;
-   model->GetNormalized().ExtractTrait<Traits::Tesselation>(tesselation);
+   model->GetNeat().ExtractTrait<Traits::Tesselation>(tesselation);
    const Vec3u steps {Pow(2u, tesselation)};
    const auto sep = ScalarType {1} / PointType {steps};
 

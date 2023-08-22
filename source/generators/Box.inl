@@ -141,7 +141,7 @@ struct GenerateBox {
 ///           their defaults                                                  
 template<CT::Box T, CT::Topology TOPOLOGY>
 Construct GenerateBox<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Normalized d {descriptor};
+   Neat d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -184,7 +184,7 @@ Construct GenerateBox<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Box T, CT::Topology TOPOLOGY>
 Construct GenerateBox<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNormalized().MakeConstruct<A::Mesh>();
+   return model->GetNeat().MakeConstruct<A::Mesh>();
 }
 
 /// Generate positions for a box                                              

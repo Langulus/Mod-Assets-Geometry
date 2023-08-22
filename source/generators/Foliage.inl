@@ -59,7 +59,7 @@ struct GenerateFoliage {
 ///           their defaults                                                  
 template<CT::Foliage T, CT::Topology TOPOLOGY>
 Construct GenerateFoliage<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Normalized d {descriptor};
+   Neat d {descriptor};
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // Foliage made out of triangles                                  
@@ -80,7 +80,7 @@ Construct GenerateFoliage<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Foliage T, CT::Topology TOPOLOGY>
 Construct GenerateFoliage<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNormalized();
+   return model->GetNeat();
 }
 
 /// Generate positions for foliage                                            

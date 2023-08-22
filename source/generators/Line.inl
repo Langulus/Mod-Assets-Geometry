@@ -42,7 +42,7 @@ struct GenerateLine {
 ///           their defaults                                                  
 template<CT::Line T, CT::Topology TOPOLOGY>
 Construct GenerateLine<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Normalized d {descriptor};
+   Neat d {descriptor};
 
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines (duh)                                 
@@ -63,7 +63,7 @@ Construct GenerateLine<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Line T, CT::Topology TOPOLOGY>
 Construct GenerateLine<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNormalized();
+   return model->GetNeat();
 }
 
 /// Generate positions for a line                                             
