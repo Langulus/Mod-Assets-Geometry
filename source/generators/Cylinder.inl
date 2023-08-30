@@ -70,7 +70,7 @@ struct GenerateCylinder {
       {7,3,4},  {4,3,1}
    };
 
-   NOD() static Construct Default(Descriptor&&);
+   NOD() static Construct Default(Neat&&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
@@ -90,8 +90,8 @@ struct GenerateCylinder {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
-Construct GenerateCylinder<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Neat d {descriptor};
+Construct GenerateCylinder<T, TOPOLOGY>::Default(Neat&& descriptor) {
+   Construct d {descriptor};
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               

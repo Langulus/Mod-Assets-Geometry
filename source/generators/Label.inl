@@ -110,7 +110,7 @@ struct GenerateLabel {
       0,2,1,2,3,1,
    };
 
-   NOD() static Construct Default(Descriptor&&);
+   NOD() static Construct Default(Neat&&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
@@ -130,8 +130,8 @@ struct GenerateLabel {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Label T, CT::Topology TOPOLOGY>
-Construct GenerateLabel<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Neat d {descriptor};
+Construct GenerateLabel<T, TOPOLOGY>::Default(Neat&& descriptor) {
+   Construct d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {

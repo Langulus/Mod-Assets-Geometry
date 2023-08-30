@@ -44,7 +44,7 @@ struct GenerateTriangle {
       PointType {    0,-Half, 0},
    };
 
-   NOD() static Construct Default(Descriptor&&);
+   NOD() static Construct Default(Neat&&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
@@ -64,8 +64,8 @@ struct GenerateTriangle {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Triangle T, CT::Topology TOPOLOGY>
-Construct GenerateTriangle<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Neat d {descriptor};
+Construct GenerateTriangle<T, TOPOLOGY>::Default(Neat&& descriptor) {
+   Construct d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {

@@ -19,3 +19,9 @@ if(LANGULUS_ENABLE_TESTING)
     enable_testing()
 	add_subdirectory(test)
 endif()
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(LangulusModAssetsGeometry
+        PRIVATE -Wno-backslash-newline-escape
+    )
+endif()

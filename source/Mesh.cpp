@@ -23,21 +23,14 @@
 /// Mesh construction                                                         
 ///   @param producer - the producer                                          
 ///   @param descriptor - instructions for generator                          
-Mesh::Mesh(MeshLibrary* producer, const Descriptor& descriptor)
+Mesh::Mesh(MeshLibrary* producer, const Neat& descriptor)
    : A::Mesh {MetaOf<::Mesh>(), producer, descriptor} {
    VERBOSE_MESHES("Initializing...");
 
-   // Parse the descriptor for a filename                               
+   // Get a path from the descriptor                                    
    Path filename;
-   descriptor.ForEachDeep(
-      [&](const Text& text) {
-         filename = text;
-      },
-      [&](const Trait& trait) {
-         if (trait.TraitIs<Traits::Name, Traits::Path>())
-            filename = trait.template AsCast<Text>();
-      }
-   );
+   if (not descriptor.ExtractTrait<Traits::Name, Traits::Path>(filename))
+      descriptor.ExtractDataAs(filename);
 
    if (filename) {
       // Load a filename if such was provided                           

@@ -27,7 +27,7 @@ private:
    Ref<A::Folder> mFolder;
 
 public:
-   MeshLibrary(Runtime*, const Descriptor&);
+   MeshLibrary(Runtime*, const Neat&);
 
    void Update(Time);
    void Create(Verb&);

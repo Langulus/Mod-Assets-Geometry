@@ -76,7 +76,7 @@ struct GenerateSphere {
 
    using D = Constants<Dimensions>;
 
-   NOD() static Construct Default(Descriptor&&);
+   NOD() static Construct Default(Neat&&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
@@ -96,8 +96,8 @@ struct GenerateSphere {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Sphere T, CT::Topology TOPOLOGY>
-Construct GenerateSphere<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Neat d {descriptor};
+Construct GenerateSphere<T, TOPOLOGY>::Default(Neat&& descriptor) {
+   Construct d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {

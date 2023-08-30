@@ -17,14 +17,15 @@
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Grid T, CT::Topology TOPOLOGY>
-Construct GenerateGrid<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Neat d {descriptor};
+Construct GenerateGrid<T, TOPOLOGY>::Default(Neat&& descriptor) {
+   Construct d {descriptor};
    if constexpr (CT::Line<TOPOLOGY>) {
       // A grid made out of lines                                       
       d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
    }
    else LANGULUS_ERROR("Unsupported topology for line");
+
    return Abandon(d);
 }
 

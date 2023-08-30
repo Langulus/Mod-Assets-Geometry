@@ -120,7 +120,7 @@ struct GenerateFrustum {
 
    using D = Constants<Dimensions>;
 
-   NOD() static Construct Default(Descriptor&&);
+   NOD() static Construct Default(Neat&&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
@@ -140,8 +140,8 @@ struct GenerateFrustum {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Frustum T, CT::Topology TOPOLOGY>
-Construct GenerateFrustum<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Neat d {descriptor};
+Construct GenerateFrustum<T, TOPOLOGY>::Default(Neat&& descriptor) {
+   Construct d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {

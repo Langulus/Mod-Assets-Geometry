@@ -21,7 +21,7 @@ struct GenerateLine {
    using PointType = typename T::PointType;
    static constexpr Count Dimensions = T::MemberCount;
 
-   NOD() static Construct Default(Descriptor&&);
+   NOD() static Construct Default(Neat&&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
@@ -41,8 +41,8 @@ struct GenerateLine {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Line T, CT::Topology TOPOLOGY>
-Construct GenerateLine<T, TOPOLOGY>::Default(Descriptor&& descriptor) {
-   Neat d {descriptor};
+Construct GenerateLine<T, TOPOLOGY>::Default(Neat&& descriptor) {
+   Construct d {descriptor};
 
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines (duh)                                 

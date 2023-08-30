@@ -31,7 +31,7 @@ struct Mesh final : A::Mesh {
    LANGULUS_VERBS(Verbs::Create);
 
 public:
-   Mesh(MeshLibrary*, const Descriptor&);
+   Mesh(MeshLibrary*, const Neat&);
 
    void Refresh();
    void Create(Verb&);

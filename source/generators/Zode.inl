@@ -90,7 +90,7 @@ struct GenerateZode {
 
    static_assert(Dimensions >= 3, "Zode should be at least 3D");
 
-   NOD() static Construct Default(Descriptor&&);
+   NOD() static Construct Default(Neat&&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
