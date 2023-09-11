@@ -15,7 +15,7 @@ target_link_libraries(LangulusModAssetsGeometry
     PRIVATE     Langulus
 )
 
-if(LANGULUS_ENABLE_TESTING)
+if(LANGULUS_TESTING)
     enable_testing()
 	add_subdirectory(test)
 endif()

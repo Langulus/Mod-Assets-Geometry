@@ -143,7 +143,7 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
    if (lod.mLODIndex == 0) {
       // On zero LOD index, we're at optimal distance, so we return     
       // the original unmodified geometry                               
-      return model->GetNeat()->MakeConstruct<A::Mesh>();
+      return model->GetNeat();
    }
 
    unsigned tesselation = 0;
@@ -156,8 +156,8 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
          newTesselation = 0;
 
       // Create the LOD descriptor, based on the current one            
-      auto newMesh = model->GetNeat()->MakeConstruct<A::Mesh>();
-      newMesh.Set<Traits::Tesselation>(std::round(newTesselation));
+      auto newMesh = model->GetNeat();
+      newMesh.template Set<Traits::Tesselation>(std::round(newTesselation));
       return Abandon(newMesh);
    }
    else if (lod.mLODIndex > 0) {
@@ -184,7 +184,7 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
       // small reorientation                                            
       const auto intersection = lod.mView.GetPosition() - lod.mModel.GetPosition();
       if (intersection.Length() == 0)
-         return model->GetNeat()->MakeConstruct<A::Mesh>();
+         return model->GetNeat();
 
       const auto steppingNormal = (intersection.Normalize() * areasToCover).Round();
 
@@ -207,7 +207,7 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
       return Abandon(newMesh);
    }
 
-   return model->GetNeat()->MakeConstruct<A::Mesh>();
+   return model->GetNeat();
 }
 
 /// Generate positions for a sphere/circle                                    

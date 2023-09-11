@@ -36,7 +36,7 @@ Construct GenerateGrid<T, TOPOLOGY>::Default(Neat&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Grid T, CT::Topology TOPOLOGY>
 Construct GenerateGrid<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNeat().MakeConstruct<A::Mesh>();
+   return model->GetNeat();
 }
 
 /// Generate positions for a grid                                             

@@ -267,7 +267,7 @@ GENERATE() TextureCoords(Mesh* model) {
    TAny<Sampler3> data;
    data.Reserve(positions->GetCount());
    for (Offset i = 0; i < positions->GetCount(); ++i)
-      data << Sampler3 {positions->AsCast<Vec3>(i)};
+      data << Sampler3 (positions->template AsCast<Vec3>(i));
    model->Commit<Traits::Sampler>(Abandon(data));
 }
 
