@@ -184,7 +184,7 @@ Construct GenerateBox<T, TOPOLOGY>::Default(Neat&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Box T, CT::Topology TOPOLOGY>
 Construct GenerateBox<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNeat();
+   return Construct::From<A::Mesh>(model->GetNeat());
 }
 
 /// Generate positions for a box                                              
