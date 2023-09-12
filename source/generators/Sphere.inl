@@ -148,7 +148,7 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
 
    unsigned tesselation = 0;
    model->GetNeat().ExtractTrait<Traits::Tesselation>(tesselation);
-   if (tesselation > 0 && lod.mLODIndex < 0) {
+   if (tesselation > 0 and lod.mLODIndex < 0) {
       // Find a lower tesselation of the geosphere, because the LOD     
       // is for an object that is further away                          
       auto newTesselation = tesselation + lod.mLODIndex;
