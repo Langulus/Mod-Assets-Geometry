@@ -7,11 +7,12 @@
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
-#include <Math/Primitives/TLine.hpp>
-#include <Math/Primitives/TPoint.hpp>
+#include <Math/Primitives/Line.hpp>
+#include <Math/Primitives/Point.hpp>
 
 template<CT::Vector T>
 struct TGrid;
+
 
 namespace Langulus::A
 {

@@ -7,7 +7,7 @@
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
-#include <Math/Primitives/TTriangle.hpp>
+#include <Math/Primitives/Triangle.hpp>
 #include <Math/Mapping.hpp>
 
 

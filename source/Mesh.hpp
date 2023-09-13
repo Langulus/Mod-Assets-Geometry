@@ -7,15 +7,15 @@
 ///                                                                           
 #pragma once
 #include "Common.hpp"
-#include <Math/Primitives/TBox.hpp>
-#include <Math/Primitives/TTriangle.hpp>
-#include <Math/Primitives/TLine.hpp>
-#include <Math/Primitives/TCylinder.hpp>
+#include <Math/Primitives/Box.hpp>
+#include <Math/Primitives/Triangle.hpp>
+#include <Math/Primitives/Line.hpp>
+#include <Math/Primitives/Cylinder.hpp>
 #include <Math/Mapping.hpp>
-#include <Math/Colors.hpp>
+#include <Math/Color.hpp>
 
 // Unfortunately, due to compiler bugs in MSVC and Clang, we can't      
-// generalize these generators yet. Some day...                         
+// generalize these generators yet. Some day we will... TODO            
 //template<CT::Primitive, CT::Topology = A::Triangle, bool = false>
 //struct Generator;
 
