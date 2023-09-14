@@ -242,7 +242,7 @@ GENERATE() Indices(Mesh* model) {
 GENERATE() Normals(Mesh* model) {
    T label;
    model->GetNeat().ExtractData(label);
-   constexpr Normal n = Cardinal::Backward<ScalarType>;
+   constexpr Normal n = Axes::Backward<ScalarType>;
    TAny<Normal> data;
    data.Reserve(VertexCount * label.mText.GetCount());
 

@@ -13,6 +13,7 @@
 #include <Math/Mapping.hpp>
 #include <Math/Color.hpp>
 #include <Math/Sampler.hpp>
+#include <Math/Normal.hpp>
 
 
 ///                                                                           
@@ -199,12 +200,12 @@ GENERATE() Positions(Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Normals(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      constexpr Normal l {Cardinal::Left<ScalarType>};
-      constexpr Normal r {Cardinal::Right<ScalarType>};
-      constexpr Normal u {Cardinal::Up<ScalarType>};
-      constexpr Normal d {Cardinal::Down<ScalarType>};
-      constexpr Normal f {Cardinal::Forward<ScalarType>};
-      constexpr Normal b {Cardinal::Backward<ScalarType>};
+      constexpr Normal l {Axes::Left<ScalarType>};
+      constexpr Normal r {Axes::Right<ScalarType>};
+      constexpr Normal u {Axes::Up<ScalarType>};
+      constexpr Normal d {Axes::Down<ScalarType>};
+      constexpr Normal f {Axes::Forward<ScalarType>};
+      constexpr Normal b {Axes::Backward<ScalarType>};
 
       TAny<Normal> data;
       data.Reserve(D::IndexCount);

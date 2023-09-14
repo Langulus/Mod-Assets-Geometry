@@ -7,14 +7,16 @@
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
-#include <Math/Primitives/TTriangle.hpp>
-#include <Math/Primitives/TLine.hpp>
-#include <Math/Matrices/TMatrix.hpp>
+#include <Math/Primitives/Triangle.hpp>
+#include <Math/Primitives/Line.hpp>
+#include <Math/Matrix.hpp>
 #include <Math/Mapping.hpp>
-#include <Math/Colors.hpp>
+#include <Math/Color.hpp>
+#include <Math/Sampler.hpp>
 
 template<CT::Vector T>
 struct TZode;
+
 
 namespace Langulus::A
 {
@@ -118,14 +120,14 @@ GENERATE() Positions(Mesh* model) {
 
    // Create the orientation matrix, that will align to the sphere      
    Mat4 orient;
-   if (offset.Abs() == Cardinal::Up<ScalarType>.xyz()) {
+   if (offset.Abs() == Axes::Up<ScalarType>.xyz()) {
       // If the offset is parallel to up vector, use right vector       
       // to avoid degeneracy                                            
-      orient = Mat4::LookAt(offset, Cardinal::Right<ScalarType>);
+      orient = Mat4::LookAt(offset, Axes::Right<ScalarType>);
    }
    else {
       // Otherwise use a standard up vector                             
-      orient = Mat4::LookAt(offset, Cardinal::Up<ScalarType>);
+      orient = Mat4::LookAt(offset, Axes::Up<ScalarType>);
    }
    orient.SetPosition(offset * Half);
 
@@ -267,7 +269,7 @@ GENERATE() TextureCoords(Mesh* model) {
    TAny<Sampler3> data;
    data.Reserve(positions->GetCount());
    for (Offset i = 0; i < positions->GetCount(); ++i)
-      data << Sampler3 (positions->template AsCast<Vec3>(i));
+      data << Sampler3 {positions->template AsCast<Vec3>(i)};
    model->Commit<Traits::Sampler>(Abandon(data));
 }
 

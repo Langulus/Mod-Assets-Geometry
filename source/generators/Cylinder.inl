@@ -154,12 +154,12 @@ GENERATE() Normals(Mesh* model) {
       "Can't generate normals for cylinder of this many dimensions");
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      constexpr Normal l {Cardinal::Left};
-      constexpr Normal r {Cardinal::Right};
-      constexpr Normal u {Cardinal::Up};
-      constexpr Normal d {Cardinal::Down};
-      constexpr Normal f {Cardinal::Forward};
-      constexpr Normal b {Cardinal::Backward};
+      constexpr Normal l {Axes::Left};
+      constexpr Normal r {Axes::Right};
+      constexpr Normal u {Axes::Up};
+      constexpr Normal d {Axes::Down};
+      constexpr Normal f {Axes::Forward};
+      constexpr Normal b {Axes::Backward};
 
       TAny<Normal> data;
       data.Reserve(IndexCount);

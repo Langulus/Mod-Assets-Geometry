@@ -8,11 +8,11 @@
 #pragma once
 #include "../Mesh.hpp"
 #include "Zode.inl"
-#include <Math/Primitives/TSphere.hpp>
-#include <Math/Primitives/TTriangle.hpp>
-#include <Math/Primitives/TLine.hpp>
+#include <Math/Primitives/Sphere.hpp>
+#include <Math/Primitives/Triangle.hpp>
+#include <Math/Primitives/Line.hpp>
 #include <Math/Mapping.hpp>
-#include <Math/Colors.hpp>
+#include <Math/Color.hpp>
 
 
 ///                                                                           
@@ -233,7 +233,7 @@ GENERATE() Normals(Mesh* model) {
       }
       else if constexpr (Dimensions == 2) {
          // Normals for a 2D circle, always facing the user (-Z)        
-         constexpr Normal b {Cardinal::Backward};
+         constexpr Normal b {Axes::Backward};
          for (auto& v : D::Vertices)
             data << b;
       }

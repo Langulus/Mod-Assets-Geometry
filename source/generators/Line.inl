@@ -73,7 +73,7 @@ GENERATE() Positions(Mesh* model) {
       // A line made out of lines                                       
       using E = TLine<PointType>;
       TAny<E> data;
-      data << E {Cardinal::Origin, Cardinal::Forward};
+      data << E {Axes::Origin, Axes::Forward};
       model->Commit<Traits::Place>(Abandon(data));
    }
    else LANGULUS_ERROR("Unsupported topology for line positions");

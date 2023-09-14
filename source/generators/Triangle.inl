@@ -7,10 +7,10 @@
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
-#include <Math/Primitives/TTriangle.hpp>
-#include <Math/Primitives/TLine.hpp>
+#include <Math/Primitives/Triangle.hpp>
+#include <Math/Primitives/Line.hpp>
 #include <Math/Mapping.hpp>
-#include <Math/Colors.hpp>
+#include <Math/Color.hpp>
 
 
 ///                                                                           
@@ -128,7 +128,7 @@ GENERATE() Indices(Mesh* model) {
 /// Generate normals for triangle                                             
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Normals(Mesh* model) {
-   constexpr Normal n = Cardinal::Backward<ScalarType>;
+   constexpr Normal n = Axes::Backward<ScalarType>;
    TAny<Normal> data;
    data.Reserve(VertexCount);
    for (auto& v : TriangleVertices)
