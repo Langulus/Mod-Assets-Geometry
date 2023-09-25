@@ -13,6 +13,7 @@
 #include <Math/Mapping.hpp>
 #include <Math/Color.hpp>
 #include <Math/Sampler.hpp>
+#include <Math/Angle.hpp>
 
 template<CT::Vector T>
 struct TZode;
