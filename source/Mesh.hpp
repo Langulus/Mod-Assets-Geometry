@@ -61,12 +61,12 @@ private:
 ///                                                                           
 template<class GENERATOR>
 void Mesh::FillGeneratorsInner() {
-   mGenerators[Traits::Index::GetTrait()] = GENERATOR::Indices;
-   mGenerators[Traits::Place::GetTrait()] = GENERATOR::Positions;
-   mGenerators[Traits::Aim::GetTrait()] = GENERATOR::Normals;
-   mGenerators[Traits::Sampler::GetTrait()] = GENERATOR::TextureCoords;
-   mGenerators[Traits::Material::GetTrait()] = GENERATOR::Materials;
-   mGenerators[Traits::Transform::GetTrait()] = GENERATOR::Instances;
+   mGenerators.Insert(Traits::Index::GetTrait(),      GENERATOR::Indices);
+   mGenerators.Insert(Traits::Place::GetTrait(),      GENERATOR::Positions);
+   mGenerators.Insert(Traits::Aim::GetTrait(),        GENERATOR::Normals);
+   mGenerators.Insert(Traits::Sampler::GetTrait(),    GENERATOR::TextureCoords);
+   mGenerators.Insert(Traits::Material::GetTrait(),   GENERATOR::Materials);
+   mGenerators.Insert(Traits::Transform::GetTrait(),  GENERATOR::Instances);
    mLODgenerator = GENERATOR::Detail;
 }
 

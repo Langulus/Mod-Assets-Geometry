@@ -76,20 +76,18 @@ void Mesh::Create(Verb& verb) {
 ///   @param index - trait group to generate                                  
 ///   @return true if data was generated                                      
 bool Mesh::Generate(TMeta trait, Offset index) {
-   auto found = GetDataListMap().Find(trait);
-   if (found) {
-      auto& data = GetDataListMap().GetValue(found);
-      if (data.GetCount() > index)
+   auto foundData = GetDataListMap().FindIt(trait);
+   if (foundData) {
+      if (foundData->mValue.GetCount() > index)
          return true;
    }
 
-   found = mGenerators.Find(trait);
-   if (found) {
-      mGenerators.GetValue(found)(this);
-      found = GetDataListMap().Find(trait);
-      if (found) {
-         auto& data = GetDataListMap().GetValue(found);
-         if (data.GetCount() > index)
+   auto foundGen = mGenerators.FindIt(trait);
+   if (foundGen) {
+      foundGen->mValue(this);
+      foundData = GetDataListMap().FindIt(trait);
+      if (foundData) {
+         if (foundData->mValue.GetCount() > index)
             return true;
       }
    }
@@ -114,7 +112,7 @@ Ref<A::Mesh> Mesh::GetLOD(const LOD& lod) const {
 /// Create mesh generator by analyzing A::Primitive                           
 ///   @param data - container that contains the primitive                     
 void Mesh::FromPrimitive(const Block& data) {
-   if (!data.CastsTo<A::Primitive>())
+   if (not data.CastsTo<A::Primitive>())
       return;
 
    mGenerators.Clear();
