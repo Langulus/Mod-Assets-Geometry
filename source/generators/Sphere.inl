@@ -97,7 +97,7 @@ struct GenerateSphere {
 ///           their defaults                                                  
 template<CT::Sphere T, CT::Topology TOPOLOGY>
 Construct GenerateSphere<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Construct d {descriptor};
+   Neat d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {

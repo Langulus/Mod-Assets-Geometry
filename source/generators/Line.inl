@@ -42,7 +42,7 @@ struct GenerateLine {
 ///           their defaults                                                  
 template<CT::Line T, CT::Topology TOPOLOGY>
 Construct GenerateLine<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Construct d {descriptor};
+   Neat d {descriptor};
 
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines (duh)                                 

@@ -131,7 +131,7 @@ struct GenerateLabel {
 ///           their defaults                                                  
 template<CT::Label T, CT::Topology TOPOLOGY>
 Construct GenerateLabel<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Construct d {descriptor};
+   Neat d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {

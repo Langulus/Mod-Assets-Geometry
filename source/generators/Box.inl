@@ -143,7 +143,7 @@ struct GenerateBox {
 ///           their defaults                                                  
 template<CT::Box T, CT::Topology TOPOLOGY>
 Construct GenerateBox<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Construct d {descriptor};
+   Neat d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {

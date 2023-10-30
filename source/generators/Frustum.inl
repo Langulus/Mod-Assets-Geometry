@@ -141,7 +141,7 @@ struct GenerateFrustum {
 ///           their defaults                                                  
 template<CT::Frustum T, CT::Topology TOPOLOGY>
 Construct GenerateFrustum<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Construct d {descriptor};
+   Neat d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {

@@ -59,7 +59,7 @@ struct GenerateFoliage {
 ///           their defaults                                                  
 template<CT::Foliage T, CT::Topology TOPOLOGY>
 Construct GenerateFoliage<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Construct d {descriptor};
+   Neat d {descriptor};
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // Foliage made out of triangles                                  

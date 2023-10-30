@@ -18,7 +18,7 @@
 ///           their defaults                                                  
 template<CT::Grid T, CT::Topology TOPOLOGY>
 Construct GenerateGrid<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Construct d {descriptor};
+   Neat d {descriptor};
    if constexpr (CT::Line<TOPOLOGY>) {
       // A grid made out of lines                                       
       d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());

@@ -65,7 +65,7 @@ struct GenerateTriangle {
 ///           their defaults                                                  
 template<CT::Triangle T, CT::Topology TOPOLOGY>
 Construct GenerateTriangle<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Construct d {descriptor};
+   Neat d {descriptor};
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {

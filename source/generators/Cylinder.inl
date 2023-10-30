@@ -91,7 +91,7 @@ struct GenerateCylinder {
 ///           their defaults                                                  
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
 Construct GenerateCylinder<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Construct d {descriptor};
+   Neat d {descriptor};
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
