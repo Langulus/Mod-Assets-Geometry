@@ -41,12 +41,6 @@ MeshLibrary::MeshLibrary(Runtime* runtime, const Neat&)
    VERBOSE_MESHES("Initialized");
 }
 
-/// Module update routine                                                     
-///   @param dt - time from last update                                       
-void MeshLibrary::Update(Time) {
-
-}
-
 /// Create/Destroy meshes                                                     
 ///   @param verb - the creation/destruction verb                             
 void MeshLibrary::Create(Verb& verb) {
