@@ -67,8 +67,8 @@ void Mesh::Refresh() {
 
 /// Produce geometry data                                                     
 ///   @param verb - creation verb to satisfy                                  
-void Mesh::Create(Verb& verb) {
-
+void Mesh::Create(Verb&) {
+   TODO();
 }
 
 /// Generate data                                                             
@@ -128,7 +128,7 @@ void Mesh::FromPrimitive(const Block& data) {
 ///   @param descriptor - the file to load                                    
 void Mesh::LoadFile(const Any& descriptor) {
    descriptor.ForEach(
-      [&](const A::File& file) {
+      [&](const A::File&) {
          TODO();
 		},
       [&](const Text& path) {

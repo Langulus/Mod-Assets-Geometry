@@ -18,7 +18,7 @@
 ///           their defaults                                                  
 template<CT::Grid T, CT::Topology TOPOLOGY>
 Construct GenerateGrid<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Neat d {descriptor};
+   auto d = Forward<Neat>(descriptor);
    if constexpr (CT::Line<TOPOLOGY>) {
       // A grid made out of lines                                       
       d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
@@ -26,7 +26,7 @@ Construct GenerateGrid<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else LANGULUS_ERROR("Unsupported topology for line");
 
-   return Abandon(d);
+   return Construct {Abandon(d)};
 }
 
 /// Generate grid level of detail, giving a LOD state                         

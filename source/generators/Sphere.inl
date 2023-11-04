@@ -30,11 +30,8 @@ struct GenerateSphere {
 
    static_assert(Dimensions >= 2, "Sphere should be at least 2D");
    
-   template<Count DIMENSIONS>
-   struct Constants;
-
    /// Properties for a 3D sphere                                             
-   template<> struct Constants<3> {
+   struct Constants3D {
       static constexpr Count VertexCount = 12;
       static constexpr Count TriangleCount = 20;
       static constexpr Count IndexCount = TriangleCount * 3;
@@ -70,11 +67,11 @@ struct GenerateSphere {
    };
    
    /// Properties for a 2D circle                                             
-   template<> struct Constants<2> {
+   struct Constants2D {
       //TODO
    };
 
-   using D = Constants<Dimensions>;
+   using D = Conditional<Dimensions == 2, Constants2D, Constants3D>;
 
    NOD() static Construct Default(Neat&&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
@@ -97,7 +94,7 @@ struct GenerateSphere {
 ///           their defaults                                                  
 template<CT::Sphere T, CT::Topology TOPOLOGY>
 Construct GenerateSphere<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Neat d {descriptor};
+   auto d = Forward<Neat>(descriptor);
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -130,7 +127,7 @@ Construct GenerateSphere<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else LANGULUS_ERROR("Unsupported topology for box");
 
-   return Abandon(d);
+   return Construct {Abandon(d)};
 }
 
 /// Generate box level of detail, giving a LOD state                          
@@ -143,7 +140,7 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
    if (lod.mLODIndex == 0) {
       // On zero LOD index, we're at optimal distance, so we return     
       // the original unmodified geometry                               
-      return model->GetNeat();
+      return Construct::From<A::Mesh>(model->GetNeat());
    }
 
    unsigned tesselation = 0;
@@ -157,8 +154,8 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
 
       // Create the LOD descriptor, based on the current one            
       auto newMesh = model->GetNeat();
-      newMesh.template Set<Traits::Tesselation>(std::round(newTesselation));
-      return Abandon(newMesh);
+      newMesh.Set(Traits::Tesselation {std::round(newTesselation)});
+      return Construct::From<A::Mesh>(Abandon(newMesh));
    }
    else if (lod.mLODIndex > 0) {
       // LOD is for a sphere that is very close. At this point the      
@@ -184,20 +181,20 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
       // small reorientation                                            
       const auto intersection = lod.mView.GetPosition() - lod.mModel.GetPosition();
       if (intersection.Length() == 0)
-         return model->GetNeat();
+         return Construct::From<A::Mesh>(model->GetNeat());
 
       const auto steppingNormal = (intersection.Normalize() * areasToCover).Round();
 
       // Clone only the descriptor and change type                      
-      auto newMesh = Construct::From<A::Mesh>(TZode<PointType>);
+      auto newMesh = Construct::From<A::Mesh>(TZode<PointType> {});
       // Set the place around which the zode is centered                
-      newMesh.Set<Traits::Place>(steppingNormal);
+      newMesh.Set(Traits::Place {steppingNormal});
       // Set the size of the sphere in order to calculate curvature     
-      newMesh.Set<Traits::Size>(lod.mModel.GetScale());
+      newMesh.Set(Traits::Size {lod.mModel.GetScale()});
       // Set the topology                                               
-      newMesh.Set<Traits::Topology>(TypeOf<A::TriangleStrip>());
+      newMesh.Set(Traits::Topology {TypeOf<A::TriangleStrip>()});
       // Set the tesselation                                            
-      newMesh.Set<Traits::Tesselation>(tesselation + static_cast<unsigned>(lod.mLODIndex) / 2);
+      newMesh.Set(Traits::Tesselation {tesselation + static_cast<unsigned>(lod.mLODIndex) / 2});
 
       // The octave gets progressively lower until we reach state       
       //real octave = 0;
@@ -207,7 +204,7 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
       return Abandon(newMesh);
    }
 
-   return model->GetNeat();
+   return Construct::From<A::Mesh>(model->GetNeat());
 }
 
 /// Generate positions for a sphere/circle                                    
@@ -233,7 +230,7 @@ GENERATE() Normals(Mesh* model) {
       }
       else if constexpr (Dimensions == 2) {
          // Normals for a 2D circle, always facing the user (-Z)        
-         constexpr Normal b {Axes::Backward};
+         constexpr Normal b {Axes::Backward<ScalarType>};
          for (auto& v : D::Vertices)
             data << b;
       }

@@ -131,7 +131,7 @@ struct GenerateLabel {
 ///           their defaults                                                  
 template<CT::Label T, CT::Topology TOPOLOGY>
 Construct GenerateLabel<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Neat d {descriptor};
+   auto d = Forward<Neat>(descriptor);
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -164,7 +164,7 @@ Construct GenerateLabel<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else LANGULUS_ERROR("Unsupported topology for box");
 
-   return Abandon(d);
+   return Construct {Abandon(d)};
 }
 
 /// Generate label level of detail, giving a LOD state                        
@@ -173,7 +173,7 @@ Construct GenerateLabel<T, TOPOLOGY>::Default(Neat&& descriptor) {
 ///   @return the same descriptor, labels don't have LOD                      
 template<CT::Label T, CT::Topology TOPOLOGY>
 Construct GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) {
-   return model->GetNeat();
+   return Construct {model->GetNeat()};
 }
 
 /// Generate positions for label                                              

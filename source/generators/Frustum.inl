@@ -27,11 +27,8 @@ struct GenerateFrustum {
    static constexpr Count Dimensions = T::MemberCount;
    static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
-   template<Count DIMENSIONS>
-   struct Constants;
-
    /// Properties for a 3D box                                                
-   template<> struct Constants<3> {
+   struct Constants3D {
       static constexpr Count VertexCount = 8;
       static constexpr Count TriangleCount = 12;
       static constexpr Count IndexCount = TriangleCount * 3;
@@ -75,7 +72,7 @@ struct GenerateFrustum {
    };
    
    /// Properties for a 2D box (rectangle)                                    
-   template<> struct Constants<2> {
+   struct Constants2D {
       ///                                                                     
       ///  3     2                                                            
       ///   +---+         Each corner is at distance 0.5 from center by       
@@ -118,7 +115,7 @@ struct GenerateFrustum {
       };
    };
 
-   using D = Constants<Dimensions>;
+   using D = Conditional<Dimensions == 2, Constants2D, Constants3D>;
 
    NOD() static Construct Default(Neat&&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
@@ -141,7 +138,7 @@ struct GenerateFrustum {
 ///           their defaults                                                  
 template<CT::Frustum T, CT::Topology TOPOLOGY>
 Construct GenerateFrustum<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Neat d {descriptor};
+   auto d = Forward<Neat>(descriptor);
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -167,7 +164,7 @@ Construct GenerateFrustum<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else LANGULUS_ERROR("Unsupported topology for frustum");
 
-   return Abandon(d);
+   return Construct {Abandon(d)};
 }
 
 /// Generate frustum level of detail, giving a LOD state                      
@@ -177,7 +174,7 @@ Construct GenerateFrustum<T, TOPOLOGY>::Default(Neat&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Frustum T, CT::Topology TOPOLOGY>
 Construct GenerateFrustum<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNeat();
+   return Construct {model->GetNeat()};
 }
 
 /// Generate positions for a frustum                                          
@@ -213,12 +210,12 @@ GENERATE() Positions(Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Normals(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      constexpr Normal l {Axes::Left};
-      constexpr Normal r {Axes::Right};
-      constexpr Normal u {Axes::Up};
-      constexpr Normal d {Axes::Down};
-      constexpr Normal f {Axes::Forward};
-      constexpr Normal b {Axes::Backward};
+      constexpr Normal l {Axes::Left<ScalarType>};
+      constexpr Normal r {Axes::Right<ScalarType>};
+      constexpr Normal u {Axes::Up<ScalarType>};
+      constexpr Normal d {Axes::Down<ScalarType>};
+      constexpr Normal f {Axes::Forward<ScalarType>};
+      constexpr Normal b {Axes::Backward<ScalarType>};
 
       TAny<Normal> data;
       data.Reserve(D::IndexCount);

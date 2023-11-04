@@ -19,6 +19,7 @@
 template<CT::Line T, CT::Topology TOPOLOGY = A::Triangle>
 struct GenerateLine {
    using PointType = typename T::PointType;
+   using ScalarType = TypeOf<PointType>;
    static constexpr Count Dimensions = T::MemberCount;
 
    NOD() static Construct Default(Neat&&);
@@ -42,7 +43,7 @@ struct GenerateLine {
 ///           their defaults                                                  
 template<CT::Line T, CT::Topology TOPOLOGY>
 Construct GenerateLine<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Neat d {descriptor};
+   auto d = Forward<Neat>(descriptor);
 
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines (duh)                                 
@@ -53,7 +54,7 @@ Construct GenerateLine<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else LANGULUS_ERROR("Unsupported topology for line");
 
-   return Abandon(d);
+   return Construct {Abandon(d)};
 }
 
 /// Generate line level of detail, giving a LOD state                         
@@ -63,7 +64,7 @@ Construct GenerateLine<T, TOPOLOGY>::Default(Neat&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Line T, CT::Topology TOPOLOGY>
 Construct GenerateLine<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNeat();
+   return Construct {model->GetNeat()};
 }
 
 /// Generate positions for a line                                             
@@ -73,7 +74,7 @@ GENERATE() Positions(Mesh* model) {
       // A line made out of lines                                       
       using E = TLine<PointType>;
       TAny<E> data;
-      data << E {Axes::Origin, Axes::Forward};
+      data << E {Axes::Origin<ScalarType>, Axes::Forward<ScalarType>};
       model->Commit<Traits::Place>(Abandon(data));
    }
    else LANGULUS_ERROR("Unsupported topology for line positions");

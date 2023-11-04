@@ -91,7 +91,7 @@ struct GenerateCylinder {
 ///           their defaults                                                  
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
 Construct GenerateCylinder<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Neat d {descriptor};
+   auto d = Forward<Neat>(descriptor);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
@@ -115,7 +115,7 @@ Construct GenerateCylinder<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else LANGULUS_ERROR("Unsupported topology for cylinder");
 
-   return Abandon(d);
+   return Construct {Abandon(d)};
 }
 
 /// Generate cylinder level of detail, giving a LOD state                     
@@ -125,7 +125,7 @@ Construct GenerateCylinder<T, TOPOLOGY>::Default(Neat&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
 Construct GenerateCylinder<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNeat();
+   return Construct {model->GetNeat()};
 }
 
 /// Generate positions for a cylinder                                         
@@ -154,12 +154,12 @@ GENERATE() Normals(Mesh* model) {
       "Can't generate normals for cylinder of this many dimensions");
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      constexpr Normal l {Axes::Left};
-      constexpr Normal r {Axes::Right};
-      constexpr Normal u {Axes::Up};
-      constexpr Normal d {Axes::Down};
-      constexpr Normal f {Axes::Forward};
-      constexpr Normal b {Axes::Backward};
+      constexpr Normal l {Axes::Left<ScalarType>};
+      constexpr Normal r {Axes::Right<ScalarType>};
+      constexpr Normal u {Axes::Up<ScalarType>};
+      constexpr Normal d {Axes::Down<ScalarType>};
+      constexpr Normal f {Axes::Forward<ScalarType>};
+      constexpr Normal b {Axes::Backward<ScalarType>};
 
       TAny<Normal> data;
       data.Reserve(IndexCount);

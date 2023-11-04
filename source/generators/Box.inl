@@ -29,11 +29,8 @@ struct GenerateBox {
    static constexpr Count Dimensions = T::MemberCount;
    static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
-   template<Count DIMENSIONS>
-   struct Constants;
-
    /// Properties for a 3D box                                                
-   template<> struct Constants<3> {
+   struct Constants3D {
       static constexpr Count VertexCount = 8;
       static constexpr Count TriangleCount = 12;
       static constexpr Count LineCount = 12;
@@ -78,7 +75,7 @@ struct GenerateBox {
    };
    
    /// Properties for a 2D box (rectangle)                                    
-   template<> struct Constants<2> {
+   struct Constants2D {
       ///                                                                     
       ///  3     2                                                            
       ///   +---+         Each corner is at distance 0.5 from center by       
@@ -120,7 +117,7 @@ struct GenerateBox {
       };
    };
 
-   using D = Constants<Dimensions>;
+   using D = Conditional<Dimensions == 2, Constants2D, Constants3D>;
 
    NOD() static Construct Default(Neat&&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
@@ -143,7 +140,7 @@ struct GenerateBox {
 ///           their defaults                                                  
 template<CT::Box T, CT::Topology TOPOLOGY>
 Construct GenerateBox<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Neat d {descriptor};
+   auto d = Forward<Neat>(descriptor);
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -176,7 +173,7 @@ Construct GenerateBox<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else LANGULUS_ERROR("Unsupported topology for box");
 
-   return Abandon(d);
+   return Construct {Abandon(d)};
 }
 
 /// Generate box level of detail, giving a LOD state                          

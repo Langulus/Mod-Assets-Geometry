@@ -59,7 +59,7 @@ struct GenerateFoliage {
 ///           their defaults                                                  
 template<CT::Foliage T, CT::Topology TOPOLOGY>
 Construct GenerateFoliage<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   Neat d {descriptor};
+   auto d = Forward<Neat>(descriptor);
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // Foliage made out of triangles                                  
@@ -70,7 +70,7 @@ Construct GenerateFoliage<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else LANGULUS_ERROR("Unsupported topology for line");
 
-   return Abandon(d);
+   return Construct {Abandon(d)};
 }
 
 /// Generate foliage level of detail, giving a LOD state                      
@@ -80,7 +80,7 @@ Construct GenerateFoliage<T, TOPOLOGY>::Default(Neat&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Foliage T, CT::Topology TOPOLOGY>
 Construct GenerateFoliage<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return model->GetNeat();
+   return Construct {model->GetNeat()};
 }
 
 /// Generate positions for foliage                                            
