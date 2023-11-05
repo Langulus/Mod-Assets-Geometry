@@ -108,7 +108,7 @@ Construct GenerateTriangle<T, TOPOLOGY>::Default(Neat&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Triangle T, CT::Topology TOPOLOGY>
 Construct GenerateTriangle<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return Construct {model->GetNeat()};
+   return Construct::From<A::Mesh>(model->GetNeat());
 }
 
 /// Generate positions for triangle                                           

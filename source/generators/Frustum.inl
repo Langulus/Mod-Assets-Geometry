@@ -174,7 +174,7 @@ Construct GenerateFrustum<T, TOPOLOGY>::Default(Neat&& descriptor) {
 ///           to generate the new geometry                                    
 template<CT::Frustum T, CT::Topology TOPOLOGY>
 Construct GenerateFrustum<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return Construct {model->GetNeat()};
+   return Construct::From<A::Mesh>(model->GetNeat());
 }
 
 /// Generate positions for a frustum                                          
