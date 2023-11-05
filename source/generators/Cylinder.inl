@@ -115,7 +115,7 @@ Construct GenerateCylinder<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else LANGULUS_ERROR("Unsupported topology for cylinder");
 
-   return Construct {Abandon(d)};
+   return Construct::From<A::Mesh>(Abandon(d));
 }
 
 /// Generate cylinder level of detail, giving a LOD state                     

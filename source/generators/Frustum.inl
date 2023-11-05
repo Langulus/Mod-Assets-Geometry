@@ -164,7 +164,7 @@ Construct GenerateFrustum<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else LANGULUS_ERROR("Unsupported topology for frustum");
 
-   return Construct {Abandon(d)};
+   return Construct::From<A::Mesh>(Abandon(d));
 }
 
 /// Generate frustum level of detail, giving a LOD state                      

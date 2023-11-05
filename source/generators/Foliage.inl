@@ -70,7 +70,7 @@ Construct GenerateFoliage<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else LANGULUS_ERROR("Unsupported topology for line");
 
-   return Construct {Abandon(d)};
+   return Construct::From<A::Mesh>(Abandon(d));
 }
 
 /// Generate foliage level of detail, giving a LOD state                      

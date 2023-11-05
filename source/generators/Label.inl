@@ -164,7 +164,7 @@ Construct GenerateLabel<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else LANGULUS_ERROR("Unsupported topology for box");
 
-   return Construct {Abandon(d)};
+   return Construct::From<A::Mesh>(Abandon(d));
 }
 
 /// Generate label level of detail, giving a LOD state                        
