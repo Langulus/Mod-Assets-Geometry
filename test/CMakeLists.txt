@@ -11,6 +11,7 @@ target_link_libraries(LangulusModAssetsGeometryTest
 add_test(
 	NAME		LangulusModAssetsGeometryTest
 	COMMAND		LangulusModAssetsGeometryTest
+	WORKING_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
 )
 
 # Make the write and read data dir for PhysFS, because it doesn't have access   
