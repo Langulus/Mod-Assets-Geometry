@@ -13,14 +13,6 @@ add_test(
 	COMMAND		LangulusModAssetsGeometryTest
 )
 
-langulus_copy_dlls(LangulusModAssetsGeometryTest ON LangulusModAssetsGeometryTest)
-langulus_copy_dlls_advanced(LangulusModAssetsGeometryTest
-	TO			LangulusModAssetsGeometryTest
-	FROM		LangulusModAssetsGeometry
-				LangulusModFileSystem
-)
-
-
 # Make the write and read data dir for PhysFS, because it doesn't have access   
 add_custom_command(
     TARGET LangulusModAssetsGeometryTest POST_BUILD
