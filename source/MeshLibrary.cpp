@@ -50,5 +50,5 @@ void MeshLibrary::Create(Verb& verb) {
 /// Get the mesh library folder                                               
 ///   @return the folder interface                                            
 const A::Folder* MeshLibrary::GetFolder() const noexcept {
-   return *mFolder;
+   return mFolder;
 }
