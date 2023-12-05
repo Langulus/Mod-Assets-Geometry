@@ -133,7 +133,7 @@ GENERATE() Positions(Mesh* model) {
    orient.SetPosition(offset * Half);
 
    // This rotator is used to spin each segment                         
-   const auto rotator = Mat4::RotationAxis(offset, T::RadialSize);
+   const auto rotator = Mat4::RotateAxis(offset, T::RadialSize);
 
    // Calculate point count based on tesselation                        
    const auto strips = Pow(2u, tesselation);
