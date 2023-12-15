@@ -82,19 +82,19 @@ GENERATE() Positions(Mesh* model) {
 
 /// Generate normals for a line                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Mesh* model) {
+GENERATE() Normals(Mesh*) {
    TODO();
 }
 
 /// Generate indices for a line                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Mesh* model) {
+GENERATE() Indices(Mesh*) {
    TODO();
 }
 
 /// Generate texture coordinates for a line                                   
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Mesh* model) {
+GENERATE() TextureCoords(Mesh*) {
    TODO();
 }
 

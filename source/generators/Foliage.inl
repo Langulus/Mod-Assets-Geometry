@@ -85,25 +85,25 @@ Construct GenerateFoliage<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 
 /// Generate positions for foliage                                            
 ///   @param model - the model to fill                                        
-GENERATE() Positions(Mesh* model) {
+GENERATE() Positions(Mesh*) {
    TODO();
 }
 
 /// Generate normals for foliage                                              
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Mesh* model) {
+GENERATE() Normals(Mesh*) {
    TODO();
 }
 
 /// Generate indices for foliage                                              
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Mesh* model) {
+GENERATE() Indices(Mesh*) {
    TODO();
 }
 
 /// Generate texture coordinates for foliage                                  
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Mesh* model) {
+GENERATE() TextureCoords(Mesh*) {
    TODO();
 }
 

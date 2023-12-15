@@ -172,7 +172,7 @@ Construct GenerateLabel<T, TOPOLOGY>::Default(Neat&& descriptor) {
 ///   @param lod - the LOD state to generate                                  
 ///   @return the same descriptor, labels don't have LOD                      
 template<CT::Label T, CT::Topology TOPOLOGY>
-Construct GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) {
+Construct GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
    return Construct::From<A::Mesh>(model->GetNeat());
 }
 
