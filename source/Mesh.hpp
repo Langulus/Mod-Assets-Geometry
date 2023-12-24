@@ -14,8 +14,8 @@
 #include <Math/Mapping.hpp>
 #include <Math/Color.hpp>
 
-// Unfortunately, due to compiler bugs in MSVC and Clang, we can't      
-// generalize these generators yet. Some day we will... TODO            
+//TODO Unfortunately, due to compiler bugs in MSVC and Clang, we can't
+// generalize these generators yet. Some day we will...
 //template<CT::Primitive, CT::Topology = A::Triangle, bool = false>
 //struct Generator;
 
@@ -49,11 +49,11 @@ private:
    void LoadFile(const Any&);
 
    // Generator functions for each supported type of data               
-   using FGenerator = void (*) (Mesh*);
+   using FGenerator = void(*)(Mesh*);
    TUnorderedMap<TMeta, FGenerator> mGenerators;
 
    // LOD generator function                                            
-   using FLOD = Construct (*) (const Mesh*, const LOD&);
+   using FLOD = Construct(*)(const Mesh*, const LOD&);
    FLOD mLODgenerator {};
 };
 
@@ -61,12 +61,12 @@ private:
 ///                                                                           
 template<class GENERATOR>
 void Mesh::FillGeneratorsInner() {
-   mGenerators.Insert(Traits::Index::GetTrait(),      GENERATOR::Indices);
-   mGenerators.Insert(Traits::Place::GetTrait(),      GENERATOR::Positions);
-   mGenerators.Insert(Traits::Aim::GetTrait(),        GENERATOR::Normals);
-   mGenerators.Insert(Traits::Sampler::GetTrait(),    GENERATOR::TextureCoords);
-   mGenerators.Insert(Traits::Material::GetTrait(),   GENERATOR::Materials);
-   mGenerators.Insert(Traits::Transform::GetTrait(),  GENERATOR::Instances);
+   mGenerators.Insert(MetaOf<Traits::Index>(),      GENERATOR::Indices);
+   mGenerators.Insert(MetaOf<Traits::Place>(),      GENERATOR::Positions);
+   mGenerators.Insert(MetaOf<Traits::Aim>(),        GENERATOR::Normals);
+   mGenerators.Insert(MetaOf<Traits::Sampler>(),    GENERATOR::TextureCoords);
+   mGenerators.Insert(MetaOf<Traits::Material>(),   GENERATOR::Materials);
+   mGenerators.Insert(MetaOf<Traits::Transform>(),  GENERATOR::Instances);
    mLODgenerator = GENERATOR::Detail;
 }
 
@@ -74,7 +74,7 @@ void Mesh::FillGeneratorsInner() {
 template<template<typename...> class GENERATOR, class PRIMITIVE>
 bool Mesh::FillGenerators(const Block& data) {
    if (data.IsExact<PRIMITIVE>()) {
-      if (!mView.mTopology)
+      if (not mView.mTopology)
          FillGeneratorsInner<GENERATOR<PRIMITIVE>>();
       else if (mView.mTopology->CastsTo<A::TriangleStrip>())
          FillGeneratorsInner<GENERATOR<PRIMITIVE, A::TriangleStrip>>();
