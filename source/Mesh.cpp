@@ -78,16 +78,16 @@ void Mesh::Create(Verb&) {
 bool Mesh::Generate(TMeta trait, Offset index) {
    auto foundData = GetDataListMap().FindIt(trait);
    if (foundData) {
-      if (foundData->mValue.GetCount() > index)
+      if (foundData.mValue->GetCount() > index)
          return true;
    }
 
    auto foundGen = mGenerators.FindIt(trait);
    if (foundGen) {
-      foundGen->mValue(this);
+      (*foundGen.mValue)(this);
       foundData = GetDataListMap().FindIt(trait);
       if (foundData) {
-         if (foundData->mValue.GetCount() > index)
+         if (foundData.mValue->GetCount() > index)
             return true;
       }
    }

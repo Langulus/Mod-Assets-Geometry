@@ -73,7 +73,7 @@ void Mesh::FillGeneratorsInner() {
 ///                                                                           
 template<template<typename...> class GENERATOR, class PRIMITIVE>
 bool Mesh::FillGenerators(const Block& data) {
-   if (data.IsExact<PRIMITIVE>()) {
+   if (data.IsExact<Any, PRIMITIVE>()) {
       if (not mView.mTopology)
          FillGeneratorsInner<GENERATOR<PRIMITIVE>>();
       else if (mView.mTopology->CastsTo<A::TriangleStrip>())
