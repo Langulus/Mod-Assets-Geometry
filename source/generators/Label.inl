@@ -23,8 +23,8 @@ namespace Langulus::A
 namespace Langulus::CT
 {
    /// Concept for distinguishing labels                                      
-   template<class... T>
-   concept Label = ((DerivedFrom<T, A::Label>) && ...);
+   template<class...T>
+   concept Label = (DerivedFrom<T, A::Label> and ...);
 }
 
 

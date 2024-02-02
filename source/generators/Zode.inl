@@ -31,8 +31,8 @@ namespace Langulus::A
 namespace Langulus::CT
 {
    /// Concept for distinguishing zodes                                       
-   template<class... T>
-   concept Zode = ((DerivedFrom<T, A::Zode>) && ...);
+   template<class...T>
+   concept Zode = (DerivedFrom<T, A::Zode> and ...);
 }
 
 

@@ -22,8 +22,8 @@ namespace Langulus::A
 namespace Langulus::CT
 {
    /// Concept for distinguishing box primitives                              
-   template<class... T>
-   concept Foliage = ((DerivedFrom<T, A::Foliage>) && ...);
+   template<class...T>
+   concept Foliage = (DerivedFrom<T, A::Foliage> and ...);
 }
 
 

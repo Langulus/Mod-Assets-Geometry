@@ -27,8 +27,8 @@ namespace Langulus::A
 namespace Langulus::CT
 {
    /// Concept for distinguishing grids                                       
-   template<class... T>
-   concept Grid = ((DerivedFrom<T, A::Grid>) && ...);
+   template<class...T>
+   concept Grid = (DerivedFrom<T, A::Grid> and ...);
 }
 
 
