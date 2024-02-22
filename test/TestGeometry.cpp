@@ -33,37 +33,31 @@ SCENARIO("Mesh creation", "[mesh]") {
          root.LoadMod("FileSystem");
          root.LoadMod("AssetsGeometry");
 
+         WHEN("The mesh is created via abstractions") {
+            auto producedMesh = root.CreateUnit<A::Mesh>(Math::Box2 {});
+
+            // Update once                                              
+            root.Update(Time::zero());
+            root.DumpHierarchy();
+
+            REQUIRE(producedMesh.GetCount() == 1);
+            REQUIRE(producedMesh.CastsTo<A::Mesh>(1));
+            REQUIRE(producedMesh.IsSparse());
+         }
+         
       #if LANGULUS_FEATURE(MANAGED_REFLECTION)
          WHEN("The mesh is created via tokens") {
             auto producedMesh = root.CreateUnitToken("Mesh", Math::Box2 {});
 
             // Update once                                              
             root.Update(Time::zero());
+            root.DumpHierarchy();
 
-            THEN("Various traits change") {
-               root.DumpHierarchy();
-
-               REQUIRE(producedMesh.GetCount() == 1);
-               REQUIRE(producedMesh.CastsTo<A::Mesh>());
-               REQUIRE(producedMesh.IsSparse());
-            }
+            REQUIRE(producedMesh.GetCount() == 1);
+            REQUIRE(producedMesh.CastsTo<A::Mesh>());
+            REQUIRE(producedMesh.IsSparse());
          }
       #endif
-
-         WHEN("The mesh is created via abstractions") {
-            auto producedMesh = root.CreateUnit<A::Mesh>(Math::Box2 {});
-
-            // Update once                                              
-            root.Update(Time::zero());
-
-            THEN("Various traits change") {
-               root.DumpHierarchy();
-
-               REQUIRE(producedMesh.GetCount() == 1);
-               REQUIRE(producedMesh.CastsTo<A::Mesh>(1));
-               REQUIRE(producedMesh.IsSparse());
-            }
-         }
 
          // Check for memory leaks after each cycle                     
          REQUIRE(memoryState.Assert());
