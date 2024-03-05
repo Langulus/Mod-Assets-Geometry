@@ -5,11 +5,14 @@ project(LangulusModAssetsGeometry
     HOMEPAGE_URL    https://langulus.com
 )
 
-# Build the module                                                              
-add_library(LangulusModAssetsGeometry SHARED
-    source/MeshLibrary.cpp
-    source/Mesh.cpp
+file(GLOB_RECURSE
+	LANGULUS_MOD_ASSETS_GEOMETRY_SOURCES 
+	LIST_DIRECTORIES FALSE CONFIGURE_DEPENDS
+	source/*.cpp
 )
+
+# Build the module                                                              
+add_library(LangulusModAssetsGeometry SHARED ${LANGULUS_MOD_ASSETS_GEOMETRY_SOURCES})
 
 target_link_libraries(LangulusModAssetsGeometry 
     PRIVATE     Langulus
