@@ -46,7 +46,10 @@ private:
    bool FillGenerators(const Block&);
    template<class GENERATOR>
    void FillGeneratorsInner();
+
    void LoadFile(const Any&);
+   bool ReadOBJ(const A::File&);
+   bool WriteOBJ(const A::File&) const;
 
    // Generator functions for each supported type of data               
    using FGenerator = void(*)(Mesh*);

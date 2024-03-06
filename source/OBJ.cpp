@@ -5,168 +5,97 @@
 /// Distributed under GNU General Public License v3+                          
 /// See LICENSE file, or https://www.gnu.org/licenses                         
 ///                                                                           
+#include "Mesh.hpp"
 #include "OBJ.hpp"
 
 
-/// File intent                                                               
-enum class Intent {
-   Read, Write
-};
-
-/// PNG file struct helper and destructor                                     
-template<Intent INTENT>
-struct OBJFileHelper {
-   png_structp png_ptr = nullptr;
-   png_infop info_ptr = nullptr;
-
-   ~PNGFileHelper() {
-      if (png_ptr) {
-         if constexpr (INTENT == Intent::Read)
-            png_destroy_read_struct(&png_ptr, &info_ptr, nullptr);
-         else if constexpr (INTENT == Intent::Write)
-            png_destroy_write_struct(&png_ptr, &info_ptr);
-         png_ptr = nullptr;
-      }
-   }
-
-   /// A helper callback function to read a chunk from a PNG file             
-   static void Read(png_structp png_ptr, png_bytep outBytes, png_size_t byteCountToRead) {
-      png_voidp io_ptr = png_get_io_ptr(png_ptr);
-      if (not io_ptr)
-         return;
-
-      auto inputStream = static_cast<A::File::Reader*>(io_ptr);
-      Any outputBlock = Disown(Block::From(outBytes, byteCountToRead));
-      inputStream->Read(outputBlock);
-   }
-
-   /// A helper callback function to write a chunk to a PNG file              
-   static void Write(png_structp png_ptr, png_bytep inBytes, png_size_t byteCountToWrite) {
-      png_voidp io_ptr = png_get_io_ptr(png_ptr);
-      if (not io_ptr)
-         return;
-
-      auto outputStream = static_cast<A::File::Writer*>(io_ptr);
-      Any inputBlock = Disown(Block::From(inBytes, byteCountToWrite));
-      outputStream->Write(inputBlock);
-   }
-};
-
-/// Load PNG from file                                                        
+/// Load OBJ file                                                             
 ///   @param file - [in/out] the file to load from                            
-///   @param destination - [out] the texture to load to                       
-///   @return true if image was loaded without any problems                   
-bool Image::ReadPNG(const A::File& file) {
+///   @return true if model was loaded without any problems                   
+bool Mesh::ReadOBJ(const A::File& file) {
    auto loadTime = SteadyClock::Now();
-   auto stream = const_cast<A::File&>(file).NewReader();
+   auto stream = file.NewReader();
    if (not stream) {
       Logger::Error("Cannot open file: ", file);
       return false;
    }
 
-   // Check if file is PNG by reading the header                        
-   Bytes png_header;
-   png_header.Null(8);
+   // Empty mesh                                                     
+   Obj::Mesh m;
 
-   auto marker = stream->Read(png_header);
-   if (marker == 0) {
-      Logger::Error("Cannot read png_header from file: ", file);
-      return false;
+   // Add dummy position/texcoord/normal                             
+   m.positions << 0.0f;
+   m.positions << 0.0f;
+   m.positions << 0.0f;
+
+   m.texcoords << 0.0f;
+   m.texcoords << 0.0f;
+
+   m.normals << 0.0f;
+   m.normals << 0.0f;
+   m.normals << 1.0f;
+
+   // Data needed during parsing                                     
+   Obj::Data data;
+   data.mesh = &m;
+   data.material = 0;
+   data.line = 1;
+   data.base = file.GetFilePath().GetDirectory();
+
+   // Create buffer for reading file                                 
+   Text buffer;
+   buffer.Reserve(2 * Obj::BufferSize);
+   auto start = buffer.GetRaw();
+
+   for (;;) {
+      // Read another buffer's worth from file                       
+      auto read = stream->Read(buffer);
+      if (read == 0 and start == buffer.GetRaw())
+         break;
+
+      // Ensure buffer ends in a newline                             
+      if (read < Obj::BufferSize) {
+         if (read == 0 or start[read - 1] != '\n')
+            start[read++] = '\n';
+      }
+
+      const auto end = start + read;
+      if (end == buffer)
+         break;
+
+      // Find last new line                                          
+      auto last = end;
+      while (last > buffer.GetRaw()) {
+         last--;
+         if (*last == '\n')
+            break;
+      }
+
+      // Check there actually is a new line                          
+      if (*last != '\n')
+         break;
+
+      last++;
+
+      // Process buffer                                              
+      Obj::parse_buffer(&data, buffer.GetRaw(), last, stream);
+
+      // Copy overflow for next buffer                               
+      auto bytes = end - last;
+      memmove(buffer.GetRaw(), last, bytes);
+      start = buffer.GetRaw() + bytes;
    }
 
-   if (0 != png_sig_cmp(
-      reinterpret_cast<png_const_bytep>(png_header.GetRaw()), 
-      0, png_header.GetBytesize())
-   ) {
-      Logger::Error("File is not PNG: ", file);
-      return false;
-   }
-
-   const auto warning_fn = [](png_structp, png_const_charp txt) {
-      Logger::Warning("PNG warning: ", txt);
-   };
-
-   PNGFileHelper<Intent::Read> fileReader;
-   fileReader.png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, warning_fn);
-   if (not fileReader.png_ptr) {
-      Logger::Error("Cannot create PNG pointer: ", file);
-      return false;
-   }
-
-   png_set_read_fn(fileReader.png_ptr, stream, fileReader.Read);
-   png_set_sig_bytes(fileReader.png_ptr, 8);
-   fileReader.info_ptr = png_create_info_struct(fileReader.png_ptr);
-   if (not fileReader.info_ptr) {
-      Logger::Error("Cannot create PNG info struct: ", file);
-      return false;
-   }
-
-   // Read file info                                                    
-   auto& view = GetView();
-   png_read_info(fileReader.png_ptr, fileReader.info_ptr);
-   view.mWidth = png_get_image_width(fileReader.png_ptr, fileReader.info_ptr);
-   view.mHeight = png_get_image_height(fileReader.png_ptr, fileReader.info_ptr);
-   view.mDepth = 1;
-   view.mFrames = 1;
-
-   auto color_type = png_get_color_type(fileReader.png_ptr, fileReader.info_ptr);
-   auto bit_depth = png_get_bit_depth(fileReader.png_ptr, fileReader.info_ptr);
-   if (bit_depth == 16)   {
-      // Set strip from 16 bits to 8 bits                               
-      // We need only 8 bits per color channel                          
-      png_set_strip_16(fileReader.png_ptr);
-   }
-
-   // Pick the correct color format                                     
-   switch (color_type) {
-   case PNG_COLOR_TYPE_GRAY:
-      if (bit_depth < 8)
-         png_set_expand_gray_1_2_4_to_8(fileReader.png_ptr);
-      view.mFormat = MetaOf<Red8>();
-      break;
-
-   case PNG_COLOR_TYPE_GRAY_ALPHA:
-      // This type is always 8 or 16 bits but we already strip 16 bits  
-      png_set_gray_to_rgb(fileReader.png_ptr);
-      if (0 != png_get_valid(fileReader.png_ptr, fileReader.info_ptr, PNG_INFO_tRNS))
-         png_set_tRNS_to_alpha(fileReader.png_ptr);
-      view.mFormat = MetaOf<RGBA>();
-      break;
-
-   case PNG_COLOR_TYPE_RGB:
-      view.mFormat = MetaOf<RGB>();
-      break;
-
-   case PNG_COLOR_TYPE_RGBA:
-      view.mFormat = MetaOf<RGBA>();
-      break;
-
-   case PNG_COLOR_TYPE_PALETTE:
-      png_set_palette_to_rgb(fileReader.png_ptr);
-      if (0 != png_get_valid(fileReader.png_ptr, fileReader.info_ptr, PNG_INFO_tRNS))
-         png_set_tRNS_to_alpha(fileReader.png_ptr);
-      else
-         png_set_filler(fileReader.png_ptr, 0xFF, PNG_FILLER_AFTER);
-      view.mFormat = MetaOf<RGBA>();
-      break;
-
-   default:
-      Logger::Error("Unknown color type for PNG: ", file);
-      return false;
-   }
-
-   png_read_update_info(fileReader.png_ptr, fileReader.info_ptr);
-
-   // Read pixels                                                       
-   std::vector<uint8_t*> row_pointers;
-   row_pointers.reserve(view.mHeight);
-
-   auto pitch = png_get_rowbytes(fileReader.png_ptr, fileReader.info_ptr);
-   TAny<uint8_t> rawData;
-   rawData.New(pitch * view.mHeight);
-   for (uint32_t i = 0; i < view.mHeight; i++)
-      row_pointers.push_back(rawData.GetRaw() + i * pitch);
-   png_read_image(fileReader.png_ptr, row_pointers.data());
+   // Flush final object/group                                       
+   m.position_count = m.positions.GetCount() / 3;
+   m.texcoord_count = m.texcoords.GetCount() / 2;
+   m.normal_count = m.normals.GetCount() / 3;
+   m.color_count = m.colors.GetCount() / 3;
+   m.face_count = m.face_vertices.GetCount();
+   m.index_count = m.indices.GetCount();
+   m.material_count = m.materials.GetCount();
+   m.object_count = m.objects.GetCount();
+   m.group_count = m.groups.GetCount();
 
    // Save the contents                                                 
    Commit<Traits::Color>(Abandon(rawData));
@@ -176,74 +105,678 @@ bool Image::ReadPNG(const A::File& file) {
    return true;
 }
 
-/// Save to PNG file                                                          
-///   @param file - [in/out] the file to write to                             
-///   @param source - the texture to save                                     
-///   @return true if image was saved without any problems                    
-bool Image::WritePNG(const A::File& file) const {
-   auto rawData = GetData<Traits::Color>();
-   if (not rawData or not *rawData)
-      return false;
+/// Parse a chunk of obj file memory                                          
+///   @param data                                                             
+///   @param ptr                                                              
+///   @param end                                                              
+///   @param stream                                                           
+void Obj::parse_buffer(
+   Data* data, const char* ptr, const char* end, Ref<A::File::Reader>& stream
+) {
+   const char* p;
+   p = ptr;
 
-   //auto writeTime = SteadyClock::Now();
-   auto stream = const_cast<A::File&>(file).NewWriter(false);
-   if (not stream) {
-      Logger::Error("Cannot open file: ", file);
-      return false;
+   while (p != end) {
+      p = skip_whitespace(p);
+
+      switch (*p) {
+      case 'v':
+         // Parse a vertex                                              
+         p++;
+
+         switch (*p++) {
+         case ' ': case '\t':
+            p = parse_vertex(data, p);
+            break;
+         case 't':
+            p = parse_texcoord(data, p);
+            break;
+         case 'n':
+            p = parse_normal(data, p);
+            break;
+         default:
+            p--; // Roll p++ back in case *p was a newline              
+         }
+         break;
+
+      case 'f':
+         // Parse a face                                                
+         p++;
+
+         switch (*p++) {
+         case ' ': case '\t':
+            p = parse_face(data, p);
+            break;
+         default:
+            p--; // Roll p++ back in case *p was a newline              
+         }
+         break;
+
+      case 'o':
+         // Parse an object                                             
+         p++;
+
+         switch (*p++) {
+         case ' ': case '\t':
+            p = parse_object(data, p);
+            break;
+         default:
+            p--; // Roll p++ back in case *p was a newline              
+         }
+         break;
+
+      case 'g':
+         // Parse a group                                               
+         p++;
+
+         switch (*p++) {
+         case ' ': case '\t':
+            p = parse_group(data, p);
+            break;
+         default:
+            p--; // Roll p++ back in case *p was a newline              
+         }
+         break;
+
+      case 'm':
+         // Parse a material library                                    
+         p++;
+
+         if (Token {p, p + 5} == "tllib" and is_whitespace(p[5])) {
+            ptr = skip_whitespace(ptr + 5);
+
+            Path lib = data->base / Token {ptr, (ptr = skip_name(ptr))};
+            if (lib) {
+               auto file = stream->GetFile()->GetFolder()->GetFile(lib);
+               if (file)
+                  read_mtllib(data, file);
+            }
+         }
+         break;
+
+      case 'u':
+         // Parse a built-in material                                   
+         p++;
+
+         if (Token {p, p + 5} == "semtl" and is_whitespace(p[5]))
+            p = parse_usemtl(data, p + 5);
+         break;
+
+      case '#':
+         break;
+      }
+
+      p = skip_line(p);
+
+      data->line++;
    }
 
-   PNGFileHelper<Intent::Write> fileWriter;
-   fileWriter.png_ptr = png_create_write_struct(
-      PNG_LIBPNG_VER_STRING,
-      nullptr, nullptr, nullptr
-   );
+   if (data->mesh->colors) {
+      // Fill the remaining slots in the colors array                   
+      unsigned int ii;
+      for (ii = data->mesh->colors.GetCount(); ii < data->mesh->positions.GetCount(); ++ii)
+         data->mesh->colors << 1.0f;
+   }
+}
 
-   if (not fileWriter.png_ptr) {
-      Logger::Error("Cannot allocate PNG write-struct for file: ", file);
-      return false;
+/// @brief 
+/// @param data 
+/// @param file 
+/// @param stream 
+/// @return 
+int Obj::read_mtllib(Data* data, const A::File& file) {
+   const char* s;
+
+   // Read entire file                                                  
+   auto contents = file.ReadAs<Text>();
+   contents << '\n';
+
+   Material mtl;
+   int found_d = 0;
+   const char* p = contents.GetRaw();
+   const char* e = contents.GetRawEnd();
+
+   while (p < e) {
+      p = skip_whitespace(p);
+
+      switch (*p) {
+      case 'n':
+         p++;
+
+         if (Token {p, p + 5} == "ewmtl" and is_whitespace(p[5])) {
+            // Push previous material (if there is one)                 
+            if (mtl.name) {
+               data->mesh->materials << mtl;
+               mtl = {};
+            }
+
+            // Read name                                                
+            p += 5;
+            while (is_whitespace(*p))
+               p++;
+
+            s = p;
+            p = skip_name(p);
+
+            mtl.name = Token(s, p);
+         }
+         break;
+
+      case 'K':
+         if (p[1] == 'a')
+            p = read_mtl_triple(p + 2, mtl.Ka);
+         else if (p[1] == 'd')
+            p = read_mtl_triple(p + 2, mtl.Kd);
+         else if (p[1] == 's')
+            p = read_mtl_triple(p + 2, mtl.Ks);
+         else if (p[1] == 'e')
+            p = read_mtl_triple(p + 2, mtl.Ke);
+         else if (p[1] == 't')
+            p = read_mtl_triple(p + 2, mtl.Kt);
+         break;
+
+      case 'N':
+         if (p[1] == 's')
+            p = read_mtl_single(p + 2, &mtl.Ns);
+         else if (p[1] == 'i')
+            p = read_mtl_single(p + 2, &mtl.Ni);
+         break;
+
+      case 'T':
+         if (p[1] == 'r') {
+            float Tr;
+            p = read_mtl_single(p + 2, &Tr);
+            if (!found_d) {
+               // Ignore Tr if we've already read d                     
+               mtl.d = 1.0f - Tr;
+            }
+         }
+         else if (p[1] == 'f')
+            p = read_mtl_triple(p + 2, mtl.Tf);
+         break;
+
+      case 'd':
+         if (is_whitespace(p[1])) {
+            p = read_mtl_single(p + 1, &mtl.d);
+            found_d = 1;
+         }
+         break;
+
+      case 'i':
+         p++;
+
+         if (Token {p, p + 4} == "llum" and is_whitespace(p[4]))
+            p = read_mtl_int(p + 4, &mtl.illum);
+         break;
+
+      case 'm':
+         p++;
+
+         if (Token {p, p + 3} == "ap_") {
+            p += 3;
+
+            if (*p == 'K') {
+               p++;
+
+               if (is_whitespace(p[1])) {
+                  if (*p == 'a')
+                     p = read_map(data, p + 1, &mtl.map_Ka);
+                  else if (*p == 'd')
+                     p = read_map(data, p + 1, &mtl.map_Kd);
+                  else if (*p == 's')
+                     p = read_map(data, p + 1, &mtl.map_Ks);
+                  else if (*p == 'e')
+                     p = read_map(data, p + 1, &mtl.map_Ke);
+                  else if (*p == 't')
+                     p = read_map(data, p + 1, &mtl.map_Kt);
+               }
+            }
+            else if (*p == 'N') {
+               p++;
+
+               if (is_whitespace(p[1])) {
+                  if (*p == 's')
+                     p = read_map(data, p + 1, &mtl.map_Ns);
+                  else if (*p == 'i')
+                     p = read_map(data, p + 1, &mtl.map_Ni);
+               }
+            }
+            else if (*p == 'd') {
+               p++;
+
+               if (is_whitespace(*p))
+                  p = read_map(data, p, &mtl.map_d);
+            }
+            else if ((p[0] == 'b' or p[0] == 'B')
+            and p[1] == 'u'
+            and p[2] == 'm'
+            and p[3] == 'p'
+            and is_whitespace(p[4])) {
+               p = read_map(data, p + 4, &mtl.map_bump);
+            }
+         }
+         break;
+
+      case '#':
+         break;
+      }
+
+      p = skip_line(p);
    }
 
-   fileWriter.info_ptr = png_create_info_struct(fileWriter.png_ptr);
-   if (not fileWriter.info_ptr) {
-      Logger::Error("Cannot create PNG info-struct for file: ", file);
-      return false;
+   // Push final material                                               
+   if (mtl.name)
+      data->mesh->materials << mtl;
+   return 1;
+}
+
+/// @brief 
+/// @param data 
+/// @param ptr 
+/// @return 
+const char* Obj::parse_vertex(Data* data, const char* ptr) {
+   unsigned int ii;
+   float v;
+
+   for (ii = 0; ii < 3; ii++) {
+      ptr = parse_float(ptr, &v);
+      data->mesh->positions << v;
    }
 
-   png_set_write_fn(fileWriter.png_ptr, stream, fileWriter.Write, nullptr);
+   ptr = skip_whitespace(ptr);
+   if (not is_newline(*ptr)) {
+      /* Fill the colors array until it matches the size of the positions array */
+      for (ii = data->mesh->colors.GetCount(); ii < data->mesh->positions.GetCount() - 3; ++ii)
+         data->mesh->colors << 1.0f;
 
-   // Pick the correct color format                                     
-   auto& view = GetView();
-   int pngFormat;
-   if (view.mFormat->IsExact<Red8>())
-      pngFormat = PNG_COLOR_TYPE_GRAY;
-   else if (view.mFormat->IsExact<RGBA>())
-      pngFormat = PNG_COLOR_TYPE_RGBA;
-   else if (view.mFormat->IsExact<RGB>())
-      pngFormat = PNG_COLOR_TYPE_RGB;
-   else
-      LANGULUS_THROW(Write, "Unknown color type");
+      for (ii = 0; ii < 3; ++ii) {
+         ptr = parse_float(ptr, &v);
+         data->mesh->colors << v;
+      }
+   }
 
-   png_set_IHDR(
-      fileWriter.png_ptr, fileWriter.info_ptr,
-      static_cast<png_uint_32>(view.mWidth),
-      static_cast<png_uint_32>(view.mHeight),
-      8, pngFormat,
-      PNG_INTERLACE_NONE,
-      PNG_COMPRESSION_TYPE_BASE,
-      PNG_FILTER_TYPE_BASE
-   );
+   return ptr;
+}
 
-   png_write_info(fileWriter.png_ptr, fileWriter.info_ptr);
+/// @brief 
+/// @param data 
+/// @param ptr 
+/// @return 
+const char* Obj::parse_texcoord(Data* data, const char* ptr) {
+   unsigned int ii;
+   float v;
 
-   // Write data                                                        
-   uint8_t* rawDataPtr = const_cast<uint8_t*>(rawData->GetRawAs<uint8_t>());
-   const auto pitch = view.mWidth * view.mFormat->mSize;
-   TAny<png_byte*> rows;
-   rows.Reserve(view.mHeight);
-   for (Offset i = 0; i < view.mHeight; i++)
-      rows << reinterpret_cast<png_byte*>(rawDataPtr + i * pitch);
+   for (ii = 0; ii < 2; ii++) {
+      ptr = parse_float(ptr, &v);
+      data->mesh->texcoords << v;
+   }
 
-   png_write_image(fileWriter.png_ptr, rows.GetRaw());
-   png_write_end(fileWriter.png_ptr, nullptr);
-   return true;
+   return ptr;
+}
+
+/// @brief 
+/// @param data 
+/// @param ptr 
+/// @return 
+const char* Obj::parse_normal(Data* data, const char* ptr) {
+   unsigned int ii;
+   float v;
+
+   for (ii = 0; ii < 3; ii++) {
+      ptr = parse_float(ptr, &v);
+      data->mesh->normals << v;
+   }
+
+   return ptr;
+}
+
+/// @brief 
+/// @param data 
+/// @param ptr 
+/// @return 
+const char* Obj::parse_face(Data* data, const char* ptr) {
+   unsigned int count;
+   Index vn;
+   int   v;
+   int   t;
+   int   n;
+
+   ptr = skip_whitespace(ptr);
+   count = 0;
+
+   while (not is_newline(*ptr)) {
+      v = 0;
+      t = 0;
+      n = 0;
+
+      ptr = parse_int(ptr, &v);
+      if (*ptr == '/') {
+         ptr++;
+
+         if (*ptr != '/')
+            ptr = parse_int(ptr, &t);
+
+         if (*ptr == '/') {
+            ptr++;
+            ptr = parse_int(ptr, &n);
+         }
+      }
+
+      if (v < 0)
+         vn.p = (data->mesh->positions.GetCount() / 3) - (Idx)(-v);
+      else if (v > 0)
+         vn.p = (Idx)(v);
+      else
+         return ptr; /* Skip lines with no valid vertex index */
+
+      if (t < 0)
+         vn.t = (data->mesh->texcoords.GetCount() / 2) - (Idx)(-t);
+      else if (t > 0)
+         vn.t = (Idx)(t);
+      else
+         vn.t = 0;
+
+      if (n < 0)
+         vn.n = (data->mesh->normals.GetCount() / 3) - (Idx)(-n);
+      else if (n > 0)
+         vn.n = (Idx)(n);
+      else
+         vn.n = 0;
+
+      data->mesh->indices << vn;
+      count++;
+
+      ptr = skip_whitespace(ptr);
+   }
+
+   data->mesh->face_vertices << count;
+   data->mesh->face_materials << data->material;
+   data->group.face_count++;
+   data->object.face_count++;
+   return ptr;
+}
+
+/// @brief 
+/// @param data 
+/// @param ptr 
+/// @return 
+const char* Obj::parse_object(Data* data, const char* ptr) {
+   auto s = (ptr = skip_whitespace(ptr));
+   auto e = (ptr = skip_name(ptr));
+   flush_object(data);
+   data->object.name = Token(s, e);
+   return ptr;
+}
+
+/// @brief 
+/// @param data 
+/// @param ptr 
+/// @return 
+const char* Obj::parse_group(Data* data, const char* ptr) {
+   auto s = (ptr = skip_whitespace(ptr));
+   auto e = (ptr = skip_name(ptr));
+   flush_group(data);
+   data->group.name = Token(s, e);
+   return ptr;
+}
+
+/// @brief 
+/// @param data 
+/// @param ptr 
+/// @return 
+const char* Obj::parse_usemtl(Data* data, const char* ptr) {
+   auto s = (ptr = skip_whitespace(ptr));
+   auto e = (ptr = skip_name(ptr));
+
+   // Find an existing material with the same name                   
+   Material* mtl;
+   unsigned idx = 0;
+   while (idx < data->mesh->materials.GetCount()) {
+      mtl = &data->mesh->materials[idx];
+      if (mtl->name == Token(s, e))
+         break;
+
+      idx++;
+   }
+
+   // If doesn't exists, create a default one with this name         
+   // Note: this case happens when OBJ doesn't have its MTL          
+   if (idx == data->mesh->materials.GetCount()) {
+      Material new_mtl;
+      new_mtl.name = Token(s, e);
+      new_mtl.fallback = 1;
+      data->mesh->materials << new_mtl;
+   }
+
+   data->material = idx;
+   return ptr;
+}
+
+/// @brief 
+/// @param p 
+/// @param v 
+/// @return 
+const char* Obj::read_mtl_int(const char* p, int* v) {
+   return parse_int(p, v);
+}
+
+/// @brief 
+/// @param p 
+/// @param v 
+/// @return 
+const char* Obj::read_mtl_single(const char* p, float* v) {
+   return parse_float(p, v);
+}
+
+/// @brief 
+/// @param p 
+/// @param v 
+/// @return 
+const char* Obj::read_mtl_triple(const char* p, float v[3]) {
+   p = read_mtl_single(p, &v[0]);
+   p = read_mtl_single(p, &v[1]);
+   p = read_mtl_single(p, &v[2]);
+   return p;
+}
+
+/// @brief 
+/// @param data 
+/// @param ptr 
+/// @param map 
+/// @return 
+const char* Obj::read_map(Data* data, const char* ptr, Texture* map) {
+   ptr = skip_whitespace(ptr);
+
+   // Don't support options at present                               
+   if (*ptr == '-')
+      return ptr;
+
+   // Read name                                                      
+   map->name = Token(ptr, (ptr = skip_name(ptr)));
+   map->path = {data->base, map->name};
+   return ptr;
+}
+
+/// @brief 
+/// @param ptr 
+/// @param val 
+/// @return 
+const char* Obj::parse_int(const char* ptr, int* val) {
+   int sign;
+   int num;
+
+   if (*ptr == '-') {
+      sign = -1;
+      ptr++;
+   }
+   else sign = +1;
+
+   num = 0;
+   while (is_digit(*ptr))
+      num = 10 * num + (*ptr++ - '0');
+
+   *val = sign * num;
+   return ptr;
+}
+
+/// @brief 
+/// @param ptr 
+/// @param val 
+/// @return 
+const char* Obj::parse_float(const char* ptr, float* val) {
+   double        sign;
+   double        num;
+   double        fra;
+   double        div;
+   unsigned int  eval;
+   const double* powers;
+
+
+   ptr = skip_whitespace(ptr);
+
+   switch (*ptr) {
+   case '+':
+      sign = 1.0;
+      ptr++;
+      break;
+
+   case '-':
+      sign = -1.0;
+      ptr++;
+      break;
+
+   default:
+      sign = 1.0;
+      break;
+   }
+
+
+   num = 0.0;
+   while (is_digit(*ptr))
+      num = 10.0 * num + (double)(*ptr++ - '0');
+
+   if (*ptr == '.')
+      ptr++;
+
+   fra = 0.0;
+   div = 1.0;
+
+   while (is_digit(*ptr)) {
+      fra = 10.0 * fra + (double)(*ptr++ - '0');
+      div *= 10.0;
+   }
+
+   num += fra / div;
+
+   if (is_exponent(*ptr)) {
+      ptr++;
+
+      switch (*ptr) {
+      case '+':
+         powers = POWER_10_POS;
+         ptr++;
+         break;
+
+      case '-':
+         powers = POWER_10_NEG;
+         ptr++;
+         break;
+
+      default:
+         powers = POWER_10_POS;
+         break;
+      }
+
+      eval = 0;
+      while (is_digit(*ptr))
+         eval = 10 * eval + (*ptr++ - '0');
+
+      num *= (eval >= MAX_POWER) ? 0.0 : powers[eval];
+   }
+
+   *val = (float)(sign * num);
+   return ptr;
+}
+
+/// @brief 
+/// @param c 
+/// @return 
+int Obj::is_whitespace(char c) {
+   return c == ' ' or c == '\t' or c == '\r';
+}
+
+/// @brief 
+/// @param c 
+/// @return 
+int Obj::is_newline(char c) {
+   return c == '\n';
+}
+
+/// @brief 
+/// @param c 
+/// @return 
+int Obj::is_digit(char c) {
+   return c >= '0' and c <= '9';
+}
+
+/// @brief 
+/// @param c 
+/// @return 
+int Obj::is_exponent(char c) {
+   return c == 'e' or c == 'E';
+}
+
+/// Skip a name by going to the end of the line, and reverting back to first  
+/// symbol that isn't whitespace                                              
+///   @param ptr - data to scan                                               
+///   @return a pointer to the end of the name                                
+const char* Obj::skip_name(const char* ptr) {
+   auto s = ptr;
+   while (not is_newline(*ptr))
+      ptr++;
+   while (ptr > s and is_whitespace(*(ptr - 1)))
+      ptr--;
+   return ptr;
+}
+
+/// Skip all whitespace forward                                               
+///   @param ptr - data to scan                                               
+///   @return a pointer to beginning of next non-whitespace symbol            
+const char* Obj::skip_whitespace(const char* ptr) {
+   while (is_whitespace(*ptr))
+      ++ptr;
+   return ptr;
+}
+
+/// Skip forward until a new line begins                                      
+///   @param ptr - data to scan                                               
+///   @return a pointer to beginning of next line                             
+const char* Obj::skip_line(const char* ptr) {
+   while (not is_newline(*ptr++))
+      ;
+   return ptr;
+}
+
+/// Add the currently staged object to content                                
+///   @param data - mesh data                                                 
+void Obj::flush_object(Data* data) {
+   // Add object if not empty                                           
+   if (data->object.face_count > 0)
+      data->mesh->objects << Move(data->object);
+
+   // Reset for more data                                               
+   data->object.face_offset = data->mesh->face_vertices.GetCount();
+   data->object.index_offset = data->mesh->indices.GetCount();
+}
+
+/// Add the currently staged group to content                                 
+///   @param data - mesh data                                                 
+void Obj::flush_group(Data* data) {
+   // Add group if not empty                                            
+   if (data->group.face_count > 0)
+      data->mesh->groups << Move(data->group);
+
+   // Reset for more data                                               
+   data->group.face_offset = data->mesh->face_vertices.GetCount();
+   data->group.index_offset = data->mesh->indices.GetCount();
 }
