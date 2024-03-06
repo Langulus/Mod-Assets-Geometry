@@ -34,7 +34,7 @@ Mesh::Mesh(MeshLibrary* producer, const Neat& descriptor)
 
    if (filename) {
       // Load a filename if such was provided                           
-      auto fileInterface = producer->GetFolder()->GetFile(filename);
+      auto fileInterface = producer->GetFolder()->RelativeFile(filename);
       if (fileInterface)
          TODO();
    }

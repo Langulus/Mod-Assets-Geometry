@@ -22,7 +22,6 @@ struct Obj {
    /// Parsed texture descriptor                                              
    struct Texture {
       Text name;     // Texture name from .mtl file                     
-      Path path;     // Resolved path to texture                        
    };
 
    /// Parsed material descriptor                                             
@@ -73,17 +72,10 @@ struct Obj {
    /// Parsed object mesh                                                     
    struct Mesh {
       // Vertex data                                                    
-      Count position_count;
-      TAny<float> positions;
-
-      Count texcoord_count;
-      TAny<float> texcoords;
-
-      Count normal_count;
-      TAny<float> normals;
-
-      Count color_count;
-      TAny<float> colors;
+      TAny<Point3f> positions;
+      TAny<Point2f> texcoords;
+      TAny<Point3f> normals;
+      TAny<Point3f> colors;
 
       // Face data: one element for each face                           
       Count          face_count;
@@ -121,9 +113,6 @@ struct Obj {
 
       // Current line in file                                           
       unsigned int line;
-
-      // Base path for materials/textures                               
-      Path base;
    };
 
    // Size of buffer to read into                                       

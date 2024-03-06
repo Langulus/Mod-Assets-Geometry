@@ -24,23 +24,15 @@ bool Mesh::ReadOBJ(const A::File& file) {
    Obj::Mesh m;
 
    // Add dummy position/texcoord/normal                             
-   m.positions << 0.0f;
-   m.positions << 0.0f;
-   m.positions << 0.0f;
-
-   m.texcoords << 0.0f;
-   m.texcoords << 0.0f;
-
-   m.normals << 0.0f;
-   m.normals << 0.0f;
-   m.normals << 1.0f;
+   m.positions << 0;
+   m.texcoords << 0;
+   m.normals   << Point3f {0, 0, 1};
 
    // Data needed during parsing                                     
    Obj::Data data;
    data.mesh = &m;
    data.material = 0;
    data.line = 1;
-   data.base = file.GetFilePath().GetDirectory();
 
    // Create buffer for reading file                                 
    Text buffer;
@@ -86,11 +78,7 @@ bool Mesh::ReadOBJ(const A::File& file) {
       start = buffer.GetRaw() + bytes;
    }
 
-   // Flush final object/group                                       
-   m.position_count = m.positions.GetCount() / 3;
-   m.texcoord_count = m.texcoords.GetCount() / 2;
-   m.normal_count = m.normals.GetCount() / 3;
-   m.color_count = m.colors.GetCount() / 3;
+   // Flush final object/group                                          
    m.face_count = m.face_vertices.GetCount();
    m.index_count = m.indices.GetCount();
    m.material_count = m.materials.GetCount();
@@ -98,7 +86,10 @@ bool Mesh::ReadOBJ(const A::File& file) {
    m.group_count = m.groups.GetCount();
 
    // Save the contents                                                 
-   Commit<Traits::Color>(Abandon(rawData));
+   Commit<Traits::Place>   (Move(m.positions));
+   Commit<Traits::Aim>     (Move(m.normals));
+   Commit<Traits::Sampler> (Move(m.texcoords));
+   Commit<Traits::Color>   (Move(m.colors));
 
    Logger::Verbose(Logger::Green, "File ", file.GetFilePath(), 
       " loaded in ", SteadyClock::Now() - loadTime);
@@ -184,12 +175,12 @@ void Obj::parse_buffer(
 
          if (Token {p, p + 5} == "tllib" and is_whitespace(p[5])) {
             ptr = skip_whitespace(ptr + 5);
-
-            Path lib = data->base / Token {ptr, (ptr = skip_name(ptr))};
+            auto e = (ptr = skip_name(ptr));
+            const Path lib = Token {ptr, e};
             if (lib) {
-               auto file = stream->GetFile()->GetFolder()->GetFile(lib);
+               auto file = stream->GetFile()->RelativeFile(lib);
                if (file)
-                  read_mtllib(data, file);
+                  read_mtllib(data, *file);
             }
          }
          break;
@@ -213,9 +204,10 @@ void Obj::parse_buffer(
 
    if (data->mesh->colors) {
       // Fill the remaining slots in the colors array                   
-      unsigned int ii;
-      for (ii = data->mesh->colors.GetCount(); ii < data->mesh->positions.GetCount(); ++ii)
-         data->mesh->colors << 1.0f;
+      for (auto ii = data->mesh->colors.GetCount();
+                ii < data->mesh->positions.GetCount();
+              ++ii)
+         data->mesh->colors << 1;
    }
 }
 
@@ -347,10 +339,8 @@ int Obj::read_mtllib(Data* data, const A::File& file) {
                if (is_whitespace(*p))
                   p = read_map(data, p, &mtl.map_d);
             }
-            else if ((p[0] == 'b' or p[0] == 'B')
-            and p[1] == 'u'
-            and p[2] == 'm'
-            and p[3] == 'p'
+            else if (Token {p, p + 4} == "bump"
+            or Token {p, p + 4} == "Bump"
             and is_whitespace(p[4])) {
                p = read_map(data, p + 4, &mtl.map_bump);
             }
@@ -370,63 +360,59 @@ int Obj::read_mtllib(Data* data, const A::File& file) {
    return 1;
 }
 
-/// @brief 
-/// @param data 
-/// @param ptr 
-/// @return 
+/// Parse three floats for a vertex position, and optionally three floats     
+/// for RGB color                                                             
+///   @param data - the mesh to save data in                                  
+///   @param ptr - text to parse                                              
+///   @return pointer to the next statement for parsing                       
 const char* Obj::parse_vertex(Data* data, const char* ptr) {
-   unsigned int ii;
-   float v;
-
-   for (ii = 0; ii < 3; ii++) {
-      ptr = parse_float(ptr, &v);
-      data->mesh->positions << v;
-   }
-
+   Point3f v;
+   ptr = parse_float(ptr, &v[0]);
+   ptr = parse_float(ptr, &v[1]);
+   ptr = parse_float(ptr, &v[2]);
+   data->mesh->positions << v;
    ptr = skip_whitespace(ptr);
+
    if (not is_newline(*ptr)) {
-      /* Fill the colors array until it matches the size of the positions array */
-      for (ii = data->mesh->colors.GetCount(); ii < data->mesh->positions.GetCount() - 3; ++ii)
-         data->mesh->colors << 1.0f;
+      // Fill the colors array until it matches the size of the         
+      // positions array. I guess it is possible to have vertices       
+      // without color?                                                 
+      for (auto ii = data->mesh->colors.GetCount();
+                ii < data->mesh->positions.GetCount() - 1;
+              ++ii)
+         data->mesh->colors << 1;
 
-      for (ii = 0; ii < 3; ++ii) {
-         ptr = parse_float(ptr, &v);
-         data->mesh->colors << v;
-      }
+      ptr = parse_float(ptr, &v[0]);
+      ptr = parse_float(ptr, &v[1]);
+      ptr = parse_float(ptr, &v[2]);
+      data->mesh->colors << v;
    }
 
    return ptr;
 }
 
-/// @brief 
-/// @param data 
-/// @param ptr 
-/// @return 
+/// Parse two floats for texture coordinates                                  
+///   @param data - the mesh to save data in                                  
+///   @param ptr - text to parse                                              
+///   @return pointer to the next statement for parsing                       
 const char* Obj::parse_texcoord(Data* data, const char* ptr) {
-   unsigned int ii;
-   float v;
-
-   for (ii = 0; ii < 2; ii++) {
-      ptr = parse_float(ptr, &v);
-      data->mesh->texcoords << v;
-   }
-
+   Point2f v;
+   ptr = parse_float(ptr, &v[0]);
+   ptr = parse_float(ptr, &v[1]);
+   data->mesh->texcoords << v;
    return ptr;
 }
 
-/// @brief 
-/// @param data 
-/// @param ptr 
-/// @return 
+/// Parse three floats for normal coordinates                                 
+///   @param data - the mesh to save data in                                  
+///   @param ptr - text to parse                                              
+///   @return pointer to the next statement for parsing                       
 const char* Obj::parse_normal(Data* data, const char* ptr) {
-   unsigned int ii;
-   float v;
-
-   for (ii = 0; ii < 3; ii++) {
-      ptr = parse_float(ptr, &v);
-      data->mesh->normals << v;
-   }
-
+   Point3f v;
+   ptr = parse_float(ptr, &v[0]);
+   ptr = parse_float(ptr, &v[1]);
+   ptr = parse_float(ptr, &v[2]);
+   data->mesh->normals << v;
    return ptr;
 }
 
@@ -435,19 +421,13 @@ const char* Obj::parse_normal(Data* data, const char* ptr) {
 /// @param ptr 
 /// @return 
 const char* Obj::parse_face(Data* data, const char* ptr) {
-   unsigned int count;
-   Index vn;
-   int   v;
-   int   t;
-   int   n;
-
    ptr = skip_whitespace(ptr);
-   count = 0;
+   unsigned count = 0;
 
    while (not is_newline(*ptr)) {
-      v = 0;
-      t = 0;
-      n = 0;
+      int v = 0;
+      int t = 0;
+      int n = 0;
 
       ptr = parse_int(ptr, &v);
       if (*ptr == '/') {
@@ -462,24 +442,25 @@ const char* Obj::parse_face(Data* data, const char* ptr) {
          }
       }
 
+      Index vn;
       if (v < 0)
-         vn.p = (data->mesh->positions.GetCount() / 3) - (Idx)(-v);
+         vn.p = data->mesh->positions.GetCount() - static_cast<Idx>(-v);
       else if (v > 0)
-         vn.p = (Idx)(v);
+         vn.p = static_cast<Idx>(v);
       else
-         return ptr; /* Skip lines with no valid vertex index */
+         return ptr; // Skip lines with no valid vertex index           
 
       if (t < 0)
-         vn.t = (data->mesh->texcoords.GetCount() / 2) - (Idx)(-t);
+         vn.t = data->mesh->texcoords.GetCount() - static_cast<Idx>(-t);
       else if (t > 0)
-         vn.t = (Idx)(t);
+         vn.t = static_cast<Idx>(t);
       else
          vn.t = 0;
 
       if (n < 0)
-         vn.n = (data->mesh->normals.GetCount() / 3) - (Idx)(-n);
+         vn.n = data->mesh->normals.GetCount() - static_cast<Idx>(-n);
       else if (n > 0)
-         vn.n = (Idx)(n);
+         vn.n = static_cast<Idx>(n);
       else
          vn.n = 0;
 
@@ -573,9 +554,9 @@ const char* Obj::read_mtl_single(const char* p, float* v) {
 /// @param v 
 /// @return 
 const char* Obj::read_mtl_triple(const char* p, float v[3]) {
-   p = read_mtl_single(p, &v[0]);
-   p = read_mtl_single(p, &v[1]);
-   p = read_mtl_single(p, &v[2]);
+   p = read_mtl_single(p, v + 0);
+   p = read_mtl_single(p, v + 1);
+   p = read_mtl_single(p, v + 2);
    return p;
 }
 
@@ -592,8 +573,8 @@ const char* Obj::read_map(Data* data, const char* ptr, Texture* map) {
       return ptr;
 
    // Read name                                                      
-   map->name = Token(ptr, (ptr = skip_name(ptr)));
-   map->path = {data->base, map->name};
+   auto e = (ptr = skip_name(ptr));
+   map->name = Token(ptr, e);
    return ptr;
 }
 
