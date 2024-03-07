@@ -36,7 +36,7 @@ Mesh::Mesh(MeshLibrary* producer, const Neat& descriptor)
       // Load a filename if such was provided                           
       auto fileInterface = producer->GetFolder()->RelativeFile(filename);
       if (fileInterface)
-         TODO();
+         ReadOBJ(*fileInterface);
    }
    else {
       // Consider all provided data                                     
@@ -57,6 +57,7 @@ Mesh::Mesh(MeshLibrary* producer, const Neat& descriptor)
       }
    }
 
+   Couple(descriptor);
    VERBOSE_MESHES("Initialized");
 }
 
@@ -128,13 +129,13 @@ void Mesh::FromPrimitive(const Block& data) {
 ///   @param descriptor - the file to load                                    
 void Mesh::LoadFile(const Any& descriptor) {
    descriptor.ForEach(
-      [&](const A::File&) {
-         TODO();
-		},
+      [&](const A::File& file) {
+         ReadOBJ(file);
+      },
       [&](const Text& path) {
 			auto file = GetRuntime()->GetFile(path);
 			if (file)
-            TODO();
+            ReadOBJ(*file);
       }
    );
 }

@@ -15,10 +15,6 @@
 bool Mesh::ReadOBJ(const A::File& file) {
    auto loadTime = SteadyClock::Now();
    auto stream = file.NewReader();
-   if (not stream) {
-      Logger::Error("Cannot open file: ", file);
-      return false;
-   }
 
    // Empty mesh                                                     
    Obj::Mesh m;
@@ -339,8 +335,7 @@ int Obj::read_mtllib(Data* data, const A::File& file) {
                if (is_whitespace(*p))
                   p = read_map(data, p, &mtl.map_d);
             }
-            else if (Token {p, p + 4} == "bump"
-            or Token {p, p + 4} == "Bump"
+            else if ((Token {p, p + 4} == "bump" or Token {p, p + 4} == "Bump")
             and is_whitespace(p[4])) {
                p = read_map(data, p + 4, &mtl.map_bump);
             }

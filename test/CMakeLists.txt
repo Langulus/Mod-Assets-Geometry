@@ -13,6 +13,7 @@ target_link_libraries(LangulusModAssetsGeometryTest
 
 add_dependencies(LangulusModAssetsGeometryTest
 	LangulusModAssetsGeometry
+	LangulusModAssetsImages
 	LangulusModFileSystem
 )
 
@@ -27,4 +28,16 @@ add_custom_command(
     TARGET LangulusModAssetsGeometryTest POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory
 		"$<TARGET_FILE_DIR:LangulusModAssetsGeometryTest>/data/assets/meshes"
+    COMMAND ${CMAKE_COMMAND} -E copy
+		"${CMAKE_CURRENT_SOURCE_DIR}/data/maxwell.obj"
+		"$<TARGET_FILE_DIR:LangulusModAssetsGeometryTest>/data/assets/meshes/maxwell/maxwell.obj"
+    COMMAND ${CMAKE_COMMAND} -E copy
+		"${CMAKE_CURRENT_SOURCE_DIR}/data/maxwell.mtl"
+		"$<TARGET_FILE_DIR:LangulusModAssetsGeometryTest>/data/assets/meshes/maxwell/maxwell.mtl"
+    COMMAND ${CMAKE_COMMAND} -E copy
+		"${CMAKE_CURRENT_SOURCE_DIR}/data/dingus_nowhiskers.png"
+		"$<TARGET_FILE_DIR:LangulusModAssetsGeometryTest>/data/assets/meshes/maxwell/dingus_nowhiskers.png"
+    COMMAND ${CMAKE_COMMAND} -E copy
+		"${CMAKE_CURRENT_SOURCE_DIR}/data/dingus_whiskers.png"
+		"$<TARGET_FILE_DIR:LangulusModAssetsGeometryTest>/data/assets/meshes/maxwell/dingus_whiskers.png"
 )
