@@ -439,21 +439,21 @@ const char* Obj::parse_face(Data* data, const char* ptr) {
 
       Index vn;
       if (v < 0)
-         vn.p = data->mesh->positions.GetCount() - static_cast<Idx>(-v);
+         vn.p = static_cast<Idx>(data->mesh->positions.GetCount() - static_cast<Count>(-v));
       else if (v > 0)
          vn.p = static_cast<Idx>(v);
       else
          return ptr; // Skip lines with no valid vertex index           
 
       if (t < 0)
-         vn.t = data->mesh->texcoords.GetCount() - static_cast<Idx>(-t);
+         vn.t = static_cast<Idx>(data->mesh->texcoords.GetCount() - static_cast<Count>(-t));
       else if (t > 0)
          vn.t = static_cast<Idx>(t);
       else
          vn.t = 0;
 
       if (n < 0)
-         vn.n = data->mesh->normals.GetCount() - static_cast<Idx>(-n);
+         vn.n = static_cast<Idx>(data->mesh->normals.GetCount() - static_cast<Count>(-n));
       else if (n > 0)
          vn.n = static_cast<Idx>(n);
       else
@@ -504,7 +504,7 @@ const char* Obj::parse_usemtl(Data* data, const char* ptr) {
    auto s = (ptr = skip_whitespace(ptr));
    auto e = (ptr = skip_name(ptr));
 
-   // Find an existing material with the same name                   
+   // Find an existing material with the same name                      
    Material* mtl;
    unsigned idx = 0;
    while (idx < data->mesh->materials.GetCount()) {
@@ -515,8 +515,8 @@ const char* Obj::parse_usemtl(Data* data, const char* ptr) {
       idx++;
    }
 
-   // If doesn't exists, create a default one with this name         
-   // Note: this case happens when OBJ doesn't have its MTL          
+   // If doesn't exists, create a default one with this name            
+   // Note: this case happens when OBJ doesn't have its MTL             
    if (idx == data->mesh->materials.GetCount()) {
       Material new_mtl;
       new_mtl.name = Token(s, e);
@@ -563,11 +563,11 @@ const char* Obj::read_mtl_triple(const char* p, float v[3]) {
 const char* Obj::read_map(Data* data, const char* ptr, Texture* map) {
    ptr = skip_whitespace(ptr);
 
-   // Don't support options at present                               
+   // Don't support options at present                                  
    if (*ptr == '-')
       return ptr;
 
-   // Read name                                                      
+   // Read name                                                         
    auto e = (ptr = skip_name(ptr));
    map->name = Token(ptr, e);
    return ptr;

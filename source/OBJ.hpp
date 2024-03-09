@@ -63,10 +63,10 @@ struct Obj {
 
    /// Parsed object group                                                    
    struct Group {
-      Text name;                       // Group name                    
-      unsigned int face_count = 0;     // Number of faces               
-      unsigned int face_offset = 0;    // First face in fastObjMesh face_* arrays
-      unsigned int index_offset = 0;   // First index in fastObjMesh indices array
+      Text name;                 // Group name                          
+      Offset face_count = 0;     // Number of faces                     
+      Offset face_offset = 0;    // First face in fastObjMesh face_* arrays
+      Offset index_offset = 0;   // First index in fastObjMesh indices array
    };
 
    /// Parsed object mesh                                                     
@@ -79,8 +79,8 @@ struct Obj {
 
       // Face data: one element for each face                           
       Count          face_count;
-      TAny<unsigned> face_vertices;
-      TAny<unsigned> face_materials;
+      TAny<Offset>   face_vertices;
+      TAny<Offset>   face_materials;
 
       // Index data: one element for each face vertex                   
       Count          index_count;
@@ -109,10 +109,10 @@ struct Obj {
       Group group;
 
       // Current material index                                         
-      unsigned int material;
+      Offset material;
 
       // Current line in file                                           
-      unsigned int line;
+      Offset line;
    };
 
    // Size of buffer to read into                                       
