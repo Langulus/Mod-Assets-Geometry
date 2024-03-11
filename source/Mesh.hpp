@@ -90,7 +90,7 @@ bool Mesh::FillGenerators(const Block& data) {
       else if (mView.mTopology->CastsTo<A::Point>())
          FillGeneratorsInner<GENERATOR<PRIMITIVE, A::Point>>();
       else
-         LANGULUS_THROW(Mesh, "Unsupported topology");
+         LANGULUS_OOPS(Mesh, "Unsupported topology");
       return true;
    }
 

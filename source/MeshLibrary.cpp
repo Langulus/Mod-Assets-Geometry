@@ -7,12 +7,12 @@
 ///                                                                           
 #include "MeshLibrary.hpp"
 
-
 LANGULUS_DEFINE_MODULE(
    MeshLibrary, 9, "AssetsGeometry",
    "Mesh reader, writer and generator", "",
    MeshLibrary, Mesh, Traits::Tesselation
 )
+
 
 /// Module construction                                                       
 ///   @param runtime - the runtime that owns the module                       
