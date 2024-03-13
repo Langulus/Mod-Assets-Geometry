@@ -7,6 +7,8 @@
 ///                                                                           
 #pragma once
 #include "Box.inl"
+#include <Langulus/Image.hpp>
+#include <Math/Scale.hpp>
 
 template<CT::Vector T>
 struct TLabel;

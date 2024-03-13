@@ -19,6 +19,8 @@
 #include "generators/Triangle.inl"
 #include "generators/Zode.inl"
 
+#include <Langulus/IO.hpp>
+
 
 /// Mesh construction                                                         
 ///   @param producer - the producer                                          

@@ -13,6 +13,7 @@
 #include <Math/Primitives/Cylinder.hpp>
 #include <Math/Mapping.hpp>
 #include <Math/Color.hpp>
+#include <Langulus/Material.hpp>
 
 //TODO Unfortunately, due to compiler bugs in MSVC and Clang, we can't
 // generalize these generators yet. Some day we will...
