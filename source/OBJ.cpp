@@ -710,7 +710,7 @@ const char* Obj::read_mtl_triple(const char* p, float v[3]) {
 /// @param ptr 
 /// @param map 
 /// @return 
-const char* Obj::read_map(Data* data, const char* ptr, Texture* map) {
+const char* Obj::read_map(Data*, const char* ptr, Texture* map) {
    ptr = skip_whitespace(ptr);
 
    // Don't support options at present                                  
