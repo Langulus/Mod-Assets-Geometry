@@ -70,7 +70,6 @@ void Mesh::FillGeneratorsInner() {
    mGenerators.Insert(MetaOf<Traits::Aim>(),        GENERATOR::Normals);
    mGenerators.Insert(MetaOf<Traits::Sampler>(),    GENERATOR::TextureCoords);
    mGenerators.Insert(MetaOf<Traits::Material>(),   GENERATOR::Materials);
-   mGenerators.Insert(MetaOf<Traits::Transform>(),  GENERATOR::Instances);
    mLODgenerator = GENERATOR::Detail;
 }
 

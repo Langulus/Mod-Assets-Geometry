@@ -42,10 +42,10 @@ Mesh::Mesh(MeshLibrary* producer, const Neat& descriptor)
    }
    else {
       // Consider all provided data                                     
-      if (mDescriptor.ExtractData(mView)) {
+      if (descriptor.ExtractData(mView)) {
          // Upload raw data if any                                      
          Bytes rawData;
-         if (mDescriptor.ExtractData(rawData))
+         if (descriptor.ExtractData(rawData))
             TODO();
       }
       else {

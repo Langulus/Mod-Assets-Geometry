@@ -127,7 +127,6 @@ struct GenerateBox {
    static void Normals(Mesh*);
    static void TextureCoords(Mesh*);
    static void Materials(Mesh*);
-   static void Instances(Mesh*);
 };
 
 #define GENERATE() template<CT::Box T, CT::Topology TOPOLOGY> \
@@ -255,6 +254,9 @@ GENERATE() Indices(Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() TextureCoords(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
+      if (model->GetTextureMapper() == MapMode::Auto)
+         model->SetTextureMapper(MapMode::Face);
+
       if (model->GetTextureMapper() == MapMode::Model) {
          // Generate model mapping                                      
          TAny<PointType> data;
@@ -352,10 +354,6 @@ GENERATE() Materials(Mesh* model) {
       TODO();
    }
    else LANGULUS_ERROR("Unsupported topology for box colors");
-}
-
-GENERATE() Instances(Mesh*) {
-   TODO();
 }
 
 #undef GENERATE

@@ -15,6 +15,23 @@ CATCH_TRANSLATE_EXCEPTION(::Langulus::Exception const& ex) {
    return ::std::string {Token {serialized}};
 }
 
+namespace Catch
+{
+   template<CT::Stringifiable T>
+   struct StringMaker<T> {
+      static std::string convert(T const& value) {
+         return ::std::string {Token {static_cast<Text>(value)}};
+      }
+   };
+
+   /// Save catch2 from doing infinite recursions with Block types            
+   template<CT::Block T>
+   struct is_range<T> {
+      static const bool value = false;
+   };
+
+}
+
 SCENARIO("Loading non-existent file", "[mesh]") {
    static Allocator::State memoryState;
 
@@ -68,6 +85,13 @@ SCENARIO("Mesh creation", "[mesh]") {
             REQUIRE(producedMesh.CastsTo<A::Mesh>(1));
             REQUIRE(producedMesh.IsSparse());
             REQUIRE(root.GetUnits().GetCount() == 1);
+
+            THEN("Generate a LOD level, that should be the same") {
+               auto sameMesh = producedMesh.As<A::Mesh>().GetLOD({});
+               root.DumpHierarchy();
+
+               REQUIRE(sameMesh == producedMesh.As<A::Mesh*>());
+            }
          }
          
       #if LANGULUS_FEATURE(MANAGED_REFLECTION)
