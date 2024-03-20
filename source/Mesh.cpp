@@ -27,9 +27,8 @@
 ///   @param descriptor - instructions for generator                          
 Mesh::Mesh(MeshLibrary* producer, const Neat& descriptor)
    : A::Mesh {MetaOf<::Mesh>(), producer, descriptor} {
-   VERBOSE_MESHES("Initializing...");
-
    // Get a path from the descriptor                                    
+   VERBOSE_MESHES("Initializing...");
    Path filename;
    if (not descriptor.ExtractTrait<Traits::Name, Traits::Path>(filename))
       descriptor.ExtractDataAs(filename);
@@ -50,12 +49,8 @@ Mesh::Mesh(MeshLibrary* producer, const Neat& descriptor)
       }
       else {
          // Configure a generator, based on provided primitives         
-         descriptor.ForEach([&](const Block& group) {
-            FromPrimitive(group);
-         });
-
-         LANGULUS_ASSERT(mGenerators, Mesh,
-            "No generators found in mesh");
+         FromDescriptor(descriptor);
+         LANGULUS_ASSERT(mGenerators, Mesh, "No generators found in mesh");
       }
    }
 
@@ -112,19 +107,43 @@ Ref<A::Mesh> Mesh::GetLOD(const LOD& lod) const {
    return const_cast<Mesh*>(this);
 }
 
+/// Analyze a descriptor, fill in any default properties that are missing     
+/// by calling the appropriate GENERATOR::Default                             
+///   @param desc - the descriptor to complete                                
+bool Mesh::AutocompleteDescriptor(Construct& desc) {
+   // The descriptor should have some primitive defined                 
+   const auto primitive = desc.GetDescriptor().FindType<A::Primitive>();
+   if (not primitive)
+      return false;
+
+   // The descriptor might or might not have the topology defined       
+   const auto ttraits = desc.GetDescriptor().GetTraits<Traits::Topology>();
+   DMeta topology;
+   if (ttraits and *ttraits)
+      topology = ttraits[0].As<DMeta>();
+
+   return AutocompleteInner<GenerateBox,  Box2 >(desc, primitive, topology)
+       or AutocompleteInner<GenerateBox,  Box3 >(desc, primitive, topology)
+       or AutocompleteInner<GenerateGrid, Grid2>(desc, primitive, topology)
+       or AutocompleteInner<GenerateGrid, Grid3>(desc, primitive, topology);
+}
+
 /// Create mesh generator by analyzing A::Primitive                           
 ///   @param data - container that contains the primitive                     
-void Mesh::FromPrimitive(const Block& data) {
-   if (not data.CastsTo<A::Primitive>())
-      return;
-
+void Mesh::FromDescriptor(const Neat& desc) {
    mGenerators.Clear();
 
-   if       (FillGenerators<GenerateBox,  Box2>(data));
-   else if  (FillGenerators<GenerateBox,  Box3>(data));
-   else if  (FillGenerators<GenerateGrid, Grid2>(data));
-   else if  (FillGenerators<GenerateGrid, Grid3>(data));
-   else TODO();
+   const auto primitive = desc.FindType<A::Primitive>();
+   LANGULUS_ASSERT(primitive, Mesh, "No primitive in descriptor: ", desc);
+
+   if       (FillGenerators<GenerateBox,  Box2 >(primitive));
+   else if  (FillGenerators<GenerateBox,  Box3 >(primitive));
+   else if  (FillGenerators<GenerateGrid, Grid2>(primitive));
+   else if  (FillGenerators<GenerateGrid, Grid3>(primitive));
+   else LANGULUS_OOPS(Mesh,
+      "Shouldn't be reached, make sure descriptor is a "
+      "valid mesh descriptor prior to entering this function"
+   );
 }
 
 /// Load mesh via filename/file interface                                     

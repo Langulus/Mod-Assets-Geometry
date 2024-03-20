@@ -44,7 +44,7 @@ struct GenerateTriangle {
       PointType {    0,-Half, 0},
    };
 
-   NOD() static Construct Default(Neat&&);
+   NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
@@ -64,14 +64,11 @@ struct GenerateTriangle {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Triangle T, CT::Topology TOPOLOGY>
-Construct GenerateTriangle<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   auto d = Forward<Neat>(descriptor);
-   d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
+bool GenerateTriangle<T, TOPOLOGY>::Default(Construct& desc) {
+   auto& d = desc.GetDescriptor();
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      // A box made out of triangles                                    
-      d.SetDefaultTrait<Traits::Topology>(
-         MetaOf<TOPOLOGY>());
+      // A solid triangles                                              
       d.SetDefaultTrait<Traits::Place>(
          MetaOf<TTriangle<PointType>>());
       d.SetDefaultTrait<Traits::Sampler>(
@@ -83,22 +80,21 @@ Construct GenerateTriangle<T, TOPOLOGY>::Default(Neat&& descriptor) {
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
-      // A box made out of lines                                        
-      d.SetDefaultTrait<Traits::Topology>(
-         MetaOf<TOPOLOGY>());
+      // A triangle of lines                                            
       d.SetDefaultTrait<Traits::Place>(
          MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
-      // A box made out of points                                       
-      d.SetDefaultTrait<Traits::Topology>(
-         MetaOf<TOPOLOGY>());
+      // A triangle of points                                           
       d.SetDefaultTrait<Traits::Place>(
          MetaOf<PointType>());
    }
-   else LANGULUS_ERROR("Unsupported topology for box");
+   else return false;
 
-   return Construct::From<A::Mesh>(Abandon(d));
+   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTrait<Traits::MapMode>(MapMode::Model);
+   desc.SetType<A::Mesh>();
+   return true;
 }
 
 /// Generate box level of detail, giving a LOD state                          

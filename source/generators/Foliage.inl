@@ -38,7 +38,7 @@ struct GenerateFoliage {
    using PointType = typename T::PointType;
    static constexpr Count Dimensions = T::MemberCount;
 
-   NOD() static Construct Default(Neat&&);
+   NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
@@ -58,19 +58,19 @@ struct GenerateFoliage {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Foliage T, CT::Topology TOPOLOGY>
-Construct GenerateFoliage<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   auto d = Forward<Neat>(descriptor);
+bool GenerateFoliage<T, TOPOLOGY>::Default(Construct& desc) {
+   auto& d = desc.GetDescriptor();
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // Foliage made out of triangles                                  
-      d.SetDefaultTrait<Traits::Topology>(
-         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
          MetaOf<TTriangle<PointType>>());
    }
-   else LANGULUS_ERROR("Unsupported topology for line");
+   else return false;
 
-   return Construct::From<A::Mesh>(Abandon(d));
+   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
+   desc.SetType<A::Mesh>();
+   return true;
 }
 
 /// Generate foliage level of detail, giving a LOD state                      

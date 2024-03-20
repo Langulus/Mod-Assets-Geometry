@@ -25,7 +25,7 @@ MeshLibrary::MeshLibrary(Runtime* runtime, const Neat&)
    //TODO configure mFolder from descriptor
 
    try {
-      mMeshFolder = Path {"assets"} / "meshes";
+      mMeshFolder = "assets/meshes";
       mFolder = GetRuntime()->GetFolder(mMeshFolder);
    }
    catch (...) {
@@ -41,10 +41,44 @@ MeshLibrary::MeshLibrary(Runtime* runtime, const Neat&)
    VERBOSE_MESHES("Initialized");
 }
 
-/// Create/Destroy meshes                                                     
+/// Create/destroy meshes                                                     
 ///   @param verb - the creation/destruction verb                             
 void MeshLibrary::Create(Verb& verb) {
-   mMeshes.Create(verb);
+   Construct request;
+   verb.ForEachDeep(
+      [&](const Construct& construct) {
+         // For each construct...                                       
+         if (not construct.CastsTo<A::Mesh>())
+            return;
+         request = construct;
+      },
+      [&](const DMeta& type) {
+         // For each type...                                            
+         if (not type or not type->CastsTo<A::Mesh>())
+            return;
+         request = Construct {type};
+      }
+   );
+
+   if (request.IsUntyped())
+      return;
+
+   // Mesh descriptor might be partial, so we attempt to autocomplete it
+   // with default traits, provided by the desired generator. This      
+   // ensures, that partial requests can match other partial requests,  
+   // if they end up the same after the implicit traits are considered  
+   // It's like an additional level of normalization over Neat          
+   if (Mesh::AutocompleteDescriptor(request)) {
+      VERBOSE_MESHES("Mesh autocompleted to: ", request);
+      auto local = verb.Fork(&request);
+      mMeshes.Create(local);
+      verb << Abandon(local.GetOutput());
+   }
+   else {
+      // Couldn't be normalized more, but we can still attempt to make  
+      // the mesh, it probably contains a filename, or raw data         
+      mMeshes.Create(verb);
+   }
 }
 
 /// Get the mesh library folder                                               

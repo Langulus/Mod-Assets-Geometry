@@ -37,10 +37,18 @@ namespace Langulus::CT
 
 
 ///                                                                           
+///   Zodes are spherical segments, that are designed to be indexed from the  
+/// origin outwards, for highly optimized terrain rendering. Imagine, that    
+/// origin is at the player, and they are surrounded by 360/angular size      
+/// number of zodes, each drawn from the player position outward. Zodes are   
+/// regenerated, when the player moves too far away from the origin. Detail   
+/// levels are generated, by getting closer to the surface of the zode, and   
+/// generating a zode with less curvature, for the more detailed segment.     
+///                                                                           
 /// An example zode with tesselation of 3                                     
 /// The zode is always on the XY plane, at Z=0                                
 ///                                                                           
-///                         radial size                                       
+///                         angular size                                      
 ///                    \ <--------------->  /                                 
 ///                     \                  /                                  
 ///            (0.5;0)    ________________    (0;0.5)                         
@@ -93,7 +101,7 @@ struct GenerateZode {
 
    static_assert(Dimensions >= 3, "Zode should be at least 3D");
 
-   NOD() static Construct Default(Neat&&);
+   NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
@@ -107,6 +115,56 @@ struct GenerateZode {
 #define GENERATE() template<CT::Zode T, CT::Topology TOPOLOGY> \
    void GenerateZode<T, TOPOLOGY>::
 
+
+/// Default zode generation                                                   
+///   @param descriptor - the descriptor to use                               
+///   @return a newly generated descriptor, with missing traits being set to  
+///           their defaults                                                  
+template<CT::Zode T, CT::Topology TOPOLOGY>
+bool GenerateZode<T, TOPOLOGY>::Default(Construct& desc) {
+   auto& d = desc.GetDescriptor();
+
+   if constexpr (CT::Triangle<TOPOLOGY>) {
+      // Zode made of triangle list                                     
+      d.SetDefaultTrait<Traits::Place>(
+         MetaOf<TTriangle<PointType>>());
+      d.SetDefaultTrait<Traits::Sampler>(
+         MetaOf<Sampler2>());
+
+      if constexpr (Dimensions >= 3) {
+         d.SetDefaultTrait<Traits::Aim>(
+            MetaOf<Normal>());
+      }
+   }
+   else if constexpr (CT::Line<TOPOLOGY>) {
+      // Zode made of lines                                             
+      d.SetDefaultTrait<Traits::Place>(
+         MetaOf<TLine<PointType>>());
+   }
+   else if constexpr (CT::Point<TOPOLOGY>) {
+      // Zode made of points                                            
+      d.SetDefaultTrait<Traits::Place>(
+         MetaOf<PointType>());
+   }
+   else return false;
+
+   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTrait<Traits::MapMode>(MapMode::Model);
+   desc.SetType<A::Mesh>();
+   return true;
+}
+
+/// Generate zode level of detail, giving a LOD state                         
+///   @param model - the box generator                                        
+///   @param lod - the LOD state to generate                                  
+///   @return a newly generated descriptor, for the LOD model you can use it  
+///           to generate the new geometry                                    
+template<CT::Zode T, CT::Topology TOPOLOGY>
+Construct GenerateZode<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+   //TODO if closer, generate less curvy zode
+   //TODO if further, generate more curvy zode, or even sphere
+   return Construct::From<A::Mesh>(model->GetNeat());
+}
 
 /// Generate positions for a zode                                             
 ///   @param model - the model to fill                                        

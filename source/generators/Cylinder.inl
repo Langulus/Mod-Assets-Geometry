@@ -70,7 +70,7 @@ struct GenerateCylinder {
       {7,3,4},  {4,3,1}
    };
 
-   NOD() static Construct Default(Neat&&);
+   NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
@@ -78,7 +78,6 @@ struct GenerateCylinder {
    static void Normals(Mesh*);
    static void TextureCoords(Mesh*);
    static void Materials(Mesh*);
-   static void Instances(Mesh*);
 };
 
 #define GENERATE() template<CT::Cylinder T, CT::Topology TOPOLOGY> \
@@ -90,15 +89,13 @@ struct GenerateCylinder {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
-Construct GenerateCylinder<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   auto d = Forward<Neat>(descriptor);
+bool GenerateCylinder<T, TOPOLOGY>::Default(Construct& desc) {
+   auto& d = desc.GetDescriptor();
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
       d.SetDefaultTrait<Traits::MapMode>(
          MapMode::Cube);
-      d.SetDefaultTrait<Traits::Topology>(
-         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
          MetaOf<TTriangle<PointType>>());
       d.SetDefaultTrait<Traits::Sampler>(
@@ -108,14 +105,14 @@ Construct GenerateCylinder<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A cylinder made out of lines                                   
-      d.SetDefaultTrait<Traits::Topology>(
-         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
          MetaOf<TLine<PointType>>());
    }
-   else LANGULUS_ERROR("Unsupported topology for cylinder");
+   else return false;
 
-   return Construct::From<A::Mesh>(Abandon(d));
+   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
+   desc.SetType<A::Mesh>();
+   return true;
 }
 
 /// Generate cylinder level of detail, giving a LOD state                     
@@ -231,10 +228,6 @@ GENERATE() TextureCoords(Mesh* model) {
 }
 
 GENERATE() Materials(Mesh*) {
-   TODO();
-}
-
-GENERATE() Instances(Mesh*) {
    TODO();
 }
 

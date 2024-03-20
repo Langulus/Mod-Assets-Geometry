@@ -22,7 +22,7 @@ private:
    // Where meshes are read and written to                              
    Path mMeshFolder;
    // Mesh library                                                      
-   TFactoryUnique<::Mesh> mMeshes;
+   TFactoryUnique<Mesh> mMeshes;
    // Data folder, where models will be saved or loaded from            
    Ref<A::Folder> mFolder;
 

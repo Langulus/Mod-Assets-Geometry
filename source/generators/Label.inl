@@ -112,7 +112,7 @@ struct GenerateLabel {
       0,2,1,2,3,1,
    };
 
-   NOD() static Construct Default(Neat&&);
+   NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
    static void Indices(Mesh*);
@@ -128,18 +128,15 @@ struct GenerateLabel {
 
 
 /// Default label generation                                                  
-///   @param descriptor - the descriptor to use                               
+///   @param desc - the descriptor to use                                     
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Label T, CT::Topology TOPOLOGY>
-Construct GenerateLabel<T, TOPOLOGY>::Default(Neat&& descriptor) {
-   auto d = Forward<Neat>(descriptor);
-   d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
+bool GenerateLabel<T, TOPOLOGY>::Default(Construct& desc) {
+   auto& d = desc.GetDescriptor();
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A sphere made out of triangles                                 
-      d.SetDefaultTrait<Traits::Topology>(
-         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
          MetaOf<TTriangle<PointType>>());
       d.SetDefaultTrait<Traits::Sampler>(
@@ -152,21 +149,20 @@ Construct GenerateLabel<T, TOPOLOGY>::Default(Neat&& descriptor) {
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A sphere made out of lines                                     
-      d.SetDefaultTrait<Traits::Topology>(
-         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
          MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A sphere made out of points                                    
-      d.SetDefaultTrait<Traits::Topology>(
-         MetaOf<TOPOLOGY>());
       d.SetDefaultTrait<Traits::Place>(
          MetaOf<PointType>());
    }
-   else LANGULUS_ERROR("Unsupported topology for box");
+   else return false;
 
-   return Construct::From<A::Mesh>(Abandon(d));
+   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
+   desc.SetType<A::Mesh>();
+   return true;
 }
 
 /// Generate label level of detail, giving a LOD state                        
