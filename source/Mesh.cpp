@@ -24,37 +24,32 @@
 
 /// Mesh construction                                                         
 ///   @param producer - the producer                                          
-///   @param descriptor - instructions for generator                          
-Mesh::Mesh(MeshLibrary* producer, const Neat& descriptor)
-   : A::Mesh {MetaOf<::Mesh>(), producer, descriptor} {
+///   @param desc - mesh descriptor                                           
+Mesh::Mesh(MeshLibrary* producer, const Neat& desc)
+   : A::Mesh {MetaOf<::Mesh>(), producer, desc} {
    // Get a path from the descriptor                                    
    VERBOSE_MESHES("Initializing...");
-   Path filename;
-   if (not descriptor.ExtractTrait<Traits::Name, Traits::Path>(filename))
-      descriptor.ExtractDataAs(filename);
 
-   if (filename) {
-      // Load a filename if such was provided                           
-      auto fileInterface = producer->GetFolder()->RelativeFile(filename);
-      if (fileInterface)
-         ReadOBJ(*fileInterface);
-   }
-   else {
-      // Consider all provided data                                     
-      if (descriptor.ExtractData(mView)) {
+   if (not FromFile(desc)) {
+      // Mesh isn't file-based, so inspect the descriptor more closely  
+      if (desc.ExtractData(mView)) {
          // Upload raw data if any                                      
          Bytes rawData;
-         if (descriptor.ExtractData(rawData))
+         if (desc.ExtractData(rawData))
             TODO();
       }
       else {
-         // Configure a generator, based on provided primitives         
-         FromDescriptor(descriptor);
-         LANGULUS_ASSERT(mGenerators, Mesh, "No generators found in mesh");
+         // Configure a generator from descriptor                       
+         LANGULUS_ASSERT(FromDescriptor(desc),
+            Mesh, "Couldn't create mesh generator");
+         LANGULUS_ASSERT(mGenerators,
+            Mesh, "No generators found in mesh");
       }
    }
 
-   Couple(descriptor);
+   // If this was reached, then mesh was successfully initialized, so   
+   // it is ready to be added to the hierarchy of Things                
+   Couple(desc);
    VERBOSE_MESHES("Initialized");
 }
 
@@ -128,35 +123,99 @@ bool Mesh::AutocompleteDescriptor(Construct& desc) {
        or AutocompleteInner<GenerateGrid, Grid3>(desc, primitive, topology);
 }
 
-/// Create mesh generator by analyzing A::Primitive                           
-///   @param data - container that contains the primitive                     
-void Mesh::FromDescriptor(const Neat& desc) {
-   mGenerators.Clear();
-
+/// Populate the mesh view and generator functions, by analyzing descriptor   
+///   @param desc - the descriptor to parse                                   
+bool Mesh::FromDescriptor(const Neat& desc) {
    const auto primitive = desc.FindType<A::Primitive>();
-   LANGULUS_ASSERT(primitive, Mesh, "No primitive in descriptor: ", desc);
+   if (not primitive)
+      return false;
 
-   if       (FillGenerators<GenerateBox,  Box2 >(primitive));
-   else if  (FillGenerators<GenerateBox,  Box3 >(primitive));
-   else if  (FillGenerators<GenerateGrid, Grid2>(primitive));
-   else if  (FillGenerators<GenerateGrid, Grid3>(primitive));
-   else LANGULUS_OOPS(Mesh,
-      "Shouldn't be reached, make sure descriptor is a "
-      "valid mesh descriptor prior to entering this function"
-   );
+   desc.ExtractTrait<Traits::Topology >(mView.mTopology);
+   desc.ExtractTrait<Traits::Bilateral>(mView.mBilateral);
+   desc.ExtractTrait<Traits::MapMode  >(mView.mTextureMapping);
+   
+   return FillGenerators<GenerateBox,  Box2 >(primitive)
+       or FillGenerators<GenerateBox,  Box3 >(primitive)
+       or FillGenerators<GenerateGrid, Grid2>(primitive)
+       or FillGenerators<GenerateGrid, Grid3>(primitive);
 }
 
 /// Load mesh via filename/file interface                                     
 ///   @param descriptor - the file to load                                    
-void Mesh::LoadFile(const Any& descriptor) {
-   descriptor.ForEach(
-      [&](const A::File& file) {
-         ReadOBJ(file);
-      },
-      [&](const Text& path) {
-			auto file = GetRuntime()->GetFile(path);
-			if (file)
-            ReadOBJ(*file);
-      }
-   );
+bool Mesh::FromFile(const Neat& desc) {
+   Path filename;
+   if (not desc.ExtractTrait<Traits::Name, Traits::Path>(filename))
+      desc.ExtractDataAs(filename);
+
+   if (filename) {
+      // Load a filename if such was provided                           
+      auto fileInterface = GetProducer()->GetFolder()->RelativeFile(filename);
+      if (fileInterface)
+         return ReadOBJ(*fileInterface);
+   }
+
+   return false;
+}
+
+#define HasGenerator(a) ::std::is_invocable_v<decltype(&a), const Mesh*>
+
+///                                                                           
+template<class GENERATOR>
+void Mesh::FillGeneratorsInner() {
+   if constexpr (HasGenerator(GENERATOR::Indices))
+      mGenerators.Insert(MetaOf<Traits::Index>(),      GENERATOR::Indices);
+   if constexpr (HasGenerator(GENERATOR::Positions))
+      mGenerators.Insert(MetaOf<Traits::Place>(),      GENERATOR::Positions);
+   if constexpr (HasGenerator(GENERATOR::Normals))
+      mGenerators.Insert(MetaOf<Traits::Aim>(),        GENERATOR::Normals);
+   if constexpr (HasGenerator(GENERATOR::TextureCoords))
+      mGenerators.Insert(MetaOf<Traits::Sampler>(),    GENERATOR::TextureCoords);
+   if constexpr (HasGenerator(GENERATOR::Materials))
+      mGenerators.Insert(MetaOf<Traits::Material>(),   GENERATOR::Materials);
+   if constexpr (HasGenerator(GENERATOR::Detail))
+      mLODgenerator = GENERATOR::Detail;
+}
+
+///                                                                           
+template<template<typename...> class GENERATOR, class PRIMITIVE>
+bool Mesh::FillGenerators(DMeta primitive) {
+   if (not primitive->CastsTo<PRIMITIVE>())
+      return false;
+
+   LANGULUS_ASSUME(DevAssumes, mView.mTopology, "Topology not set");
+   if (mView.mTopology->CastsTo<A::TriangleStrip>())
+      FillGeneratorsInner<GENERATOR<PRIMITIVE, A::TriangleStrip>>();
+   else if (mView.mTopology->CastsTo<A::Triangle>())
+      FillGeneratorsInner<GENERATOR<PRIMITIVE, A::Triangle>>();
+   else if (mView.mTopology->CastsTo<A::LineStrip>())
+      FillGeneratorsInner<GENERATOR<PRIMITIVE, A::LineStrip>>();
+   else if (mView.mTopology->CastsTo<A::Line>())
+      FillGeneratorsInner<GENERATOR<PRIMITIVE, A::Line>>();
+   else if (mView.mTopology->CastsTo<A::Point>())
+      FillGeneratorsInner<GENERATOR<PRIMITIVE, A::Point>>();
+   else
+      LANGULUS_OOPS(Mesh, "Unsupported topology: ", mView.mTopology);
+   return true;
+}
+
+///                                                                           
+template<template<typename...> class GENERATOR, class PRIMITIVE>
+bool Mesh::AutocompleteInner(Construct& out, DMeta primitive, DMeta topology) {
+   if (not primitive->CastsTo<PRIMITIVE>())
+      return false;
+   
+   if (not topology)
+      return GENERATOR<PRIMITIVE>::Default(out);
+   else if (topology->CastsTo<A::TriangleStrip>())
+      return GENERATOR<PRIMITIVE, A::TriangleStrip>::Default(out);
+   else if (topology->CastsTo<A::Triangle>())
+      return GENERATOR<PRIMITIVE, A::Triangle>::Default(out);
+   else if (topology->CastsTo<A::LineStrip>())
+      return GENERATOR<PRIMITIVE, A::LineStrip>::Default(out);
+   else if (topology->CastsTo<A::Line>())
+      return GENERATOR<PRIMITIVE, A::Line>::Default(out);
+   else if (topology->CastsTo<A::Point>())
+      return GENERATOR<PRIMITIVE, A::Point>::Default(out);
+   else
+      return false;
 }

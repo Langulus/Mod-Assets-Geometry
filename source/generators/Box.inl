@@ -149,8 +149,13 @@ bool GenerateBox<T, TOPOLOGY>::Default(Construct& desc) {
          MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
-         d.SetDefaultTrait<Traits::Aim>(
-            MetaOf<Normal>());
+         // 3D+ box                                                     
+         d.SetDefaultTrait<Traits::Aim>(MetaOf<Normal>());
+         d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
+      }
+      else {
+         // 2D rectangle                                                
+         d.SetDefaultTrait<Traits::MapMode>(MapMode::Model);
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
@@ -165,7 +170,6 @@ bool GenerateBox<T, TOPOLOGY>::Default(Construct& desc) {
    }
    else return false;
 
-   d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
    d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
    desc.SetType<A::Mesh>();
    return true;
@@ -250,9 +254,6 @@ GENERATE() Indices(const Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() TextureCoords(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      if (model->GetTextureMapper() == MapMode::Auto)
-         model->SetTextureMapper(MapMode::Face);
-
       if (model->GetTextureMapper() == MapMode::Model) {
          // Generate model mapping                                      
          TAny<PointType> data;
@@ -285,6 +286,8 @@ GENERATE() TextureCoords(const Mesh* model) {
    else LANGULUS_ERROR("Unsupported topology for box texture coordinates");
 }
 
+/// Generate material indices for different vertices/faces                    
+///   @param model - the geometry instance to save data in                    
 GENERATE() Materials(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cube made out of triangles                                   

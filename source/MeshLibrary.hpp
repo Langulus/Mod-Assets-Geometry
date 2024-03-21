@@ -19,18 +19,12 @@ struct MeshLibrary final : A::AssetModule {
    LANGULUS_VERBS(Verbs::Create);
 
 private:
-   // Where meshes are read and written to                              
-   Path mMeshFolder;
    // Mesh library                                                      
    TFactoryUnique<Mesh> mMeshes;
-   // Data folder, where models will be saved or loaded from            
-   Ref<A::Folder> mFolder;
 
 public:
    MeshLibrary(Runtime*, const Neat&);
 
    void Create(Verb&);
-
-   const A::Folder* GetFolder() const noexcept;
 };
 

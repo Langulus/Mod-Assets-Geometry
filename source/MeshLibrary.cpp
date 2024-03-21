@@ -16,21 +16,21 @@ LANGULUS_DEFINE_MODULE(
 
 /// Module construction                                                       
 ///   @param runtime - the runtime that owns the module                       
-///   @param descriptor - instructions for configuring the module             
-MeshLibrary::MeshLibrary(Runtime* runtime, const Neat&)
+///   @param desc - instructions for configuring the module                   
+MeshLibrary::MeshLibrary(Runtime* runtime, const Neat& desc)
    : A::AssetModule {MetaOf<MeshLibrary>(), runtime}
    , mMeshes {this} {
    VERBOSE_MESHES("Initializing...");
-   // Extract mesh folder, if any                                       
-   //TODO configure mFolder from descriptor
 
-   try {
-      mMeshFolder = "assets/meshes";
-      mFolder = GetRuntime()->GetFolder(mMeshFolder);
-   }
+   // Extract mesh folder, if any                                       
+   Path repo = "assets/meshes";
+   if (not desc.ExtractTrait<Traits::Name, Traits::Path>(repo))
+      desc.ExtractDataAs(repo);
+
+   try { mFolder = GetRuntime()->GetFolder(repo); }
    catch (...) {
       Logger::Warning(Self(),
-         "Can't access mesh asset library folder `", mMeshFolder,
+         "Can't access mesh asset library folder `", repo,
          "` - either folder is missing, or there's probably "
          "no file system module available. "
          "Mesh reading/writing won't be available, "
@@ -79,10 +79,4 @@ void MeshLibrary::Create(Verb& verb) {
       // the mesh, it probably contains a filename, or raw data         
       mMeshes.Create(verb);
    }
-}
-
-/// Get the mesh library folder                                               
-///   @return the folder interface                                            
-const A::Folder* MeshLibrary::GetFolder() const noexcept {
-   return mFolder;
 }
