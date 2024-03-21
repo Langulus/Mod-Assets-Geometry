@@ -73,11 +73,11 @@ struct GenerateCylinder {
    NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
-   static void Indices(Mesh*);
-   static void Positions(Mesh*);
-   static void Normals(Mesh*);
-   static void TextureCoords(Mesh*);
-   static void Materials(Mesh*);
+   static void Indices(const Mesh*);
+   static void Positions(const Mesh*);
+   static void Normals(const Mesh*);
+   static void TextureCoords(const Mesh*);
+   static void Materials(const Mesh*);
 };
 
 #define GENERATE() template<CT::Cylinder T, CT::Topology TOPOLOGY> \
@@ -127,7 +127,7 @@ Construct GenerateCylinder<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 
 /// Generate positions for a cylinder                                         
 ///   @param model - the model to fill                                        
-GENERATE() Positions(Mesh* model) {
+GENERATE() Positions(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
       using E = TTriangle<PointType>;
@@ -146,7 +146,7 @@ GENERATE() Positions(Mesh* model) {
 
 /// Generate normals for a cylinder                                           
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Mesh* model) {
+GENERATE() Normals(const Mesh* model) {
    static_assert(Dimensions >= 3,
       "Can't generate normals for cylinder of this many dimensions");
 
@@ -174,7 +174,7 @@ GENERATE() Normals(Mesh* model) {
 
 /// Generate indices for a cylinder                                           
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Mesh* model) {
+GENERATE() Indices(const Mesh* model) {
    TAny<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
@@ -196,7 +196,7 @@ GENERATE() Indices(Mesh* model) {
 
 /// Generate texture coordinates for a cylinder                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Mesh* model) {
+GENERATE() TextureCoords(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       if (model->GetTextureMapper() == MapMode::Model) {
          // Generate model mapping                                      
@@ -227,7 +227,7 @@ GENERATE() TextureCoords(Mesh* model) {
    else LANGULUS_ERROR("Unsupported topology for cylinder texture coordinates");
 }
 
-GENERATE() Materials(Mesh*) {
+GENERATE() Materials(const Mesh*) {
    TODO();
 }
 

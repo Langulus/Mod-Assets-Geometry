@@ -25,12 +25,12 @@ struct GenerateLine {
    NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
-   static void Indices(Mesh*);
-   static void Positions(Mesh*);
-   static void Normals(Mesh*);
-   static void TextureCoords(Mesh*);
-   static void Materials(Mesh*);
-   static void Instances(Mesh*);
+   static void Indices(const Mesh*);
+   static void Positions(const Mesh*);
+   static void Normals(const Mesh*);
+   static void TextureCoords(const Mesh*);
+   static void Materials(const Mesh*);
+   static void Instances(const Mesh*);
 };
 
 #define GENERATE() template<CT::Line T, CT::Topology TOPOLOGY> \
@@ -69,7 +69,7 @@ Construct GenerateLine<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 
 /// Generate positions for a line                                             
 ///   @param model - the model to fill                                        
-GENERATE() Positions(Mesh* model) {
+GENERATE() Positions(const Mesh* model) {
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines                                       
       using E = TLine<PointType>;
@@ -82,27 +82,27 @@ GENERATE() Positions(Mesh* model) {
 
 /// Generate normals for a line                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Mesh*) {
+GENERATE() Normals(const Mesh*) {
    TODO();
 }
 
 /// Generate indices for a line                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Mesh*) {
+GENERATE() Indices(const Mesh*) {
    TODO();
 }
 
 /// Generate texture coordinates for a line                                   
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Mesh*) {
+GENERATE() TextureCoords(const Mesh*) {
    TODO();
 }
 
-GENERATE() Materials(Mesh*) {
+GENERATE() Materials(const Mesh*) {
    TODO();
 }
 
-GENERATE() Instances(Mesh*) {
+GENERATE() Instances(const Mesh*) {
    TODO();
 }
 

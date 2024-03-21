@@ -122,11 +122,11 @@ struct GenerateBox {
    NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
-   static void Indices(Mesh*);
-   static void Positions(Mesh*);
-   static void Normals(Mesh*);
-   static void TextureCoords(Mesh*);
-   static void Materials(Mesh*);
+   static void Indices(const Mesh*);
+   static void Positions(const Mesh*);
+   static void Normals(const Mesh*);
+   static void TextureCoords(const Mesh*);
+   static void Materials(const Mesh*);
 };
 
 #define GENERATE() template<CT::Box T, CT::Topology TOPOLOGY> \
@@ -183,14 +183,14 @@ Construct GenerateBox<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 
 /// Generate positions for a box                                              
 ///   @param model - the model to fill                                        
-GENERATE() Positions(Mesh* model) {
+GENERATE() Positions(const Mesh* model) {
    TAny<PointType> data = D::Vertices;
    model->Commit<Traits::Place>(Abandon(data));
 }
 
 /// Generate normals for a box                                                
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Mesh* model) {
+GENERATE() Normals(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       constexpr Normal l {Axes::Left<ScalarType>};
       constexpr Normal r {Axes::Right<ScalarType>};
@@ -222,7 +222,7 @@ GENERATE() Normals(Mesh* model) {
 
 /// Generate indices for a box                                                
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Mesh* model) {
+GENERATE() Indices(const Mesh* model) {
    TAny<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
@@ -248,7 +248,7 @@ GENERATE() Indices(Mesh* model) {
 
 /// Generate texture coordinates for a box                                    
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Mesh* model) {
+GENERATE() TextureCoords(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       if (model->GetTextureMapper() == MapMode::Auto)
          model->SetTextureMapper(MapMode::Face);
@@ -285,7 +285,7 @@ GENERATE() TextureCoords(Mesh* model) {
    else LANGULUS_ERROR("Unsupported topology for box texture coordinates");
 }
 
-GENERATE() Materials(Mesh* model) {
+GENERATE() Materials(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cube made out of triangles                                   
       TAny<RGB> data;

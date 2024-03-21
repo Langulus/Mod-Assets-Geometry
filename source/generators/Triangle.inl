@@ -47,12 +47,12 @@ struct GenerateTriangle {
    NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
-   static void Indices(Mesh*);
-   static void Positions(Mesh*);
-   static void Normals(Mesh*);
-   static void TextureCoords(Mesh*);
-   static void Materials(Mesh*);
-   static void Instances(Mesh*);
+   static void Indices(const Mesh*);
+   static void Positions(const Mesh*);
+   static void Normals(const Mesh*);
+   static void TextureCoords(const Mesh*);
+   static void Materials(const Mesh*);
+   static void Instances(const Mesh*);
 };
 
 #define GENERATE() template<CT::Triangle T, CT::Topology TOPOLOGY> \
@@ -109,21 +109,21 @@ Construct GenerateTriangle<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 
 /// Generate positions for triangle                                           
 ///   @param model - the model to fill                                        
-GENERATE() Positions(Mesh* model) {
+GENERATE() Positions(const Mesh* model) {
    TAny<PointType> data = TriangleVertices;
    model->Commit<Traits::Place>(Abandon(data));
 }
 
 /// Generate indices for triangle                                             
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Mesh* model) {
+GENERATE() Indices(const Mesh* model) {
    TAny<uint32_t> data {0, 1, 2};
    model->Commit<Traits::Place>(Abandon(data));
 }
 
 /// Generate normals for triangle                                             
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Mesh* model) {
+GENERATE() Normals(const Mesh* model) {
    constexpr Normal n = Axes::Backward<ScalarType>;
    TAny<Normal> data;
    data.Reserve(VertexCount);
@@ -134,7 +134,7 @@ GENERATE() Normals(Mesh* model) {
 
 /// Generate texture coordinates for a box                                    
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Mesh* model) {
+GENERATE() TextureCoords(const Mesh* model) {
    TAny<Sampler2> data;
    data.Reserve(VertexCount);
    for (auto& v : TriangleVertices)
@@ -142,11 +142,11 @@ GENERATE() TextureCoords(Mesh* model) {
    model->template Commit<Traits::Aim>(Abandon(data));
 }
 
-GENERATE() Materials(Mesh*) {
+GENERATE() Materials(const Mesh*) {
    TODO();
 }
 
-GENERATE() Instances(Mesh*) {
+GENERATE() Instances(const Mesh*) {
    TODO();
 }
 

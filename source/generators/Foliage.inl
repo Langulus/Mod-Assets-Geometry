@@ -41,12 +41,12 @@ struct GenerateFoliage {
    NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
-   static void Indices(Mesh*);
-   static void Positions(Mesh*);
-   static void Normals(Mesh*);
-   static void TextureCoords(Mesh*);
-   static void Materials(Mesh*);
-   static void Instances(Mesh*);
+   static void Indices(const Mesh*);
+   static void Positions(const Mesh*);
+   static void Normals(const Mesh*);
+   static void TextureCoords(const Mesh*);
+   static void Materials(const Mesh*);
+   static void Instances(const Mesh*);
 };
 
 #define GENERATE() template<CT::Foliage T, CT::Topology TOPOLOGY> \
@@ -85,33 +85,33 @@ Construct GenerateFoliage<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 
 /// Generate positions for foliage                                            
 ///   @param model - the model to fill                                        
-GENERATE() Positions(Mesh*) {
+GENERATE() Positions(const Mesh*) {
    TODO();
 }
 
 /// Generate normals for foliage                                              
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Mesh*) {
+GENERATE() Normals(const Mesh*) {
    TODO();
 }
 
 /// Generate indices for foliage                                              
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Mesh*) {
+GENERATE() Indices(const Mesh*) {
    TODO();
 }
 
 /// Generate texture coordinates for foliage                                  
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Mesh*) {
+GENERATE() TextureCoords(const Mesh*) {
    TODO();
 }
 
-GENERATE() Materials(Mesh*) {
+GENERATE() Materials(const Mesh*) {
    TODO();
 }
 
-GENERATE() Instances(Mesh*) {
+GENERATE() Instances(const Mesh*) {
    TODO();
 }
 

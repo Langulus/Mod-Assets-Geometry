@@ -115,12 +115,12 @@ struct GenerateLabel {
    NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
-   static void Indices(Mesh*);
-   static void Positions(Mesh*);
-   static void Normals(Mesh*);
-   static void TextureCoords(Mesh*);
-   static void Materials(Mesh*);
-   static void Instances(Mesh*);
+   static void Indices(const Mesh*);
+   static void Positions(const Mesh*);
+   static void Normals(const Mesh*);
+   static void TextureCoords(const Mesh*);
+   static void Materials(const Mesh*);
+   static void Instances(const Mesh*);
 };
 
 #define GENERATE() template<CT::Label T, CT::Topology TOPOLOGY> \
@@ -176,7 +176,7 @@ Construct GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 
 /// Generate positions for label                                              
 ///   @param model - the model to fill                                        
-GENERATE() Positions(Mesh* model) {
+GENERATE() Positions(const Mesh* model) {
    T label;
    model->GetNeat().ExtractData(label);
    TAny<PointType> data;
@@ -216,7 +216,7 @@ GENERATE() Positions(Mesh* model) {
 
 /// Generate indices for label                                                
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(Mesh* model) {
+GENERATE() Indices(const Mesh* model) {
    T label;
    model->GetNeat().ExtractData(label);
    TAny<uint32_t> data;
@@ -237,7 +237,7 @@ GENERATE() Indices(Mesh* model) {
 
 /// Generate normals for label                                                
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(Mesh* model) {
+GENERATE() Normals(const Mesh* model) {
    T label;
    model->GetNeat().ExtractData(label);
    constexpr Normal n = Axes::Backward<ScalarType>;
@@ -257,7 +257,7 @@ GENERATE() Normals(Mesh* model) {
 
 /// Generate texture coordinates for label                                    
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(Mesh* model) {
+GENERATE() TextureCoords(const Mesh* model) {
    T label;
    model->GetNeat().ExtractData(label);
 
@@ -281,11 +281,11 @@ GENERATE() TextureCoords(Mesh* model) {
    model->template Commit<Traits::Sampler>(Abandon(data));
 }
 
-GENERATE() Materials(Mesh*) {
+GENERATE() Materials(const Mesh*) {
    TODO();
 }
 
-GENERATE() Instances(Mesh*) {
+GENERATE() Instances(const Mesh*) {
    TODO();
 }
 
