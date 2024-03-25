@@ -1,6 +1,7 @@
 ///                                                                           
 /// Langulus::Module::Assets::Geometry                                        
-/// Copyright(C) 2016 Dimo Markov <langulusteam@gmail.com>                    
+/// Copyright (c) 2016 Dimo Markov <team@langulus.com>                        
+/// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
 /// Distributed under GNU General Public License v3+                          
 /// See LICENSE file, or https://www.gnu.org/licenses                         
@@ -18,7 +19,8 @@ LANGULUS_DEFINE_MODULE(
 ///   @param runtime - the runtime that owns the module                       
 ///   @param desc - instructions for configuring the module                   
 MeshLibrary::MeshLibrary(Runtime* runtime, const Neat& desc)
-   : A::AssetModule {MetaOf<MeshLibrary>(), runtime}
+   : Resolvable {MetaOf<MeshLibrary>()}
+   , Module {runtime}
    , mMeshes {this} {
    VERBOSE_MESHES("Initializing...");
 

@@ -1,6 +1,7 @@
 ///                                                                           
 /// Langulus::Module::Assets::Geometry                                        
-/// Copyright(C) 2016 Dimo Markov <langulusteam@gmail.com>                    
+/// Copyright (c) 2016 Dimo Markov <team@langulus.com>                        
+/// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
 /// Distributed under GNU General Public License v3+                          
 /// See LICENSE file, or https://www.gnu.org/licenses                         
@@ -8,18 +9,19 @@
 #pragma once
 #include "Common.hpp"
 
+
 namespace Tools
 {
 
-   /// Subdivide faces                                                         
-   ///   @param div - subdivisions                                             
-   ///   @param indices - indices (can be null)                                 
+   /// Subdivide faces                                                        
+   ///   @param div - subdivisions                                            
+   ///   @param indices - indices (can be null)                               
    ///   @param source - original vertices                                    
    ///   @param dest - destination container where new vertices go            
    ///   @param pcount - number of primitives                                 
-   ///   @param vstart - starting vertex                                       
-   ///   @param vstep - vertex step                                             
-   ///   @param vperprim - vertices per primitive                              
+   ///   @param vstart - starting vertex                                      
+   ///   @param vstep - vertex step                                           
+   ///   @param vperprim - vertices per primitive                             
    template<class DATA, class INDEX>
    void Subdivide(pcptr div, const Any* indices, const Any* source, Any* output, const pcptr pcount, const pcptr vstart, const pcptr vstep, const pcptr vperprim) {
       // Can't subdivide points                                          
