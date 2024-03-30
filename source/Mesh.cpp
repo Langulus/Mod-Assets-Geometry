@@ -117,7 +117,7 @@ bool Mesh::AutocompleteDescriptor(Construct& desc) {
    const auto ttraits = desc.GetDescriptor().GetTraits<Traits::Topology>();
    DMeta topology;
    if (ttraits and *ttraits)
-      topology = ttraits[0].As<DMeta>();
+      topology = (*ttraits)[0].As<DMeta>();
 
    return AutocompleteInner<GenerateBox,  Box2 >(desc, primitive, topology)
        or AutocompleteInner<GenerateBox,  Box3 >(desc, primitive, topology)
