@@ -111,14 +111,14 @@ Construct GenerateTriangle<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 /// Generate positions for triangle                                           
 ///   @param model - the model to fill                                        
 GENERATE() Positions(const Mesh* model) {
-   TAny<PointType> data = TriangleVertices;
+   TMany<PointType> data = TriangleVertices;
    model->Commit<Traits::Place>(Abandon(data));
 }
 
 /// Generate indices for triangle                                             
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Indices(const Mesh* model) {
-   TAny<uint32_t> data {0, 1, 2};
+   TMany<uint32_t> data {0, 1, 2};
    model->Commit<Traits::Place>(Abandon(data));
 }
 
@@ -126,7 +126,7 @@ GENERATE() Indices(const Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Normals(const Mesh* model) {
    constexpr Normal n = Axes::Backward<ScalarType>;
-   TAny<Normal> data;
+   TMany<Normal> data;
    data.Reserve(VertexCount);
    for (auto& v : TriangleVertices)
       data << n;
@@ -136,7 +136,7 @@ GENERATE() Normals(const Mesh* model) {
 /// Generate texture coordinates for a box                                    
 ///   @param model - the geometry instance to save data in                    
 GENERATE() TextureCoords(const Mesh* model) {
-   TAny<Sampler2> data;
+   TMany<Sampler2> data;
    data.Reserve(VertexCount);
    for (auto& v : TriangleVertices)
       data << v;

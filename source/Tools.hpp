@@ -23,7 +23,7 @@ namespace Tools
    ///   @param vstep - vertex step                                           
    ///   @param vperprim - vertices per primitive                             
    template<class DATA, class INDEX>
-   void Subdivide(pcptr div, const Any* indices, const Any* source, Any* output, const pcptr pcount, const pcptr vstart, const pcptr vstep, const pcptr vperprim) {
+   void Subdivide(pcptr div, const Many* indices, const Many* source, Many* output, const pcptr pcount, const pcptr vstart, const pcptr vstep, const pcptr vperprim) {
       // Can't subdivide points                                          
       if (vperprim == 1) {
          *output = *source;
@@ -37,7 +37,7 @@ namespace Tools
 
       // Allocate new data                                                
       // From this point onward, the data is not indexed                  
-      TAny<DATA> out_view;
+      TMany<DATA> out_view;
       out_view.Reserve(newbase * pcount);
       const auto* oldarray = source->As<const DATA*>();
       const INDEX* idx = indices ? indices->As<const INDEX*>() : nullptr;
@@ -78,7 +78,7 @@ namespace Tools
    /// Normalize                                                               
    ///   @param output - destination container where normalized values go      
    template<class T>
-   void Normalize(Any* output) {
+   void Normalize(Many* output) {
       TODO();
    }
 

@@ -202,7 +202,7 @@ GENERATE() Positions(const Mesh* model) {
    const auto dir = PointType {step, -step, 0};
 
    // Generate the unique points for all segments                       
-   TAny<PointType> data;
+   TMany<PointType> data;
    data.Reserve(points * T::Segments);
    for (Offset index = 0; index < T::Segments; ++index) {
       data << PointType {orient * Vec4 {0, 0, 0, 1}};
@@ -230,7 +230,7 @@ GENERATE() Positions(const Mesh* model) {
 GENERATE() Normals(const Mesh* model) {
    const auto positions = model->GetData<Traits::Place>();
 
-   TAny<Normal> data;
+   TMany<Normal> data;
    data.Reserve(positions->GetCount());
    for (Offset i = 0; i < positions->GetCount(); ++i)
       data << Normal {positions->AsCast<Vec3>(i)};
@@ -243,7 +243,7 @@ GENERATE() Indices(const Mesh* model) {
    unsigned tesselation = 0;
    model->GetNeat().ExtractTrait<Traits::Tesselation>(tesselation);
    const auto strips = Pow(2u, tesselation);
-   TAny<uint32_t> data;
+   TMany<uint32_t> data;
 
    if constexpr (CT::TriangleStrip<TOPOLOGY>) {
       // A zode made of triangle strips                                 
@@ -326,7 +326,7 @@ GENERATE() Indices(const Mesh* model) {
 GENERATE() TextureCoords(const Mesh* model) {
    const auto positions = model->GetData<Traits::Place>();
 
-   TAny<Sampler3> data;
+   TMany<Sampler3> data;
    data.Reserve(positions->GetCount());
    for (Offset i = 0; i < positions->GetCount(); ++i)
       data << Sampler3 {positions->template AsCast<Vec3>(i)};

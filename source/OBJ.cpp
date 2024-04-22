@@ -74,31 +74,31 @@ struct Obj {
    /// Parsed object mesh                                                     
    struct Mesh {
       // Vertex data                                                    
-      TAny<Point3f> positions;
-      TAny<Point2f> texcoords;
-      TAny<Point3f> normals;
-      TAny<Point3f> colors;
+      TMany<Point3f> positions;
+      TMany<Point2f> texcoords;
+      TMany<Point3f> normals;
+      TMany<Point3f> colors;
 
       // Face data: one element for each face                           
       Count          face_count;
-      TAny<Offset>   face_vertices;
-      TAny<Offset>   face_materials;
+      TMany<Offset>   face_vertices;
+      TMany<Offset>   face_materials;
 
       // Index data: one element for each face vertex                   
       Count          index_count;
-      TAny<Index>    indices;
+      TMany<Index>    indices;
 
       // Materials                                                      
       Count          material_count;
-      TAny<Material> materials;
+      TMany<Material> materials;
 
       // Mesh objects ('o' tag in .obj file)                            
       Count          object_count;
-      TAny<Group>    objects;
+      TMany<Group>    objects;
 
       // Mesh groups ('g' tag in .obj file)                             
       Count          group_count;
-      TAny<Group>    groups;
+      TMany<Group>    groups;
    };
 
 

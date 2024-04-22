@@ -209,7 +209,7 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
 GENERATE() Positions(const Mesh* model) {
    // A geosphere/circle made of triangles/lines/points                 
    // This geometry is always indexes, so all positions go              
-   TAny<PointType> data = D::Vertices;
+   TMany<PointType> data = D::Vertices;
    model->Commit<Traits::Place>(Abandon(data));
 }
 
@@ -217,7 +217,7 @@ GENERATE() Positions(const Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Normals(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      TAny<Normal> data;
+      TMany<Normal> data;
       data.Reserve(D::VertexCount);
 
       if constexpr (Dimensions >= 3) {
@@ -241,7 +241,7 @@ GENERATE() Normals(const Mesh* model) {
 /// Generate indices for a sphere/circle                                      
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Indices(const Mesh* model) {
-   TAny<uint32_t> data;
+   TMany<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A geosphere/circle made out of triangles                       
       data.Reserve(D::IndexCount);
@@ -267,7 +267,7 @@ GENERATE() Indices(const Mesh* model) {
 /// Generate texture coordinates for a sphere/circle                          
 ///   @param model - the geometry instance to save data in                    
 GENERATE() TextureCoords(const Mesh* model) {
-   TAny<PointType> data;
+   TMany<PointType> data;
    data.Reserve(D::VertexCount);
    for (auto& v : D::Vertices)
       data << (v + Half);
@@ -277,7 +277,7 @@ GENERATE() TextureCoords(const Mesh* model) {
 GENERATE() Materials(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cube made out of triangles                                   
-      TAny<RGB> data;
+      TMany<RGB> data;
       data.Reserve(D::IndexCount);
 
       data << RGB {64,  64,   64};

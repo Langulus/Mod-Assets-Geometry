@@ -180,7 +180,7 @@ Construct GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 GENERATE() Positions(const Mesh* model) {
    T label;
    model->GetNeat().ExtractData(label);
-   TAny<PointType> data;
+   TMany<PointType> data;
    data.Reserve(VertexCount * label.mText.GetCount());
 
    Vec2 limits;
@@ -220,7 +220,7 @@ GENERATE() Positions(const Mesh* model) {
 GENERATE() Indices(const Mesh* model) {
    T label;
    model->GetNeat().ExtractData(label);
-   TAny<uint32_t> data;
+   TMany<uint32_t> data;
    data.Reserve(IndexCount * label.mText.GetCount());
 
    Offset relevantCharIndex = 0;
@@ -242,7 +242,7 @@ GENERATE() Normals(const Mesh* model) {
    T label;
    model->GetNeat().ExtractData(label);
    constexpr Normal n = Axes::Backward<ScalarType>;
-   TAny<Normal> data;
+   TMany<Normal> data;
    data.Reserve(VertexCount * label.mText.GetCount());
 
    for (auto& c : label.mText) {
@@ -267,7 +267,7 @@ GENERATE() TextureCoords(const Mesh* model) {
       label.mFont->GetAtlasSize()
    };
 
-   TAny<Sampler2> data;
+   TMany<Sampler2> data;
    data.Reserve(VertexCount * label.mText.GetCount());
 
    for (auto& c : label.mText) {

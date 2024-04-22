@@ -59,7 +59,7 @@ GENERATE() Positions(const Mesh* model) {
       // A grid made out of lines                                       
       const auto count = (steps[0] + 1) * (steps[1] + steps[2] + 2) + (steps[1] + 1) * (steps[2] + 1);
       using E = TLine<PointType>;
-      TAny<E> data;
+      TMany<E> data;
       data.Reserve(count);
 
       for (Offset x = 0; x <= steps[0]; ++x) {
@@ -107,7 +107,7 @@ GENERATE() Positions(const Mesh* model) {
    else if constexpr (CT::Point<TOPOLOGY>) {
       // Generate a grid of points                                      
       const auto count = steps[0] * steps[1] * steps[2];
-      TAny<PointType> data;
+      TMany<PointType> data;
       data.Reserve(count);
 
       for (Offset x = 0; x < steps[0]; ++x) {

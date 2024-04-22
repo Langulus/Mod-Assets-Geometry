@@ -182,7 +182,7 @@ GENERATE() Positions(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box (3D) or rectangle (2D) made out of triangles             
       using E = TTriangle<PointType>;
-      TAny<E> data;
+      TMany<E> data;
       data.Reserve(D::TriangleCount);
       for (Offset i = 0; i < D::TriangleCount; ++i)
          data << E {D::Vertices, D::Indices[i]};
@@ -191,7 +191,7 @@ GENERATE() Positions(const Mesh* model) {
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A box (3D) or rectangle (2D) made out of lines                 
       using E = TLine<PointType>;
-      TAny<E> data;
+      TMany<E> data;
       data.Reserve(D::LineCount);
       for (Offset i = 0; i < D::LineCount; ++i)
          data << E {D::Vertices, D::LineIndices[i]};
@@ -199,7 +199,7 @@ GENERATE() Positions(const Mesh* model) {
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A box (3D) or rectangle (2D) made out of points                
-      TAny<PointType> data = D::Vertices;
+      TMany<PointType> data = D::Vertices;
       model->Commit<Traits::Place>(Abandon(data));
    }
    else LANGULUS_ERROR("Unsupported topology for box positions");
@@ -216,7 +216,7 @@ GENERATE() Normals(const Mesh* model) {
       constexpr Normal f {Axes::Forward<ScalarType>};
       constexpr Normal b {Axes::Backward<ScalarType>};
 
-      TAny<Normal> data;
+      TMany<Normal> data;
       data.Reserve(D::IndexCount);
       if constexpr (Dimensions == 3) {
          // Normals for a 3D box                                        
@@ -241,7 +241,7 @@ GENERATE() Normals(const Mesh* model) {
 /// Generate indices for a frustum                                            
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Indices(const Mesh* model) {
-   TAny<uint32_t> data;
+   TMany<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
       data.Reserve(D::IndexCount);
@@ -270,7 +270,7 @@ GENERATE() TextureCoords(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       if (model->GetTextureMapper() == MapMode::Model) {
          // Generate model mapping                                      
-         TAny<Sampler3> data;
+         TMany<Sampler3> data;
          data.Reserve(D::IndexCount);
          for (Offset i = 0; i < D::TriangleCount; ++i) {
             data << D::Vertices[D::Indices[i][0]] + Half;
@@ -282,7 +282,7 @@ GENERATE() TextureCoords(const Mesh* model) {
       }
       else if (model->GetTextureMapper() == MapMode::Face) {
          // Generate face mapping                                       
-         TAny<Sampler2> data;
+         TMany<Sampler2> data;
          data.Reserve(D::IndexCount);
          for (Offset i = 0; i < D::IndexCount; ++i)
             data << D::FaceMapping[i % (D::IndexCount / D::FaceCount)];

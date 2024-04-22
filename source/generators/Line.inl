@@ -74,7 +74,7 @@ GENERATE() Positions(const Mesh* model) {
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines                                       
       using E = TLine<PointType>;
-      TAny<E> data;
+      TMany<E> data;
       data << E {Axes::Origin<ScalarType>, Axes::Forward<ScalarType>};
       model->Commit<Traits::Place>(Abandon(data));
    }

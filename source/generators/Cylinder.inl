@@ -132,7 +132,7 @@ GENERATE() Positions(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
       using E = TTriangle<PointType>;
-      TAny<E> data;
+      TMany<E> data;
       data.Reserve(TriangleCount);
       for (Offset i = 0; i < TriangleCount; ++i)
          data << E {Vertices, TriangleIndices[i]};
@@ -159,7 +159,7 @@ GENERATE() Normals(const Mesh* model) {
       constexpr Normal f {Axes::Forward<ScalarType>};
       constexpr Normal b {Axes::Backward<ScalarType>};
 
-      TAny<Normal> data;
+      TMany<Normal> data;
       data.Reserve(IndexCount);
       data << l << l << l << l << l << l;
       data << r << r << r << r << r << r;
@@ -176,7 +176,7 @@ GENERATE() Normals(const Mesh* model) {
 /// Generate indices for a cylinder                                           
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Indices(const Mesh* model) {
-   TAny<uint32_t> data;
+   TMany<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
       data.Reserve(IndexCount);
@@ -201,7 +201,7 @@ GENERATE() TextureCoords(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       if (model->GetTextureMapper() == MapMode::Model) {
          // Generate model mapping                                      
-         TAny<Sampler3> data;
+         TMany<Sampler3> data;
          data.Reserve(IndexCount);
          for (Offset i = 0; i < TriangleCount; ++i) {
             data << Vertices[TriangleIndices[i][0]] + Half;
@@ -213,7 +213,7 @@ GENERATE() TextureCoords(const Mesh* model) {
       }
       else if (model->GetTextureMapper() == MapMode::Face) {
          // Generate face mapping                                       
-         TAny<Sampler2> data;
+         TMany<Sampler2> data;
          data.Reserve(IndexCount);
          for (Offset i = 0; i < IndexCount; ++i)
             data << FaceMapping[i % (IndexCount / FaceCount)];

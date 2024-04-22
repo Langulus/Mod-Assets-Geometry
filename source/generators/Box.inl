@@ -189,7 +189,7 @@ Construct GenerateBox<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 /// Generate positions for a box                                              
 ///   @param model - the model to fill                                        
 GENERATE() Positions(const Mesh* model) {
-   TAny<PointType> data = D::Vertices;
+   TMany<PointType> data = D::Vertices;
    model->Commit<Traits::Place>(Abandon(data));
 }
 
@@ -204,7 +204,7 @@ GENERATE() Normals(const Mesh* model) {
       constexpr Normal f {Axes::Forward<ScalarType>};
       constexpr Normal b {Axes::Backward<ScalarType>};
 
-      TAny<Normal> data;
+      TMany<Normal> data;
       data.Reserve(D::IndexCount);
       if constexpr (Dimensions == 3) {
          // Normals for a 3D box                                        
@@ -228,7 +228,7 @@ GENERATE() Normals(const Mesh* model) {
 /// Generate indices for a box                                                
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Indices(const Mesh* model) {
-   TAny<uint32_t> data;
+   TMany<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
       data.Reserve(D::IndexCount);
@@ -257,7 +257,7 @@ GENERATE() TextureCoords(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       if (model->GetTextureMapper() == MapMode::Model) {
          // Generate model mapping                                      
-         TAny<PointType> data;
+         TMany<PointType> data;
          data.Reserve(D::IndexCount);
          for (Offset i = 0; i < D::TriangleCount; ++i) {
             data << (D::Vertices[D::Indices[i][0]] + Half);
@@ -269,7 +269,7 @@ GENERATE() TextureCoords(const Mesh* model) {
       }
       else if (model->GetTextureMapper() == MapMode::Face) {
          // Generate face mapping                                       
-         TAny<Sampler2> data;
+         TMany<Sampler2> data;
          data.Reserve(D::IndexCount);
          for (Offset i = 0; i < D::IndexCount; ++i)
             data << D::FaceMapping[i % (D::IndexCount / D::FaceCount)];
@@ -292,7 +292,7 @@ GENERATE() TextureCoords(const Mesh* model) {
 GENERATE() Materials(const Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cube made out of triangles                                   
-      TAny<RGB> data;
+      TMany<RGB> data;
       data.Reserve(D::IndexCount);
 
       data << RGB {64,  64,   64};
