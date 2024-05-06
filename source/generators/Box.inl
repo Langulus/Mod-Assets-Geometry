@@ -205,20 +205,19 @@ GENERATE() Normals(const Mesh* model) {
       constexpr Normal b {Axes::Backward<ScalarType>};
 
       TMany<Normal> data;
-      data.Reserve(D::IndexCount);
       if constexpr (Dimensions == 3) {
+         data.Reserve(D::TriangleCount);
          // Normals for a 3D box                                        
-         data << l << l << l << l << l << l;
-         data << r << r << r << r << r << r;
-         data << u << u << u << u << u << u;
-         data << d << d << d << d << d << d;
-         data << f << f << f << f << f << f;
-         data << b << b << b << b << b << b;
+         data << l << l;
+         data << r << r;
+         data << u << u;
+         data << d << d;
+         data << f << f;
+         data << b << b;
       }
       else if constexpr (Dimensions == 2) {
          // Normals for a 2D rect, always facing the user (-Z)          
-         for (Offset i = 0; i < D::IndexCount; ++i)
-            data << b;
+         data << b;
       }
 
       model->template Commit<Traits::Aim>(Abandon(data));
