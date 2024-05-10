@@ -248,6 +248,8 @@ GENERATE() Indices(const Mesh* model) {
    else LANGULUS_ERROR("Unsupported topology for box indices");
 
    model->template Commit<Traits::Index>(Abandon(data));
+   const_cast<Mesh*>(model)->GetView().mIndexCount
+      = static_cast<uint32_t>(data.GetCount());
 }
 
 /// Generate texture coordinates for a box                                    

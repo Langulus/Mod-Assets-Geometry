@@ -56,13 +56,6 @@ struct Obj {
       Texture map_bump;
    };
 
-   /// Parsed object index                                                    
-   struct Index {
-      Idx p;
-      Idx t;
-      Idx n;
-   };
-
    /// Parsed object group                                                    
    struct Group {
       Text name;                 // Group name                          
@@ -81,23 +74,21 @@ struct Obj {
 
       // Face data: one element for each face                           
       Count          face_count;
-      TMany<Offset>   face_vertices;
-      TMany<Offset>   face_materials;
+      TMany<Offset>  face_vertices;
+      TMany<Offset>  face_materials;
 
-      // Index data: one element for each face vertex                   
-      Count          index_count;
-      TMany<Index>    indices;
+      // Indices for each vertex attribute                              
+      TMany<Idx>   mPositionIndices;
+      TMany<Idx>   mTextureIndices;
+      TMany<Idx>   mNormalIndices;
 
       // Materials                                                      
-      Count          material_count;
       TMany<Material> materials;
 
       // Mesh objects ('o' tag in .obj file)                            
-      Count          object_count;
       TMany<Group>    objects;
 
       // Mesh groups ('g' tag in .obj file)                             
-      Count          group_count;
       TMany<Group>    groups;
    };
 
@@ -183,7 +174,7 @@ bool Mesh::ReadOBJ(const A::File& file) {
 
    // Create buffer for reading file                                    
    Text buffer;
-   buffer.Reserve(2 * Obj::BufferSize);
+   buffer.Reserve<true>(2 * Obj::BufferSize);
    auto start = buffer.GetRaw();
 
    for (;;) {
@@ -226,17 +217,25 @@ bool Mesh::ReadOBJ(const A::File& file) {
    }
 
    // Flush final object/group                                          
-   m.face_count = m.face_vertices.GetCount();
-   m.index_count = m.indices.GetCount();
-   m.material_count = m.materials.GetCount();
+   mView.mPrimitiveCount = static_cast<uint32_t>(m.face_vertices.GetCount());
+   mView.mIndexCount = static_cast<uint32_t>(m.mPositionIndices.GetCount());
+   mView.mTextureMapping = m.texcoords.IsEmpty()
+      ? Math::MapModeType::Model
+      : Math::MapModeType::Custom;
+   mView.mTopology = MetaDataOf<A::Triangle>();
+
+   /*m.material_count = m.materials.GetCount();
    m.object_count = m.objects.GetCount();
-   m.group_count = m.groups.GetCount();
+   m.group_count = m.groups.GetCount();*/
 
    // Save the contents                                                 
    Commit<Traits::Place>   (Move(m.positions));
    Commit<Traits::Aim>     (Move(m.normals));
    Commit<Traits::Sampler> (Move(m.texcoords));
    Commit<Traits::Color>   (Move(m.colors));
+   Commit<Traits::Index>   (Traits::Place   {Move(m.mPositionIndices)});
+   Commit<Traits::Index>   (Traits::Aim     {Move(m.mNormalIndices)});
+   Commit<Traits::Index>   (Traits::Sampler {Move(m.mTextureIndices)});
 
    Logger::Verbose(Logger::Green, "File ", file.GetFilePath(), 
       " loaded in ", SteadyClock::Now() - loadTime);
@@ -352,8 +351,7 @@ void Obj::parse_buffer(
    if (data->mesh->colors) {
       // Fill the remaining slots in the colors array                   
       for (auto ii = data->mesh->colors.GetCount();
-                ii < data->mesh->positions.GetCount();
-              ++ii)
+                ii < data->mesh->positions.GetCount(); ++ii)
          data->mesh->colors << 1;
    }
 }
@@ -524,8 +522,7 @@ const char* Obj::parse_vertex(Data* data, const char* ptr) {
       // positions array. I guess it is possible to have vertices       
       // without color?                                                 
       for (auto ii = data->mesh->colors.GetCount();
-                ii < data->mesh->positions.GetCount() - 1;
-              ++ii)
+                ii < data->mesh->positions.GetCount() - 1; ++ii)
          data->mesh->colors << 1;
 
       ptr = parse_float(ptr, &v[0]);
@@ -562,14 +559,21 @@ const char* Obj::parse_normal(Data* data, const char* ptr) {
    return ptr;
 }
 
-/// @brief 
-/// @param data 
-/// @param ptr 
-/// @return 
+/// Parses a face ('f') line                                                  
+/// A face in obj files can have more than three vertices, and form a 'fan'   
+/// topology. We handle those by triangulating them, and inserting the        
+/// required triangles.                                                       
+///   @param data - [in/out] data store                                       
+///   @param ptr - text to parse                                              
+///   @return the end of the parsed region                                    
 const char* Obj::parse_face(Data* data, const char* ptr) {
    ptr = skip_whitespace(ptr);
-   unsigned count = 0;
 
+   TMany<Idx> p_seq;
+   TMany<Idx> t_seq;
+   TMany<Idx> n_seq;
+
+   // For each vertex in the face definition...                         
    while (not is_newline(*ptr)) {
       int v = 0;
       int t = 0;
@@ -588,38 +592,46 @@ const char* Obj::parse_face(Data* data, const char* ptr) {
          }
       }
 
-      Index vn;
+      // Push position index                                            
       if (v < 0)
-         vn.p = static_cast<Idx>(data->mesh->positions.GetCount() - static_cast<Count>(-v));
+         p_seq << static_cast<Idx>(data->mesh->positions.GetCount() - static_cast<Count>(-v));
       else if (v > 0)
-         vn.p = static_cast<Idx>(v);
+         p_seq << static_cast<Idx>(v);
       else
          return ptr; // Skip lines with no valid vertex index           
 
+      // Push texture coordinate index                                  
       if (t < 0)
-         vn.t = static_cast<Idx>(data->mesh->texcoords.GetCount() - static_cast<Count>(-t));
+         t_seq << static_cast<Idx>(data->mesh->texcoords.GetCount() - static_cast<Count>(-t));
       else if (t > 0)
-         vn.t = static_cast<Idx>(t);
+         t_seq << static_cast<Idx>(t);
       else
-         vn.t = 0;
+         t_seq << 0;
 
+      // Push normal index                                              
       if (n < 0)
-         vn.n = static_cast<Idx>(data->mesh->normals.GetCount() - static_cast<Count>(-n));
+         n_seq << static_cast<Idx>(data->mesh->normals.GetCount() - static_cast<Count>(-n));
       else if (n > 0)
-         vn.n = static_cast<Idx>(n);
+         n_seq << static_cast<Idx>(n);
       else
-         vn.n = 0;
-
-      data->mesh->indices << vn;
-      count++;
+         n_seq << 0;
 
       ptr = skip_whitespace(ptr);
    }
 
-   data->mesh->face_vertices << count;
-   data->mesh->face_materials << data->material;
-   data->group.face_count++;
-   data->object.face_count++;
+   // Triangulate the face                                              
+   // https://stackoverflow.com/questions/23723993                      
+   for (Count i = 2; i < p_seq.GetCount(); ++i) {
+      data->mesh->mPositionIndices << p_seq[0] << p_seq[i - 1] << p_seq[i];
+      data->mesh->mTextureIndices  << t_seq[0] << t_seq[i - 1] << t_seq[i];
+      data->mesh->mNormalIndices   << n_seq[0] << n_seq[i - 1] << n_seq[i];
+
+      data->mesh->face_vertices    << 3;
+      data->mesh->face_materials   << data->material;
+      data->group.face_count++;
+      data->object.face_count++;
+   }
+
    return ptr;
 }
 
@@ -631,7 +643,7 @@ const char* Obj::parse_object(Data* data, const char* ptr) {
    auto s = (ptr = skip_whitespace(ptr));
    auto e = (ptr = skip_name(ptr));
    flush_object(data);
-   data->object.name = Token(s, e);
+   data->object.name = Copy(Token(s, e));
    return ptr;
 }
 
@@ -643,7 +655,7 @@ const char* Obj::parse_group(Data* data, const char* ptr) {
    auto s = (ptr = skip_whitespace(ptr));
    auto e = (ptr = skip_name(ptr));
    flush_group(data);
-   data->group.name = Token(s, e);
+   data->group.name = Copy(Token(s, e));
    return ptr;
 }
 
@@ -670,7 +682,7 @@ const char* Obj::parse_usemtl(Data* data, const char* ptr) {
    // Note: this case happens when OBJ doesn't have its MTL             
    if (idx == data->mesh->materials.GetCount()) {
       Material new_mtl;
-      new_mtl.name = Token(s, e);
+      new_mtl.name = Copy(Token(s, e));
       new_mtl.fallback = 1;
       data->mesh->materials << new_mtl;
    }
@@ -893,7 +905,7 @@ void Obj::flush_object(Data* data) {
 
    // Reset for more data                                               
    data->object.face_offset = data->mesh->face_vertices.GetCount();
-   data->object.index_offset = data->mesh->indices.GetCount();
+   data->object.index_offset = data->mesh->mPositionIndices.GetCount();
 }
 
 /// Add the currently staged group to content                                 
@@ -905,5 +917,5 @@ void Obj::flush_group(Data* data) {
 
    // Reset for more data                                               
    data->group.face_offset = data->mesh->face_vertices.GetCount();
-   data->group.index_offset = data->mesh->indices.GetCount();
+   data->group.index_offset = data->mesh->mPositionIndices.GetCount();
 }
