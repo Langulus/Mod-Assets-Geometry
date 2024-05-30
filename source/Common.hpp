@@ -18,5 +18,10 @@ struct Mesh;
 
 LANGULUS_DEFINE_TRAIT(Tesselation, "Tesselation level, usually an integer");
 
-#define VERBOSE_MESHES(...)      Logger::Verbose(Self(), __VA_ARGS__)
-#define VERBOSE_MESHES_TAB(...)  const auto tab = Logger::Verbose(Self(), __VA_ARGS__, Logger::Tabs {})
+#if 0
+   #define VERBOSE_MESHES(...)      Logger::Verbose(Self(), __VA_ARGS__)
+   #define VERBOSE_MESHES_TAB(...)  const auto tab = Logger::Verbose(Self(), __VA_ARGS__, Logger::Tabs {})
+#else
+   #define VERBOSE_MESHES(...)      LANGULUS(NOOP)
+   #define VERBOSE_MESHES_TAB(...)  LANGULUS(NOOP)
+#endif
