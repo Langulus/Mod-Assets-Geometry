@@ -39,11 +39,10 @@ SCENARIO("Loading non-existent file", "[mesh]") {
    for (int repeat = 0; repeat != 10; ++repeat) {
       GIVEN(std::string("Init and shutdown cycle #") + std::to_string(repeat)) {
          // Create root entity                                          
-         Thing root;
-         root.SetName("ROOT");
-         root.CreateRuntime();
-         root.LoadMod("FileSystem");
-         root.LoadMod("AssetsGeometry");
+         auto root = Thing::Root<false>(
+            "FileSystem",
+            "AssetsGeometry"
+         );
 
          WHEN("The mesh is created via abstractions") {
             REQUIRE_THROWS(root.CreateUnit<A::Mesh>("nonexistent.obj"));
@@ -69,11 +68,10 @@ SCENARIO("Mesh creation", "[mesh]") {
    for (int repeat = 0; repeat != 10; ++repeat) {
       GIVEN(std::string("Init and shutdown cycle #") + std::to_string(repeat)) {
          // Create root entity                                          
-         Thing root;
-         root.SetName("ROOT");
-         root.CreateRuntime();
-         root.LoadMod("FileSystem");
-         root.LoadMod("AssetsGeometry");
+         auto root = Thing::Root<false>(
+            "FileSystem",
+            "AssetsGeometry"
+         );
 
          WHEN("The mesh is created via abstractions") {
             auto producedMesh = root.CreateUnit<A::Mesh>(Math::Box2 {});
@@ -122,12 +120,11 @@ SCENARIO("Loading OBJ file", "[mesh]") {
    for (int repeat = 0; repeat != 10; ++repeat) {
       GIVEN(std::string("Init and shutdown cycle #") + std::to_string(repeat)) {
          // Create root entity                                          
-         Thing root;
-         root.SetName("ROOT");
-         root.CreateRuntime();
-         root.LoadMod("FileSystem");
-         root.LoadMod("AssetsGeometry");
-         root.LoadMod("AssetsImages");
+         auto root = Thing::Root<false>(
+            "FileSystem",
+            "AssetsGeometry",
+            "AssetsImages"
+         );
 
          WHEN("The mesh is created via abstractions") {
             auto producedMesh = root.CreateUnit<A::Mesh>("maxwell/maxwell.obj");
