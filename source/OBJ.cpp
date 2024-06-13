@@ -595,7 +595,7 @@ const char* Obj::parse_face(Data* data, const char* ptr) {
       // Push position index                                            
       if (v < 0)
          p_seq << static_cast<Idx>(data->mesh->positions.GetCount() - static_cast<Count>(-v));
-      else if (v > 0 and v < data->mesh->positions.GetCount())
+      else if (v > 0 and v < static_cast<int>(data->mesh->positions.GetCount()))
          p_seq << static_cast<Idx>(v);
       else
          return ptr; // Skip lines with no valid vertex index           
@@ -603,7 +603,7 @@ const char* Obj::parse_face(Data* data, const char* ptr) {
       // Push texture coordinate index                                  
       if (t < 0)
          t_seq << static_cast<Idx>(data->mesh->texcoords.GetCount() - static_cast<Count>(-t));
-      else if (t > 0 and t < data->mesh->texcoords.GetCount())
+      else if (t > 0 and t < static_cast<int>(data->mesh->texcoords.GetCount()))
          t_seq << static_cast<Idx>(t);
       else
          t_seq << 0;
@@ -611,7 +611,7 @@ const char* Obj::parse_face(Data* data, const char* ptr) {
       // Push normal index                                              
       if (n < 0)
          n_seq << static_cast<Idx>(data->mesh->normals.GetCount() - static_cast<Count>(-n));
-      else if (n > 0 and n < data->mesh->normals.GetCount())
+      else if (n > 0 and n < static_cast<int>(data->mesh->normals.GetCount()))
          n_seq << static_cast<Idx>(n);
       else
          n_seq << 0;
