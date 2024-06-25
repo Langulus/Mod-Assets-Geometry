@@ -9,7 +9,6 @@
 #pragma once
 #include "../Mesh.hpp"
 #include <Math/Primitives/Line.hpp>
-#include <Math/Primitives/Point.hpp>
 
 template<CT::Vector T>
 struct TGrid;

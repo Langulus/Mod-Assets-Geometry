@@ -101,7 +101,7 @@ struct GenerateLabel {
    static constexpr Count IndexCount = TriangleCount * 3;
 
    /// Glyph's unique vertices                                                
-   static constexpr Point2 GlyphVertices[VertexCount] = {
+   static constexpr Vec2 GlyphVertices[VertexCount] = {
       {1, 1},           // Bottom-right corner                          
       {0, 1},           // Bottom-left corner                           
       {1, 0},           // Top-right corner                             

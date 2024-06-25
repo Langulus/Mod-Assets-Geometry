@@ -67,10 +67,10 @@ struct Obj {
    /// Parsed object mesh                                                     
    struct Mesh {
       // Vertex data                                                    
-      TMany<Point3f> positions;
-      TMany<Point2f> texcoords;
-      TMany<Point3f> normals;
-      TMany<Point3f> colors;
+      TMany<Vec3f> positions;
+      TMany<Vec2f> texcoords;
+      TMany<Vec3f> normals;
+      TMany<Vec3f> colors;
 
       // Face data: one element for each face                           
       Count          face_count;
@@ -164,7 +164,7 @@ bool Mesh::ReadOBJ(const A::File& file) {
    // Add dummy position/texcoord/normal                                
    m.positions << 0;
    m.texcoords << 0;
-   m.normals   << Point3f {0, 0, 1};
+   m.normals   << Vec3f {0, 0, 1};
 
    // Data needed during parsing                                        
    Obj::Data data;
@@ -510,7 +510,7 @@ int Obj::read_mtllib(Data* data, const A::File& file) {
 ///   @param ptr - text to parse                                              
 ///   @return pointer to the next statement for parsing                       
 const char* Obj::parse_vertex(Data* data, const char* ptr) {
-   Point3f v;
+   Vec3f v;
    ptr = parse_float(ptr, &v[0]);
    ptr = parse_float(ptr, &v[1]);
    ptr = parse_float(ptr, &v[2]);
@@ -539,7 +539,7 @@ const char* Obj::parse_vertex(Data* data, const char* ptr) {
 ///   @param ptr - text to parse                                              
 ///   @return pointer to the next statement for parsing                       
 const char* Obj::parse_texcoord(Data* data, const char* ptr) {
-   Point2f v;
+   Vec2f v;
    ptr = parse_float(ptr, &v[0]);
    ptr = parse_float(ptr, &v[1]);
    data->mesh->texcoords << v;
@@ -551,7 +551,7 @@ const char* Obj::parse_texcoord(Data* data, const char* ptr) {
 ///   @param ptr - text to parse                                              
 ///   @return pointer to the next statement for parsing                       
 const char* Obj::parse_normal(Data* data, const char* ptr) {
-   Point3f v;
+   Vec3f v;
    ptr = parse_float(ptr, &v[0]);
    ptr = parse_float(ptr, &v[1]);
    ptr = parse_float(ptr, &v[2]);
