@@ -20,7 +20,7 @@ LANGULUS_DEFINE_TRAIT(Tesselation, "Tesselation level, usually an integer");
 
 #if 0
    #define VERBOSE_MESHES(...)      Logger::Verbose(Self(), __VA_ARGS__)
-   #define VERBOSE_MESHES_TAB(...)  const auto tab = Logger::Verbose(Self(), __VA_ARGS__, Logger::Tabs {})
+   #define VERBOSE_MESHES_TAB(...)  const auto tab = Logger::VerboseTab(Self(), __VA_ARGS__)
 #else
    #define VERBOSE_MESHES(...)      LANGULUS(NOOP)
    #define VERBOSE_MESHES_TAB(...)  LANGULUS(NOOP)
