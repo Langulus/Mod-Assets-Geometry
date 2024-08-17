@@ -77,7 +77,7 @@ SCENARIO("Mesh creation", "[mesh]") {
             auto producedMesh = root.CreateUnit<A::Mesh>(Math::Box2 {});
 
             // Update once                                              
-            root.Update(Time::zero());
+            root.Update({});
             root.DumpHierarchy();
 
             REQUIRE(producedMesh.GetCount() == 1);
@@ -98,7 +98,7 @@ SCENARIO("Mesh creation", "[mesh]") {
             auto producedMesh = root.CreateUnitToken("Mesh", Math::Box2 {});
 
             // Update once                                              
-            root.Update(Time::zero());
+            root.Update({});
             root.DumpHierarchy();
 
             REQUIRE(producedMesh.GetCount() == 1);
@@ -130,7 +130,7 @@ SCENARIO("Loading OBJ file", "[mesh]") {
             auto producedMesh = root.CreateUnit<A::Mesh>("maxwell/maxwell.obj");
 
             // Update once                                              
-            root.Update(Time::zero());
+            root.Update({});
             root.DumpHierarchy();
 
             REQUIRE(producedMesh.GetCount() == 1);
@@ -144,7 +144,7 @@ SCENARIO("Loading OBJ file", "[mesh]") {
             auto producedMesh = root.CreateUnitToken("Mesh", "maxwell/maxwell.obj");
 
             // Update once                                              
-            root.Update(Time::zero());
+            root.Update({});
             root.DumpHierarchy();
 
             REQUIRE(producedMesh.GetCount() == 1);
