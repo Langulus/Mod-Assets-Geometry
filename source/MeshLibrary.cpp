@@ -21,7 +21,7 @@ LANGULUS_DEFINE_MODULE(
 MeshLibrary::MeshLibrary(Runtime* runtime, const Neat& desc)
    : Resolvable {this}
    , Module {runtime}
-   , mMeshes {this} {
+   /*, mMeshes {this}*/ {
    VERBOSE_MESHES("Initializing...");
 
    // Extract mesh folder, if any                                       
@@ -73,12 +73,12 @@ void MeshLibrary::Create(Verb& verb) {
    if (Mesh::AutocompleteDescriptor(request)) {
       VERBOSE_MESHES("Mesh autocompleted to: ", request);
       auto local = verb.Fork(&request);
-      mMeshes.Create(local);
+      mMeshes.Create(this, local);
       verb << Abandon(local.GetOutput());
    }
    else {
       // Couldn't be normalized more, but we can still attempt to make  
       // the mesh, it probably contains a filename, or raw data         
-      mMeshes.Create(verb);
+      mMeshes.Create(this, verb);
    }
 }
