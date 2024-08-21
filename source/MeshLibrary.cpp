@@ -20,8 +20,7 @@ LANGULUS_DEFINE_MODULE(
 ///   @param desc - instructions for configuring the module                   
 MeshLibrary::MeshLibrary(Runtime* runtime, const Neat& desc)
    : Resolvable {this}
-   , Module {runtime}
-   /*, mMeshes {this}*/ {
+   , Module {runtime} {
    VERBOSE_MESHES("Initializing...");
 
    // Extract mesh folder, if any                                       

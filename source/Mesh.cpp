@@ -27,7 +27,7 @@
 ///   @param producer - the producer                                          
 ///   @param desc - mesh descriptor                                           
 Mesh::Mesh(MeshLibrary* producer, const Neat& desc)
-   : Resolvable {this}
+   : Resolvable   {this}
    , ProducedFrom {producer, desc} {
    // Get a path from the descriptor                                    
    VERBOSE_MESHES("Initializing...");
