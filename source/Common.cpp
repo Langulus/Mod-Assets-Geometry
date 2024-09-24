@@ -5,24 +5,15 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#pragma once
-#include <Langulus.hpp>
-#include <Langulus/Mesh.hpp>
+#include "Common.hpp"
+#include <Math/Primitives.hpp>
+#include "generators/Grid.hpp"
 
-using namespace Langulus;
-using namespace Math;
 
-struct MeshLibrary;
-struct Mesh;
+/// Register meshes                                                           
+void RegisterMeshes() {
+   Math::RegisterPrimitives();
 
-LANGULUS_DEFINE_TRAIT(Tesselation, "Tesselation level, usually an integer");
-
-#if 0
-   #define VERBOSE_MESHES(...)      Logger::Verbose(Self(), __VA_ARGS__)
-   #define VERBOSE_MESHES_TAB(...)  const auto tab = Logger::VerboseTab(Self(), __VA_ARGS__)
-#else
-   #define VERBOSE_MESHES(...)      LANGULUS(NOOP)
-   #define VERBOSE_MESHES_TAB(...)  LANGULUS(NOOP)
-#endif
-
-void RegisterMeshes();
+   (void) MetaOf<Grid2>();
+   (void) MetaOf<Grid3>();
+}

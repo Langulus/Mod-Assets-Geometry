@@ -3,15 +3,15 @@
 /// Copyright (c) 2016 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
-/// Distributed under GNU General Public License v3+                          
-/// See LICENSE file, or https://www.gnu.org/licenses                         
+/// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #include "MeshLibrary.hpp"
 
 LANGULUS_DEFINE_MODULE(
    MeshLibrary, 9, "AssetsGeometry",
    "Mesh reader, writer and generator", "",
-   MeshLibrary, Mesh, Traits::Tesselation
+   MeshLibrary, Mesh,
+   Traits::Tesselation
 )
 
 
@@ -22,6 +22,11 @@ MeshLibrary::MeshLibrary(Runtime* runtime, const Neat& desc)
    : Resolvable {this}
    , Module {runtime} {
    VERBOSE_MESHES("Initializing...");
+
+   // Register types                                                    
+   Math::RegisterVectors();
+   Math::RegisterRanges();
+   RegisterMeshes();
 
    // Extract mesh folder, if any                                       
    Path repo = "assets/meshes";

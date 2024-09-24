@@ -3,34 +3,66 @@
 /// Copyright (c) 2016 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
-/// Distributed under GNU General Public License v3+                          
-/// See LICENSE file, or https://www.gnu.org/licenses                         
+/// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
 #include <Math/Primitives/Line.hpp>
 
-template<CT::Vector T>
+template<CT::Vector>
 struct TGrid;
 
+using Grid2 = TGrid<Vec2>;
+using Grid3 = TGrid<Vec3>;
 
-namespace Langulus::A
+
+namespace Langulus
 {
-   /// An abstract grid                                                       
-   struct Grid : A::Primitive {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) TGrid<Vec3>;
-      LANGULUS_BASES(A::Primitive);
-   };
-}
+   namespace A
+   {
+      /// An abstract grid                                                    
+      struct Grid : A::Primitive {
+         LANGULUS(ABSTRACT) true;
+         LANGULUS(CONCRETE) TGrid<Vec3>;
+         LANGULUS_BASES(A::Primitive);
+      };
+   }
 
-namespace Langulus::CT
-{
-   /// Concept for distinguishing grids                                       
-   template<class...T>
-   concept Grid = (DerivedFrom<T, A::Grid> and ...);
-}
+   namespace CT
+   {
+      /// Concept for distinguishing grids                                    
+      template<class...T>
+      concept Grid = (DerivedFrom<T, A::Grid> and ...);
+   }
 
+   /// Custom name generator at compile-time for boxes                        
+   template<CT::Vector T>
+   consteval auto CustomName(Of<TGrid<T>>&&) noexcept {
+      using CLASS = TGrid<T>;
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      if constexpr (T::MemberCount > 3) {
+         for (auto i : defaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "Grid")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + T::MemberCount;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
+   }
+}
 
 ///                                                                        |  
 /// 2D/3D grid, centered around origin                                     |  
@@ -55,6 +87,7 @@ namespace Langulus::CT
 ///                                                                        |  
 template<CT::Vector T>
 struct TGrid : A::Grid {
+   LANGULUS(NAME) CustomNameOf<TGrid>::Generate();
    LANGULUS(ABSTRACT) false;
    LANGULUS(POD) CT::POD<T>;
    LANGULUS(TYPED) TypeOf<T>;
@@ -67,9 +100,6 @@ struct TGrid : A::Grid {
    T mCellSize {1};
    TVector<Count, MemberCount> mExtent {5};
 };
-
-using Grid2 = TGrid<Vec2>;
-using Grid3 = TGrid<Vec3>;
 
 
 ///                                                                           
