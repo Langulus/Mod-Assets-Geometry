@@ -24,8 +24,10 @@ MeshLibrary::MeshLibrary(Runtime* runtime, const Neat& desc)
    VERBOSE_MESHES("Initializing...");
 
    // Register types                                                    
+   Math::RegisterNumbers();
    Math::RegisterVectors();
    Math::RegisterRanges();
+
    RegisterMeshes();
 
    // Extract mesh folder, if any                                       
