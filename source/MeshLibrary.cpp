@@ -18,9 +18,9 @@ LANGULUS_DEFINE_MODULE(
 /// Module construction                                                       
 ///   @param runtime - the runtime that owns the module                       
 ///   @param desc - instructions for configuring the module                   
-MeshLibrary::MeshLibrary(Runtime* runtime, const Neat& desc)
+MeshLibrary::MeshLibrary(Runtime* runtime, Describe desc)
    : Resolvable {this}
-   , Module {runtime} {
+   , Module     {runtime} {
    VERBOSE_MESHES("Initializing...");
 
    // Register types                                                    

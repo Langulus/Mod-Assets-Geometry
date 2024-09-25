@@ -32,7 +32,7 @@ struct Mesh final : A::Mesh {
    LANGULUS_VERBS(Verbs::Create);
 
 public:
-   Mesh(MeshLibrary*, const Neat&);
+   Mesh(MeshLibrary*, Describe);
 
    void Refresh();
    void Create(Verb&);
@@ -46,8 +46,8 @@ private:
    template<template<typename...> class GENERATOR, class PRIMITIVE>
    static bool AutocompleteInner(Construct&, DMeta, DMeta = {});
 
-   bool FromDescriptor(const Neat&);
-   bool FromFile(const Neat&);
+   bool FromDescriptor(Describe);
+   bool FromFile(Describe);
 
    template<template<typename...> class GENERATOR, class PRIMITIVE>
    bool FillGenerators(DMeta);
