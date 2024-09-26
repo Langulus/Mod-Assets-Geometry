@@ -18,7 +18,7 @@ LANGULUS_DEFINE_MODULE(
 /// Module construction                                                       
 ///   @param runtime - the runtime that owns the module                       
 ///   @param desc - instructions for configuring the module                   
-MeshLibrary::MeshLibrary(Runtime* runtime, Describe desc)
+MeshLibrary::MeshLibrary(Runtime* runtime, const Many& desc)
    : Resolvable {this}
    , Module     {runtime} {
    VERBOSE_MESHES("Initializing...");

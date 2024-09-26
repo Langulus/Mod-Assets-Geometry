@@ -25,7 +25,7 @@
 /// Mesh construction                                                         
 ///   @param producer - the producer                                          
 ///   @param desc - mesh descriptor                                           
-Mesh::Mesh(MeshLibrary* producer, Describe desc)
+Mesh::Mesh(MeshLibrary* producer, const Many& desc)
    : Resolvable   {this}
    , ProducedFrom {producer, desc} {
    // Get a path from the descriptor                                    
@@ -113,7 +113,7 @@ bool Mesh::AutocompleteDescriptor(Construct& desc) {
       return false;
 
    // The descriptor might or might not have the topology defined       
-   const auto ttraits = desc.GetDescriptor().GetTraits<Traits::Topology>();
+   const auto ttraits = desc.GetDescriptor().GetTraits<Traits::Topology>(); //TODO use gather, will use Neat::GetTraits as optimization if available
    DMeta topology;
    if (ttraits and *ttraits)
       topology = (*ttraits)[0].As<DMeta>();
@@ -126,7 +126,7 @@ bool Mesh::AutocompleteDescriptor(Construct& desc) {
 
 /// Populate the mesh view and generator functions, by analyzing descriptor   
 ///   @param desc - the descriptor to parse                                   
-bool Mesh::FromDescriptor(Describe desc) {
+bool Mesh::FromDescriptor(const Many& desc) {
    const auto primitive = desc.FindType<A::Primitive>();
    if (not primitive)
       return false;
@@ -143,7 +143,7 @@ bool Mesh::FromDescriptor(Describe desc) {
 
 /// Load mesh via filename/file interface                                     
 ///   @param descriptor - the file to load                                    
-bool Mesh::FromFile(Describe desc) {
+bool Mesh::FromFile(const Many& desc) {
    Path filename;
    if (not desc.ExtractTrait<Traits::Name, Traits::Path>(filename))
       desc.ExtractDataAs(filename);
