@@ -92,7 +92,7 @@ bool Mesh::Generate(TMeta trait, Offset index) {
 /// Get level of detail mesh                                                  
 ///   @param lod - the level of detail state to generate LOD from             
 ///   @return the new geometry                                                
-Ref<A::Mesh> Mesh::GetLOD(const LOD& lod) const {
+auto Mesh::GetLOD(const LOD& lod) const -> Ref<A::Mesh> {
    if (mLODgenerator) {
       // Generate a request, and fulfill it                             
       Verbs::Create creator {mLODgenerator(this, lod)};
@@ -113,10 +113,10 @@ bool Mesh::AutocompleteDescriptor(Construct& desc) {
       return false;
 
    // The descriptor might or might not have the topology defined       
-   const auto ttraits = desc.GetDescriptor().GetTraits<Traits::Topology>(); //TODO use gather, will use Neat::GetTraits as optimization if available
    DMeta topology;
-   if (ttraits and *ttraits)
-      topology = (*ttraits)[0].As<DMeta>();
+   desc.GetDescriptor().ForEachDeep([&](const Traits::Topology& trait) {
+      topology = trait.As<DMeta>();
+   });
 
    return AutocompleteInner<GenerateBox,  Box2 >(desc, primitive, topology)
        or AutocompleteInner<GenerateBox,  Box3 >(desc, primitive, topology)

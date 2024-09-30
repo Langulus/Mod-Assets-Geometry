@@ -47,7 +47,7 @@ GENERATE() Positions(const Mesh* model) {
    // Calculate vertex count - tesselation in this context means        
    // how many times a sector in the grid is divided in half            
    unsigned tesselation = 0;
-   model->GetNeat().ExtractTrait<Traits::Tesselation>(tesselation);
+   model->GetDescriptor().ExtractTrait<Traits::Tesselation>(tesselation);
    const Vec3u steps {Pow(2u, tesselation)};
    const auto sep = ScalarType {1} / PointType {steps};
 
