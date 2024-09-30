@@ -108,13 +108,13 @@ auto Mesh::GetLOD(const LOD& lod) const -> Ref<A::Mesh> {
 ///   @param desc - the descriptor to complete                                
 bool Mesh::AutocompleteDescriptor(Construct& desc) {
    // The descriptor should have some primitive defined                 
-   const auto primitive = desc.GetDescriptor().FindType<A::Primitive>();
+   const auto primitive = desc->FindType<A::Primitive>();
    if (not primitive)
       return false;
 
    // The descriptor might or might not have the topology defined       
    DMeta topology;
-   desc.GetDescriptor().ForEachDeep([&](const Traits::Topology& trait) {
+   desc->ForEachDeep([&](const Traits::Topology& trait) {
       topology = trait.As<DMeta>();
    });
 
