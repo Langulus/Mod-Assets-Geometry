@@ -122,7 +122,7 @@ bool GenerateCylinder<T, TOPOLOGY>::Default(Construct& desc) {
 ///           to generate the new geometry                                    
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
 Construct GenerateCylinder<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return Construct::From<A::Mesh>(model->GetNeat());
+   return Construct::From<A::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a cylinder                                         

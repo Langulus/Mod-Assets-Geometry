@@ -136,11 +136,11 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
    if (lod.mLODIndex == 0) {
       // On zero LOD index, we're at optimal distance, so we return     
       // the original unmodified geometry                               
-      return Construct::From<A::Mesh>(model->GetNeat());
+      return Construct::From<A::Mesh>(model->GetDescriptor());
    }
 
    unsigned tesselation = 0;
-   model->GetNeat().ExtractTrait<Traits::Tesselation>(tesselation);
+   model->GetDescriptor().ExtractTrait<Traits::Tesselation>(tesselation);
    if (tesselation > 0 and lod.mLODIndex < 0) {
       // Find a lower tesselation of the geosphere, because the LOD     
       // is for an object that is further away                          
@@ -149,7 +149,7 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
          newTesselation = 0;
 
       // Create the LOD descriptor, based on the current one            
-      auto newMesh = model->GetNeat();
+      auto newMesh = model->GetDescriptor();
       newMesh.Set(Traits::Tesselation {std::round(newTesselation)});
       return Construct::From<A::Mesh>(Abandon(newMesh));
    }
@@ -177,7 +177,7 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
       // small reorientation                                            
       const auto intersection = lod.mView.GetPosition() - lod.mModel.GetPosition();
       if (intersection.Length() == 0)
-         return Construct::From<A::Mesh>(model->GetNeat());
+         return Construct::From<A::Mesh>(model->GetDescriptor());
 
       const auto steppingNormal = (intersection.Normalize() * areasToCover).Round();
 
@@ -200,7 +200,7 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
       return Abandon(newMesh);
    }
 
-   return Construct::From<A::Mesh>(model->GetNeat());
+   return Construct::From<A::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a sphere/circle                                    

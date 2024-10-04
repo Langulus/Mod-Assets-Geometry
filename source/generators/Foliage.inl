@@ -80,7 +80,7 @@ bool GenerateFoliage<T, TOPOLOGY>::Default(Construct& desc) {
 ///           to generate the new geometry                                    
 template<CT::Foliage T, CT::Topology TOPOLOGY>
 Construct GenerateFoliage<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return Construct::From<A::Mesh>(model->GetNeat());
+   return Construct::From<A::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for foliage                                            

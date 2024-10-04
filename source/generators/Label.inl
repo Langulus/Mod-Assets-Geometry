@@ -171,14 +171,14 @@ bool GenerateLabel<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return the same descriptor, labels don't have LOD                      
 template<CT::Label T, CT::Topology TOPOLOGY>
 Construct GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return Construct::From<A::Mesh>(model->GetNeat());
+   return Construct::From<A::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for label                                              
 ///   @param model - the model to fill                                        
 GENERATE() Positions(const Mesh* model) {
    T label;
-   model->GetNeat().ExtractData(label);
+   model->GetDescriptor().ExtractData(label);
    TMany<PointType> data;
    data.Reserve(VertexCount * label.mText.GetCount());
 
@@ -218,7 +218,7 @@ GENERATE() Positions(const Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Indices(const Mesh* model) {
    T label;
-   model->GetNeat().ExtractData(label);
+   model->GetDescriptor().ExtractData(label);
    TMany<uint32_t> data;
    data.Reserve(IndexCount * label.mText.GetCount());
 
@@ -239,7 +239,7 @@ GENERATE() Indices(const Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Normals(const Mesh* model) {
    T label;
-   model->GetNeat().ExtractData(label);
+   model->GetDescriptor().ExtractData(label);
    constexpr Normal n = Axes::Backward<ScalarType>;
    TMany<Normal> data;
    data.Reserve(VertexCount * label.mText.GetCount());
@@ -259,7 +259,7 @@ GENERATE() Normals(const Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() TextureCoords(const Mesh* model) {
    T label;
-   model->GetNeat().ExtractData(label);
+   model->GetDescriptor().ExtractData(label);
 
    const Vec4 size {
       label.mFont->GetAtlasSize(),

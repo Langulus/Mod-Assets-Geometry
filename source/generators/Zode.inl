@@ -163,16 +163,16 @@ template<CT::Zode T, CT::Topology TOPOLOGY>
 Construct GenerateZode<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
    //TODO if closer, generate less curvy zode
    //TODO if further, generate more curvy zode, or even sphere
-   return Construct::From<A::Mesh>(model->GetNeat());
+   return Construct::From<A::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a zode                                             
 ///   @param model - the model to fill                                        
 GENERATE() Positions(const Mesh* model) {
    PointType offset;
-   model->GetNeat().ExtractTrait<Traits::Place>(offset);
+   model->GetDescriptor().ExtractTrait<Traits::Place>(offset);
    unsigned tesselation = 0;
-   model->GetNeat().ExtractTrait<Traits::Tesselation>(tesselation);
+   model->GetDescriptor().ExtractTrait<Traits::Tesselation>(tesselation);
 
    const auto distance = offset.Length();
    offset = offset / distance;
@@ -240,7 +240,7 @@ GENERATE() Normals(const Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Indices(const Mesh* model) {
    unsigned tesselation = 0;
-   model->GetNeat().ExtractTrait<Traits::Tesselation>(tesselation);
+   model->GetDescriptor().ExtractTrait<Traits::Tesselation>(tesselation);
    const auto strips = Pow(2u, tesselation);
    TMany<uint32_t> data;
 
