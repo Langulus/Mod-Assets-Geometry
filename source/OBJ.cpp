@@ -22,7 +22,7 @@ struct Obj {
 
    /// Parsed texture descriptor                                              
    struct Texture {
-      Text name;     // Texture name from .mtl file                     
+      Text name;                 // Texture name from .mtl file         
    };
 
    /// Parsed material descriptor                                             
@@ -560,8 +560,8 @@ const char* Obj::parse_normal(Data* data, const char* ptr) {
 
 /// Parses a face ('f') line                                                  
 /// A face in obj files can have more than three vertices, and form a 'fan'   
-/// topology. We handle those by triangulating them, and inserting the        
-/// required triangles.                                                       
+/// topology. We handle those by triangulating and inserting the required     
+/// triangles.                                                                
 ///   @param data - [in/out] data store                                       
 ///   @param ptr - text to parse                                              
 ///   @return the end of the parsed region                                    
@@ -596,8 +596,11 @@ const char* Obj::parse_face(Data* data, const char* ptr) {
          p_seq << static_cast<Idx>(data->mesh->positions.GetCount() - static_cast<Count>(-v));
       else if (v > 0 and v < static_cast<int>(data->mesh->positions.GetCount()))
          p_seq << static_cast<Idx>(v);
-      else
-         return ptr; // Skip lines with no valid vertex index           
+      else {
+         // Skip lines with no valid vertex index                       
+         ptr = skip_whitespace(ptr);
+         continue;
+      }
 
       // Push texture coordinate index                                  
       if (t < 0)
