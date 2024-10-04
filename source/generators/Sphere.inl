@@ -133,14 +133,15 @@ bool GenerateSphere<T, TOPOLOGY>::Default(Construct& desc) {
 ///           required level-of-detail geometry                               
 template<CT::Sphere T, CT::Topology TOPOLOGY>
 Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) {
+   auto& md = model->GetDescriptor();
    if (lod.mLODIndex == 0) {
       // On zero LOD index, we're at optimal distance, so we return     
       // the original unmodified geometry                               
-      return Construct::From<A::Mesh>(model->GetDescriptor());
+      return Construct::From<A::Mesh>(md);
    }
 
    unsigned tesselation = 0;
-   model->GetDescriptor().ExtractTrait<Traits::Tesselation>(tesselation);
+   md.ExtractTrait<Traits::Tesselation>(tesselation);
    if (tesselation > 0 and lod.mLODIndex < 0) {
       // Find a lower tesselation of the geosphere, because the LOD     
       // is for an object that is further away                          
@@ -149,8 +150,8 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
          newTesselation = 0;
 
       // Create the LOD descriptor, based on the current one            
-      auto newMesh = model->GetDescriptor();
-      newMesh.Set(Traits::Tesselation {std::round(newTesselation)});
+      auto newMesh = md;
+      newMesh.SetTrait(Traits::Tesselation {std::round(newTesselation)});
       return Construct::From<A::Mesh>(Abandon(newMesh));
    }
    else if (lod.mLODIndex > 0) {
@@ -177,20 +178,20 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
       // small reorientation                                            
       const auto intersection = lod.mView.GetPosition() - lod.mModel.GetPosition();
       if (intersection.Length() == 0)
-         return Construct::From<A::Mesh>(model->GetDescriptor());
+         return Construct::From<A::Mesh>(md);
 
       const auto steppingNormal = (intersection.Normalize() * areasToCover).Round();
 
       // Clone only the descriptor and change type                      
       auto newMesh = Construct::From<A::Mesh>(TZode<PointType> {});
       // Set the place around which the zode is centered                
-      newMesh.Set(Traits::Place {steppingNormal});
+      newMesh.SetTrait(Traits::Place {steppingNormal});
       // Set the size of the sphere in order to calculate curvature     
-      newMesh.Set(Traits::Size {lod.mModel.GetScale()});
+      newMesh.SetTrait(Traits::Size {lod.mModel.GetScale()});
       // Set the topology                                               
-      newMesh.Set(Traits::Topology {TypeOf<A::TriangleStrip>()});
+      newMesh.SetTrait(Traits::Topology {TypeOf<A::TriangleStrip>()});
       // Set the tesselation                                            
-      newMesh.Set(Traits::Tesselation {tesselation + static_cast<unsigned>(lod.mLODIndex) / 2});
+      newMesh.SetTrait(Traits::Tesselation {tesselation + static_cast<unsigned>(lod.mLODIndex) / 2});
 
       // The octave gets progressively lower until we reach state       
       //real octave = 0;
@@ -200,7 +201,7 @@ Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod)
       return Abandon(newMesh);
    }
 
-   return Construct::From<A::Mesh>(model->GetDescriptor());
+   return Construct::From<A::Mesh>(md);
 }
 
 /// Generate positions for a sphere/circle                                    
