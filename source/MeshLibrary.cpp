@@ -49,6 +49,12 @@ MeshLibrary::MeshLibrary(Runtime* runtime, const Many& desc)
    VERBOSE_MESHES("Initialized");
 }
 
+/// Shutdown mesh library                                                     
+MeshLibrary::~MeshLibrary() {
+   for (auto& asset : mMeshes)
+      asset.Detach();
+}
+
 /// Create/destroy meshes                                                     
 ///   @param verb - the creation/destruction verb                             
 void MeshLibrary::Create(Verb& verb) {
