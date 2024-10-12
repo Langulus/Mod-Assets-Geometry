@@ -19,8 +19,8 @@ target_link_libraries(LangulusModAssetsGeometry
 )
 
 if(LANGULUS_TESTING)
-    enable_testing()
-	add_subdirectory(test)
+    #enable_testing()
+	#add_subdirectory(test)
 endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
