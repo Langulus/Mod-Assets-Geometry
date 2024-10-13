@@ -34,6 +34,7 @@ struct Mesh final : A::Mesh {
 public:
    Mesh(MeshLibrary*, const Many&);
 
+   void Detach();
    void Refresh();
    void Create(Verb&);
    bool Generate(TMeta, Offset = 0);
