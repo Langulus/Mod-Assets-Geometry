@@ -43,7 +43,7 @@ Construct GenerateGrid<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 
 /// Generate positions for a grid                                             
 ///   @param model - the model to fill                                        
-GENERATE() Positions(const Mesh* model) {
+GENERATE() Positions(Mesh* model) {
    // Calculate vertex count - tesselation in this context means        
    // how many times a sector in the grid is divided in half            
    unsigned tesselation = 0;
@@ -136,27 +136,27 @@ GENERATE() Positions(const Mesh* model) {
 
 /// Generate normals for a grid                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(const Mesh*) {
+GENERATE() Normals(Mesh*) {
    TODO();
 }
 
 /// Generate indices for a grid                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(const Mesh*) {
+GENERATE() Indices(Mesh*) {
    TODO();
 }
 
 /// Generate texture coordinates for a grid                                   
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(const Mesh*) {
+GENERATE() TextureCoords(Mesh*) {
    TODO();
 }
 
-GENERATE() Materials(const Mesh*) {
+GENERATE() Materials(Mesh*) {
    TODO();
 }
 
-GENERATE() Instances(const Mesh*) {
+GENERATE() Instances(Mesh*) {
    TODO();
 }
 

@@ -122,11 +122,11 @@ struct GenerateBox {
    NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
-   static void Indices(const Mesh*);
-   static void Positions(const Mesh*);
-   static void Normals(const Mesh*);
-   static void TextureCoords(const Mesh*);
-   static void Materials(const Mesh*);
+   static void Indices(Mesh*);
+   static void Positions(Mesh*);
+   static void Normals(Mesh*);
+   static void TextureCoords(Mesh*);
+   static void Materials(Mesh*);
 };
 
 #define GENERATE() template<CT::Box T, CT::Topology TOPOLOGY> \
@@ -143,10 +143,8 @@ bool GenerateBox<T, TOPOLOGY>::Default(Construct& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
-      d.SetDefaultTrait<Traits::Place>(
-         MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Traits::Sampler>(
-         MetaOf<Sampler2>());
+      d.SetDefaultTrait<Traits::Place>(MetaOf<TTriangle<PointType>>());
+      d.SetDefaultTrait<Traits::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
          // 3D+ box                                                     
@@ -160,13 +158,11 @@ bool GenerateBox<T, TOPOLOGY>::Default(Construct& desc) {
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A box made out of lines                                        
-      d.SetDefaultTrait<Traits::Place>(
-         MetaOf<TLine<PointType>>());
+      d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A box made out of points                                       
-      d.SetDefaultTrait<Traits::Place>(
-         MetaOf<PointType>());
+      d.SetDefaultTrait<Traits::Place>(MetaOf<PointType>());
    }
    else return false;
 
@@ -187,14 +183,14 @@ Construct GenerateBox<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 
 /// Generate positions for a box                                              
 ///   @param model - the model to fill                                        
-GENERATE() Positions(const Mesh* model) {
+GENERATE() Positions(Mesh* model) {
    TMany<PointType> data = D::Vertices;
    model->Commit<Traits::Place>(Abandon(data));
 }
 
 /// Generate normals for a box                                                
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(const Mesh* model) {
+GENERATE() Normals(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       constexpr Normal l {Axes::Left<ScalarType>};
       constexpr Normal r {Axes::Right<ScalarType>};
@@ -225,7 +221,7 @@ GENERATE() Normals(const Mesh* model) {
 
 /// Generate indices for a box                                                
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(const Mesh* model) {
+GENERATE() Indices(Mesh* model) {
    TMany<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
@@ -247,13 +243,12 @@ GENERATE() Indices(const Mesh* model) {
    else LANGULUS_ERROR("Unsupported topology for box indices");
 
    model->template Commit<Traits::Index>(Abandon(data));
-   const_cast<Mesh*>(model)->GetView().mIndexCount
-      = static_cast<uint32_t>(data.GetCount());
+   model->GetView().mIndexCount = static_cast<uint32_t>(data.GetCount());
 }
 
 /// Generate texture coordinates for a box                                    
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(const Mesh* model) {
+GENERATE() TextureCoords(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       if (model->GetTextureMapper() == MapMode::Model) {
          // Generate model mapping                                      
@@ -289,7 +284,7 @@ GENERATE() TextureCoords(const Mesh* model) {
 
 /// Generate material indices for different vertices/faces                    
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Materials(const Mesh* model) {
+GENERATE() Materials(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cube made out of triangles                                   
       TMany<RGB> data;

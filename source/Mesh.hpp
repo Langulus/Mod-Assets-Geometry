@@ -34,12 +34,11 @@ struct Mesh final : A::Mesh {
 public:
    Mesh(MeshLibrary*, const Many&);
 
-   void Detach();
    void Refresh();
    void Create(Verb&);
    bool Generate(TMeta, Offset = 0);
 
-   NOD() Ref<A::Mesh> GetLOD(const LOD&) const;
+   NOD() auto GetLOD(const LOD&) const -> Ref<A::Mesh>;
 
    static bool AutocompleteDescriptor(Construct&);
 
@@ -59,7 +58,7 @@ private:
    //bool WriteOBJ(const A::File&) const;
 
    // Generator functions for each supported type of data               
-   using FGenerator = void(*)(const Mesh*);
+   using FGenerator = void(*)(Mesh*);
    TUnorderedMap<TMeta, FGenerator> mGenerators;
 
    // LOD generator function                                            

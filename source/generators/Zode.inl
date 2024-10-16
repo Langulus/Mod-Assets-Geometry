@@ -104,12 +104,12 @@ struct GenerateZode {
    NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
-   static void Indices(const Mesh*);
-   static void Positions(const Mesh*);
-   static void Normals(const Mesh*);
-   static void TextureCoords(const Mesh*);
-   static void Materials(const Mesh*);
-   static void Instances(const Mesh*);
+   static void Indices(Mesh*);
+   static void Positions(Mesh*);
+   static void Normals(Mesh*);
+   static void TextureCoords(Mesh*);
+   static void Materials(Mesh*);
+   static void Instances(Mesh*);
 };
 
 #define GENERATE() template<CT::Zode T, CT::Topology TOPOLOGY> \
@@ -126,25 +126,20 @@ bool GenerateZode<T, TOPOLOGY>::Default(Construct& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // Zode made of triangle list                                     
-      d.SetDefaultTrait<Traits::Place>(
-         MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Traits::Sampler>(
-         MetaOf<Sampler2>());
+      d.SetDefaultTrait<Traits::Place>(MetaOf<TTriangle<PointType>>());
+      d.SetDefaultTrait<Traits::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
-         d.SetDefaultTrait<Traits::Aim>(
-            MetaOf<Normal>());
+         d.SetDefaultTrait<Traits::Aim>(MetaOf<Normal>());
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // Zode made of lines                                             
-      d.SetDefaultTrait<Traits::Place>(
-         MetaOf<TLine<PointType>>());
+      d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // Zode made of points                                            
-      d.SetDefaultTrait<Traits::Place>(
-         MetaOf<PointType>());
+      d.SetDefaultTrait<Traits::Place>(MetaOf<PointType>());
    }
    else return false;
 
@@ -168,7 +163,7 @@ Construct GenerateZode<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 
 /// Generate positions for a zode                                             
 ///   @param model - the model to fill                                        
-GENERATE() Positions(const Mesh* model) {
+GENERATE() Positions(Mesh* model) {
    PointType offset;
    model->GetDescriptor().ExtractTrait<Traits::Place>(offset);
    unsigned tesselation = 0;
@@ -226,7 +221,7 @@ GENERATE() Positions(const Mesh* model) {
 
 /// Generate normals for a zode                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(const Mesh* model) {
+GENERATE() Normals(Mesh* model) {
    const auto positions = model->GetData<Traits::Place>();
 
    TMany<Normal> data;
@@ -238,7 +233,7 @@ GENERATE() Normals(const Mesh* model) {
 
 /// Generate indices for a zode                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(const Mesh* model) {
+GENERATE() Indices(Mesh* model) {
    unsigned tesselation = 0;
    model->GetDescriptor().ExtractTrait<Traits::Tesselation>(tesselation);
    const auto strips = Pow(2u, tesselation);
@@ -322,7 +317,7 @@ GENERATE() Indices(const Mesh* model) {
 
 /// Generate texture coordinates for a zode                                   
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(const Mesh* model) {
+GENERATE() TextureCoords(Mesh* model) {
    const auto positions = model->GetData<Traits::Place>();
 
    TMany<Sampler3> data;
@@ -332,11 +327,11 @@ GENERATE() TextureCoords(const Mesh* model) {
    model->Commit<Traits::Sampler>(Abandon(data));
 }
 
-GENERATE() Materials(const Mesh*) {
+GENERATE() Materials(Mesh*) {
    TODO();
 }
 
-GENERATE() Instances(const Mesh*) {
+GENERATE() Instances(Mesh*) {
    TODO();
 }
 

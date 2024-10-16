@@ -47,12 +47,12 @@ struct GenerateTriangle {
    NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
-   static void Indices(const Mesh*);
-   static void Positions(const Mesh*);
-   static void Normals(const Mesh*);
-   static void TextureCoords(const Mesh*);
-   static void Materials(const Mesh*);
-   static void Instances(const Mesh*);
+   static void Indices(Mesh*);
+   static void Positions(Mesh*);
+   static void Normals(Mesh*);
+   static void TextureCoords(Mesh*);
+   static void Materials(Mesh*);
+   static void Instances(Mesh*);
 };
 
 #define GENERATE() template<CT::Triangle T, CT::Topology TOPOLOGY> \
@@ -69,25 +69,20 @@ bool GenerateTriangle<T, TOPOLOGY>::Default(Construct& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A solid triangles                                              
-      d.SetDefaultTrait<Traits::Place>(
-         MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Traits::Sampler>(
-         MetaOf<Sampler2>());
+      d.SetDefaultTrait<Traits::Place>(MetaOf<TTriangle<PointType>>());
+      d.SetDefaultTrait<Traits::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
-         d.SetDefaultTrait<Traits::Aim>(
-            MetaOf<Normal>());
+         d.SetDefaultTrait<Traits::Aim>(MetaOf<Normal>());
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A triangle of lines                                            
-      d.SetDefaultTrait<Traits::Place>(
-         MetaOf<TLine<PointType>>());
+      d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A triangle of points                                           
-      d.SetDefaultTrait<Traits::Place>(
-         MetaOf<PointType>());
+      d.SetDefaultTrait<Traits::Place>(MetaOf<PointType>());
    }
    else return false;
 
@@ -109,21 +104,21 @@ Construct GenerateTriangle<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 
 /// Generate positions for triangle                                           
 ///   @param model - the model to fill                                        
-GENERATE() Positions(const Mesh* model) {
+GENERATE() Positions(Mesh* model) {
    TMany<PointType> data = TriangleVertices;
    model->Commit<Traits::Place>(Abandon(data));
 }
 
 /// Generate indices for triangle                                             
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(const Mesh* model) {
+GENERATE() Indices(Mesh* model) {
    TMany<uint32_t> data {0, 1, 2};
    model->Commit<Traits::Place>(Abandon(data));
 }
 
 /// Generate normals for triangle                                             
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(const Mesh* model) {
+GENERATE() Normals(Mesh* model) {
    constexpr Normal n = Axes::Backward<ScalarType>;
    TMany<Normal> data;
    data.Reserve(VertexCount);
@@ -134,7 +129,7 @@ GENERATE() Normals(const Mesh* model) {
 
 /// Generate texture coordinates for a box                                    
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(const Mesh* model) {
+GENERATE() TextureCoords(Mesh* model) {
    TMany<Sampler2> data;
    data.Reserve(VertexCount);
    for (auto& v : TriangleVertices)
@@ -142,11 +137,11 @@ GENERATE() TextureCoords(const Mesh* model) {
    model->template Commit<Traits::Aim>(Abandon(data));
 }
 
-GENERATE() Materials(const Mesh*) {
+GENERATE() Materials(Mesh*) {
    TODO();
 }
 
-GENERATE() Instances(const Mesh*) {
+GENERATE() Instances(Mesh*) {
    TODO();
 }
 

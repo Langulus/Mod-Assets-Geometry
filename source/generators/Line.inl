@@ -25,12 +25,12 @@ struct GenerateLine {
    NOD() static bool Default(Construct&);
    NOD() static Construct Detail(const Mesh*, const LOD&);
 
-   static void Indices(const Mesh*);
-   static void Positions(const Mesh*);
-   static void Normals(const Mesh*);
-   static void TextureCoords(const Mesh*);
-   static void Materials(const Mesh*);
-   static void Instances(const Mesh*);
+   static void Indices(Mesh*);
+   static void Positions(Mesh*);
+   static void Normals(Mesh*);
+   static void TextureCoords(Mesh*);
+   static void Materials(Mesh*);
+   static void Instances(Mesh*);
 };
 
 #define GENERATE() template<CT::Line T, CT::Topology TOPOLOGY> \
@@ -47,8 +47,7 @@ bool GenerateLine<T, TOPOLOGY>::Default(Construct& desc) {
 
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines (duh)                                 
-      d.SetDefaultTrait<Traits::Place>(
-         MetaOf<TLine<PointType>>());
+      d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
    }
    else return false;
 
@@ -69,7 +68,7 @@ Construct GenerateLine<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
 
 /// Generate positions for a line                                             
 ///   @param model - the model to fill                                        
-GENERATE() Positions(const Mesh* model) {
+GENERATE() Positions(Mesh* model) {
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines                                       
       using E = TLine<PointType>;
@@ -82,27 +81,27 @@ GENERATE() Positions(const Mesh* model) {
 
 /// Generate normals for a line                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Normals(const Mesh*) {
+GENERATE() Normals(Mesh*) {
    TODO();
 }
 
 /// Generate indices for a line                                               
 ///   @param model - the geometry instance to save data in                    
-GENERATE() Indices(const Mesh*) {
+GENERATE() Indices(Mesh*) {
    TODO();
 }
 
 /// Generate texture coordinates for a line                                   
 ///   @param model - the geometry instance to save data in                    
-GENERATE() TextureCoords(const Mesh*) {
+GENERATE() TextureCoords(Mesh*) {
    TODO();
 }
 
-GENERATE() Materials(const Mesh*) {
+GENERATE() Materials(Mesh*) {
    TODO();
 }
 
-GENERATE() Instances(const Mesh*) {
+GENERATE() Instances(Mesh*) {
    TODO();
 }
 

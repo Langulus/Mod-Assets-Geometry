@@ -54,12 +54,6 @@ Mesh::Mesh(MeshLibrary* producer, const Many& desc)
    VERBOSE_MESHES("Initialized");
 }
 
-void Mesh::Detach() {
-   mDataListMap.Reset();
-   mGenerators.Reset();
-   ProducedFrom::Detach();
-}
-
 /// React on environmental change                                             
 void Mesh::Refresh() {
 
