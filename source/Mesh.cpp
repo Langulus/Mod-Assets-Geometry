@@ -96,7 +96,7 @@ auto Mesh::GetLOD(const LOD& lod) const -> Ref<A::Mesh> {
    if (mLODgenerator) {
       // Generate a request, and fulfill it                             
       Verbs::Create creator {mLODgenerator(this, lod)};
-      static_cast<MeshLibrary*>(mProducer)->Create(creator);
+      mProducer.As<MeshLibrary>()->Create(creator);
       return creator->template As<A::Mesh*>();
    }
 
@@ -158,7 +158,7 @@ bool Mesh::FromFile(const Many& desc) {
    return false;
 }
 
-#define HasGenerator(a) ::std::is_invocable_v<decltype(&a), const Mesh*>
+#define HasGenerator(a) ::std::is_invocable_v<decltype(&a), Mesh*>
 
 ///                                                                           
 template<class GENERATOR>

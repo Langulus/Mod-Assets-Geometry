@@ -25,6 +25,8 @@ private:
 public:
    MeshLibrary(Runtime*, const Many&);
 
+   void RequestGarbageCollection() {}
+
    void Create(Verb&);
 };
 
