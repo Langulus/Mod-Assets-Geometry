@@ -49,6 +49,11 @@ MeshLibrary::MeshLibrary(Runtime* runtime, const Many& desc)
    VERBOSE_MESHES("Initialized");
 }
 
+/// First stage destruction                                                   
+void MeshLibrary::Teardown() {
+   mMeshes.Teardown();
+}
+
 /// Create/destroy meshes                                                     
 ///   @param verb - the creation/destruction verb                             
 void MeshLibrary::Create(Verb& verb) {
