@@ -7,7 +7,6 @@
 ///                                                                           
 #pragma once
 #include "Mesh.hpp"
-#include <Flow/Verbs/Create.hpp>
 
 
 ///                                                                           
@@ -20,14 +19,13 @@ struct MeshLibrary final : A::AssetModule {
 
 private:
    // Mesh library                                                      
-   TFactoryUnique<Mesh> mMeshes;
+   TFactoryUnique<::Mesh> mMeshes;
 
 public:
    MeshLibrary(Runtime*, const Many&);
 
-   void RequestGarbageCollection() {}
-
    void Create(Verb&);
    void Teardown();
+   void RequestGarbageCollection() {}
 };
 

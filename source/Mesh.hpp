@@ -37,9 +37,10 @@ public:
    void Refresh();
    void Create(Verb&);
    bool Generate(TMeta, Offset = 0);
+   //void Teardown();
 
    NOD() auto GetLOD(const LOD&) const -> Ref<A::Mesh>;
-
+   NOD() auto GetLibrary() const -> MeshLibrary*;
    static bool AutocompleteDescriptor(Construct&);
 
 private:

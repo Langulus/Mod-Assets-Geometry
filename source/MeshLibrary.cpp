@@ -35,7 +35,9 @@ MeshLibrary::MeshLibrary(Runtime* runtime, const Many& desc)
    if (not desc.ExtractTrait<Traits::Name, Traits::Path>(repo))
       desc.ExtractDataAs(repo);
 
-   try { mFolder = GetRuntime()->GetFolder(repo); }
+   try {
+      mFolder = GetRuntime()->GetFolder(repo);
+   }
    catch (...) {
       Logger::Warning(Self(),
          "Can't access mesh asset library folder `", repo,
@@ -51,6 +53,7 @@ MeshLibrary::MeshLibrary(Runtime* runtime, const Many& desc)
 
 /// First stage destruction                                                   
 void MeshLibrary::Teardown() {
+   mFolder.Reset();
    mMeshes.Teardown();
 }
 

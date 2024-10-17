@@ -55,6 +55,12 @@ Mesh::Mesh(MeshLibrary* producer, const Many& desc)
 }
 
 /// React on environmental change                                             
+/*void Mesh::Teardown() {
+   mGenerators.Reset();
+   mDataListMap.Reset();
+}*/
+
+/// React on environmental change                                             
 void Mesh::Refresh() {
 
 }
@@ -96,7 +102,7 @@ auto Mesh::GetLOD(const LOD& lod) const -> Ref<A::Mesh> {
    if (mLODgenerator) {
       // Generate a request, and fulfill it                             
       Verbs::Create creator {mLODgenerator(this, lod)};
-      mProducer.As<MeshLibrary>()->Create(creator);
+      GetLibrary()->Create(creator);
       return creator->template As<A::Mesh*>();
    }
 
@@ -219,4 +225,10 @@ bool Mesh::AutocompleteInner(Construct& out, DMeta primitive, DMeta topology) {
       return GENERATOR<PRIMITIVE, A::Point>::Default(out);
    else
       return false;
+}
+
+/// Get the mesh library                                                      
+///   @return the library                                                     
+auto Mesh::GetLibrary() const -> MeshLibrary* {
+   return mProducer.template As<MeshLibrary>();
 }
