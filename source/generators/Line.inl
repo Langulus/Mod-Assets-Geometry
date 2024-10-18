@@ -76,7 +76,7 @@ GENERATE() Positions(Mesh* model) {
       data << E {Axes::Origin<ScalarType>, Axes::Forward<ScalarType>};
       model->Commit<Traits::Place>(Abandon(data));
    }
-   else LANGULUS_ERROR("Unsupported topology for line positions");
+   else static_assert(false, "Unsupported topology for line positions");
 }
 
 /// Generate normals for a line                                               

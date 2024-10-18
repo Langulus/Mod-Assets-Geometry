@@ -139,9 +139,9 @@ GENERATE() Positions(Mesh* model) {
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A cylinder made out of lines                                   
-      LANGULUS_ERROR("TODO");
+      static_assert(false, "TODO");
    }
-   else LANGULUS_ERROR("Unsupported topology for cylinder positions");
+   else static_assert(false, "Unsupported topology for cylinder positions");
 }
 
 /// Generate normals for a cylinder                                           
@@ -169,7 +169,7 @@ GENERATE() Normals(Mesh* model) {
 
       model->template Commit<Traits::Aim>(Abandon(data));
    }
-   else LANGULUS_ERROR("Unsupported topology for cylinder normals");
+   else static_assert(false, "Unsupported topology for cylinder normals");
 }
 
 /// Generate indices for a cylinder                                           
@@ -189,7 +189,7 @@ GENERATE() Indices(Mesh* model) {
       // A cylinder made out of lines                                   
       TODO();
    }
-   else LANGULUS_ERROR("Unsupported topology for cylinder indices");
+   else static_assert(false, "Unsupported topology for cylinder indices");
 
    model->template Commit<Traits::Index>(Abandon(data));
 }
@@ -224,7 +224,7 @@ GENERATE() TextureCoords(Mesh* model) {
    else if constexpr (CT::Line<TOPOLOGY>) {
       TODO();
    }
-   else LANGULUS_ERROR("Unsupported topology for cylinder texture coordinates");
+   else static_assert(false, "Unsupported topology for cylinder texture coordinates");
 }
 
 GENERATE() Materials(Mesh*) {

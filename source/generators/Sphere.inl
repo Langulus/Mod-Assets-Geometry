@@ -226,11 +226,11 @@ GENERATE() Normals(Mesh* model) {
          for (auto& v : D::Vertices)
             data << b;
       }
-      else LANGULUS_ERROR("Shouldn't be reached");
+      else static_assert(false, "Shouldn't be reached");
 
       model->template Commit<Traits::Aim>(Abandon(data));
    }
-   else LANGULUS_ERROR("Unsupported topology for sphere/circle normals");
+   else static_assert(false, "Unsupported topology for sphere/circle normals");
 }
 
 /// Generate indices for a sphere/circle                                      
@@ -254,7 +254,7 @@ GENERATE() Indices(Mesh* model) {
          data << D::LineIndices[i][1];
       }
    }
-   else LANGULUS_ERROR("Unsupported topology for sphere/circle indices");
+   else static_assert(false, "Unsupported topology for sphere/circle indices");
 
    model->template Commit<Traits::Index>(Abandon(data));
 }
@@ -333,7 +333,7 @@ GENERATE() Materials(Mesh* model) {
       // A cube made out of points                                      
       TODO();
    }
-   else LANGULUS_ERROR("Unsupported topology for box colors");
+   else static_assert(false, "Unsupported topology for box colors");
 }
 
 GENERATE() Instances(Mesh*) {

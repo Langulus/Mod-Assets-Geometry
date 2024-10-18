@@ -312,7 +312,7 @@ GENERATE() Indices(Mesh* model) {
       // A zode made of a line list                                     
       TODO();
    }
-   else LANGULUS_ERROR("Unsupported topology for box positions");
+   else static_assert(false, "Unsupported topology for box positions");
 }
 
 /// Generate texture coordinates for a zode                                   

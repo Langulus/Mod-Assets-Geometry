@@ -240,7 +240,7 @@ GENERATE() Indices(Mesh* model) {
       // A box made out of points                                       
       TODO();
    }
-   else LANGULUS_ERROR("Unsupported topology for box indices");
+   else static_assert(false, "Unsupported topology for box indices");
 
    model->template Commit<Traits::Index>(Abandon(data));
    model->GetView().mIndexCount = static_cast<uint32_t>(data.GetCount());
@@ -279,7 +279,7 @@ GENERATE() TextureCoords(Mesh* model) {
    else if constexpr (CT::Point<TOPOLOGY>) {
       TODO();
    }
-   else LANGULUS_ERROR("Unsupported topology for box texture coordinates");
+   else static_assert(false, "Unsupported topology for box texture coordinates");
 }
 
 /// Generate material indices for different vertices/faces                    
@@ -348,7 +348,7 @@ GENERATE() Materials(Mesh* model) {
       // A cube made out of points                                      
       TODO();
    }
-   else LANGULUS_ERROR("Unsupported topology for box colors");
+   else static_assert(false, "Unsupported topology for box colors");
 }
 
 #undef GENERATE

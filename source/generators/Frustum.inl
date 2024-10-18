@@ -197,7 +197,7 @@ GENERATE() Positions(Mesh* model) {
       TMany<PointType> data = D::Vertices;
       model->Commit<Traits::Place>(Abandon(data));
    }
-   else LANGULUS_ERROR("Unsupported topology for box positions");
+   else static_assert(false, "Unsupported topology for box positions");
 }
 
 /// Generate normals for a frustum                                            
@@ -230,7 +230,7 @@ GENERATE() Normals(Mesh* model) {
 
       model->template Commit<Traits::Aim>(Abandon(data));
    }
-   else LANGULUS_ERROR("Unsupported topology for box normals");
+   else static_assert(false, "Unsupported topology for box normals");
 }
 
 /// Generate indices for a frustum                                            
@@ -252,9 +252,9 @@ GENERATE() Indices(Mesh* model) {
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A box made out of points                                       
-      LANGULUS_ERROR("TODO");
+      static_assert(false, "TODO");
    }
-   else LANGULUS_ERROR("Unsupported topology for box indices");
+   else static_assert(false, "Unsupported topology for box indices");
 
    model->template Commit<Traits::Index>(Abandon(data));
 }
@@ -292,7 +292,7 @@ GENERATE() TextureCoords(Mesh* model) {
    else if constexpr (CT::Point<TOPOLOGY>) {
       TODO();
    }
-   else LANGULUS_ERROR("Unsupported topology for box texture coordinates");
+   else static_assert(false, "Unsupported topology for box texture coordinates");
 }
 
 GENERATE() Materials(Mesh*) {
