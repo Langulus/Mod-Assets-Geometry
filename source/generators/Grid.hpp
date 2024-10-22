@@ -35,34 +35,7 @@ namespace Langulus
       concept Grid = (DerivedFrom<T, A::Grid> and ...);
    }
 
-   /// Custom name generator at compile-time for boxes                        
-   template<CT::Vector T>
-   consteval auto CustomName(Of<TGrid<T>>&&) noexcept {
-      using CLASS = TGrid<T>;
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<CLASS>();
-      ::std::array<char, defaultClassName.size() + 1> name {};
-      ::std::size_t offset {};
-
-      if constexpr (T::MemberCount > 3) {
-         for (auto i : defaultClassName)
-            name[offset++] = i;
-         return name;
-      }
-
-      // Write prefix                                                   
-      for (auto i : "Grid")
-         name[offset++] = i;
-
-      // Write size                                                     
-      --offset;
-      name[offset++] = '0' + T::MemberCount;
-
-      // Write suffix                                                   
-      for (auto i : SuffixOf<TypeOf<T>>())
-         name[offset++] = i;
-      return name;
-   }
-}
+} // namespace Langulus
 
 ///                                                                        |  
 /// 2D/3D grid, centered around origin                                     |  
@@ -87,7 +60,34 @@ namespace Langulus
 ///                                                                        |  
 template<CT::Vector T>
 struct TGrid : A::Grid {
-   LANGULUS(NAME) CustomNameOf<TGrid>::Generate();
+private:
+   static consteval auto GenerateToken() {
+      constexpr auto defaultClassName = RTTI::LastCppNameOf<TGrid>();
+      ::std::array<char, defaultClassName.size() + 1> name {};
+      ::std::size_t offset {};
+
+      if constexpr (T::MemberCount > 3) {
+         for (auto i : defaultClassName)
+            name[offset++] = i;
+         return name;
+      }
+
+      // Write prefix                                                   
+      for (auto i : "Grid")
+         name[offset++] = i;
+
+      // Write size                                                     
+      --offset;
+      name[offset++] = '0' + T::MemberCount;
+
+      // Write suffix                                                   
+      for (auto i : SuffixOf<TypeOf<T>>())
+         name[offset++] = i;
+      return name;
+   }
+
+public:
+   LANGULUS(NAME) GenerateToken();
    LANGULUS(ABSTRACT) false;
    LANGULUS(POD) CT::POD<T>;
    LANGULUS(TYPED) TypeOf<T>;
