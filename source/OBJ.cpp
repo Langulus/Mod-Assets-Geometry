@@ -178,7 +178,7 @@ bool Mesh::ReadOBJ(const A::File& file) {
 
    for (;;) {
       // Read another buffer's worth from file                          
-      auto read = stream->Read(buffer);
+      auto read = stream->Read(static_cast<Many&>(buffer));
       if (read == 0 and start == buffer.GetRaw())
          break;
 
