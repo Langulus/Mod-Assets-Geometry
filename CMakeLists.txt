@@ -12,11 +12,7 @@ file(GLOB_RECURSE
 )
 
 # Build the module                                                              
-add_library(LangulusModAssetsGeometry SHARED ${LANGULUS_MOD_ASSETS_GEOMETRY_SOURCES})
-
-target_link_libraries(LangulusModAssetsGeometry 
-    PRIVATE     Langulus
-)
+add_langulus_mod(LangulusModAssetsGeometry ${LANGULUS_MOD_ASSETS_GEOMETRY_SOURCES})
 
 if(LANGULUS_TESTING)
     enable_testing()
