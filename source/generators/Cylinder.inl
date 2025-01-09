@@ -70,8 +70,8 @@ struct GenerateCylinder {
       {7,3,4},  {4,3,1}
    };
 
-   NOD() static bool Default(Construct&);
-   NOD() static Construct Detail(const Mesh*, const LOD&);
+   static bool Default(Construct&);
+   static auto Detail(const Mesh*, const LOD&) -> Construct;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -121,7 +121,7 @@ bool GenerateCylinder<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
-Construct GenerateCylinder<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+auto GenerateCylinder<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
    return Construct::From<A::Mesh>(model->GetDescriptor());
 }
 

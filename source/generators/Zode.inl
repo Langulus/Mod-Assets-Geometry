@@ -101,8 +101,8 @@ struct GenerateZode {
 
    static_assert(Dimensions >= 3, "Zode should be at least 3D");
 
-   NOD() static bool Default(Construct&);
-   NOD() static Construct Detail(const Mesh*, const LOD&);
+   static bool Default(Construct&);
+   static auto Detail(const Mesh*, const LOD&) -> Construct;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -155,7 +155,7 @@ bool GenerateZode<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Zode T, CT::Topology TOPOLOGY>
-Construct GenerateZode<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+auto GenerateZode<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
    //TODO if closer, generate less curvy zode
    //TODO if further, generate more curvy zode, or even sphere
    return Construct::From<A::Mesh>(model->GetDescriptor());

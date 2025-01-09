@@ -73,8 +73,8 @@ struct GenerateSphere {
 
    using D = Conditional<Dimensions == 2, Constants2D, Constants3D>;
 
-   NOD() static bool Default(Construct&);
-   NOD() static Construct Detail(const Mesh*, const LOD&);
+   static bool Default(Construct&);
+   static auto Detail(const Mesh*, const LOD&) -> Construct;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -127,7 +127,7 @@ bool GenerateSphere<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return a newly generated descriptor, you can use it to generate the    
 ///           required level-of-detail geometry                               
 template<CT::Sphere T, CT::Topology TOPOLOGY>
-Construct GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) {
+auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> Construct {
    auto& md = model->GetDescriptor();
    if (lod.mLODIndex == 0) {
       // On zero LOD index, we're at optimal distance, so we return     

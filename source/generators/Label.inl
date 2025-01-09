@@ -112,8 +112,8 @@ struct GenerateLabel {
       0,2,1,2,3,1,
    };
 
-   NOD() static bool Default(Construct&);
-   NOD() static Construct Detail(const Mesh*, const LOD&);
+   static bool Default(Construct&);
+   static auto Detail(const Mesh*, const LOD&) -> Construct;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -165,7 +165,7 @@ bool GenerateLabel<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @param lod - the LOD state to generate                                  
 ///   @return the same descriptor, labels don't have LOD                      
 template<CT::Label T, CT::Topology TOPOLOGY>
-Construct GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+auto GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
    return Construct::From<A::Mesh>(model->GetDescriptor());
 }
 

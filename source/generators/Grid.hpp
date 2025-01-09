@@ -115,8 +115,8 @@ struct GenerateGrid {
    static constexpr Count Dimensions = T::MemberCount;
    static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
-   NOD() static bool Default(Construct&);
-   NOD() static Construct Detail(const Mesh*, const LOD&);
+   static bool Default(Construct&);
+   static auto Detail(const Mesh*, const LOD&) -> Construct;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);

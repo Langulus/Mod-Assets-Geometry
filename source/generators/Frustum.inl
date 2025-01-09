@@ -117,8 +117,8 @@ struct GenerateFrustum {
 
    using D = Conditional<Dimensions == 2, Constants2D, Constants3D>;
 
-   NOD() static bool Default(Construct&);
-   NOD() static Construct Detail(const Mesh*, const LOD&);
+   static bool Default(Construct&);
+   static auto Detail(const Mesh*, const LOD&) -> Construct;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -167,7 +167,7 @@ bool GenerateFrustum<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Frustum T, CT::Topology TOPOLOGY>
-Construct GenerateFrustum<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+auto GenerateFrustum<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
    return Construct::From<A::Mesh>(model->GetDescriptor());
 }
 

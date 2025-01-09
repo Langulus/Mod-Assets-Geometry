@@ -22,8 +22,8 @@ struct GenerateLine {
    using ScalarType = TypeOf<PointType>;
    static constexpr Count Dimensions = T::MemberCount;
 
-   NOD() static bool Default(Construct&);
-   NOD() static Construct Detail(const Mesh*, const LOD&);
+   static bool Default(Construct&);
+   static auto Detail(const Mesh*, const LOD&) -> Construct;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -62,7 +62,7 @@ bool GenerateLine<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Line T, CT::Topology TOPOLOGY>
-Construct GenerateLine<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+auto GenerateLine<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
    return Construct::From<A::Mesh>(model->GetDescriptor());
 }
 
