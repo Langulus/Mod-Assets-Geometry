@@ -15,6 +15,7 @@
 ///                                                                           
 /// Based on fast_obj v1.2 https://github.com/thisistherk/fast_obj            
 /// Completely rewritten to use Langulus containers and C++20                 
+/// TODO test if actually faster and contribute back if so                    
 ///                                                                           
 struct Obj {
 
