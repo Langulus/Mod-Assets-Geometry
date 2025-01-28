@@ -7,7 +7,7 @@
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
-#include <Math/Primitives/Line.hpp>
+#include <Langulus/Math/Primitives/Line.hpp>
 
 
 ///                                                                           

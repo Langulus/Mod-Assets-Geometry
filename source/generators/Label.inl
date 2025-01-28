@@ -8,7 +8,7 @@
 #pragma once
 #include "Box.inl"
 #include <Langulus/Image.hpp>
-#include <Math/Scale.hpp>
+#include <Langulus/Math/Scale.hpp>
 
 template<CT::Vector T>
 struct TLabel;
@@ -243,8 +243,10 @@ GENERATE() Normals(Mesh* model) {
       if (IsSpace(c))
          continue;
 
-      for (auto& v : GlyphVertices)
+      for (auto& v : GlyphVertices) {
+         (void)v;
          data << n;
+      }
    }
 
    model->template Commit<Traits::Aim>(Abandon(data));

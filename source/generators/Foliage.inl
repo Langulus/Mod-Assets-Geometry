@@ -7,8 +7,8 @@
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
-#include <Math/Primitives/Triangle.hpp>
-#include <Math/Mapping.hpp>
+#include <Langulus/Math/Primitives/Triangle.hpp>
+#include <Langulus/Math/Mapping.hpp>
 
 
 namespace Langulus::A

@@ -7,11 +7,11 @@
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
-#include <Math/Primitives/Cylinder.hpp>
-#include <Math/Primitives/Triangle.hpp>
-#include <Math/Primitives/Line.hpp>
-#include <Math/Mapping.hpp>
-#include <Math/Color.hpp>
+#include <Langulus/Math/Primitives/Cylinder.hpp>
+#include <Langulus/Math/Primitives/Triangle.hpp>
+#include <Langulus/Math/Primitives/Line.hpp>
+#include <Langulus/Math/Mapping.hpp>
+#include <Langulus/Math/Color.hpp>
 
 
 ///                                                                           
