@@ -15,7 +15,7 @@ file(GLOB_RECURSE
 add_langulus_mod(LangulusModAssetsGeometry ${LANGULUS_MOD_ASSETS_GEOMETRY_SOURCES})
 
 if(LANGULUS_TESTING)
-    enable_testing()
+	enable_testing()
 	add_subdirectory(test)
 endif()
 
