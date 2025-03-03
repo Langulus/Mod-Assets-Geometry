@@ -7,6 +7,7 @@
 ///                                                                           
 #pragma once
 #include "Mesh.hpp"
+#include <Langulus/Flow/Factory.hpp>
 
 
 ///                                                                           
