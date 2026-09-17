@@ -189,7 +189,7 @@ bool Mesh::FillGenerators(DMeta primitive) {
    if (not primitive->CastsTo<PRIMITIVE>())
       return false;
 
-   LANGULUS_ASSUME(DevAssumes, mView.mTopology, "Topology not set");
+   LglsAssumeDev(mView.mTopology, "Topology not set");
    if (mView.mTopology->CastsTo<A::TriangleStrip>())
       FillGeneratorsInner<GENERATOR<PRIMITIVE, A::TriangleStrip>>();
    else if (mView.mTopology->CastsTo<A::Triangle>())
