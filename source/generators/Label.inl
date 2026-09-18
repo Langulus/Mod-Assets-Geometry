@@ -56,7 +56,7 @@ struct TLabel : A::Label {
    LANGULUS_BASES(A::Label);
 
    using PointType = T;
-   static constexpr Count MemberCount = T::MemberCount;
+   static constexpr size_t MemberCount = T::MemberCount;
    static_assert(MemberCount > 1, "Can't have one-dimensional label");
 
    Text mText;
@@ -81,7 +81,7 @@ template<CT::Label T, CT::Topology TOPOLOGY = A::Triangle>
 struct GenerateLabel {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
-   static constexpr Count Dimensions = T::MemberCount;
+   static constexpr size_t Dimensions = T::MemberCount;
 
    static_assert(CT::Exact<TOPOLOGY, A::Triangle>,
       "Label can be only have triangle topology");
@@ -95,9 +95,9 @@ struct GenerateLabel {
    ///   |/  |                                                                
    ///   +---+                                                                
    ///  1     0                                                               
-   static constexpr Count VertexCount = 4;
-   static constexpr Count TriangleCount = 2;
-   static constexpr Count IndexCount = TriangleCount * 3;
+   static constexpr size_t VertexCount = 4;
+   static constexpr size_t TriangleCount = 2;
+   static constexpr size_t IndexCount = TriangleCount * 3;
 
    /// Glyph's unique vertices                                                
    static constexpr Vec2 GlyphVertices[VertexCount] = {
@@ -217,7 +217,7 @@ GENERATE() Indices(Mesh* model) {
    TMany<uint32_t> data;
    data.Reserve(IndexCount * label.mText.GetCount());
 
-   Offset relevantCharIndex = 0;
+   size_t relevantCharIndex = 0;
    for (auto& c : label.mText) {
       if (IsSpace(c))
          continue;

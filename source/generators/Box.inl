@@ -26,16 +26,16 @@ template<CT::Box T, CT::Topology TOPOLOGY = A::Triangle>
 struct GenerateBox {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
-   static constexpr Count Dimensions = T::MemberCount;
+   static constexpr size_t Dimensions = T::MemberCount;
    static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
    /// Properties for a 3D box                                                
    struct Constants3D {
-      static constexpr Count VertexCount = 8;
-      static constexpr Count TriangleCount = 12;
-      static constexpr Count LineCount = 12;
-      static constexpr Count IndexCount = TriangleCount * 3;
-      static constexpr Count FaceCount = TriangleCount / 2;
+      static constexpr size_t VertexCount = 8;
+      static constexpr size_t TriangleCount = 12;
+      static constexpr size_t LineCount = 12;
+      static constexpr size_t IndexCount = TriangleCount * 3;
+      static constexpr size_t FaceCount = TriangleCount / 2;
 
       /// 3D box unique vertices                                              
       static constexpr PointType Vertices[VertexCount] = {
@@ -85,11 +85,11 @@ struct GenerateBox {
       ///   +---+                                                             
       ///  1     0                                                            
       ///                                                                     
-      static constexpr Count VertexCount = 4;
-      static constexpr Count TriangleCount = 2;
-      static constexpr Count LineCount = 4;
-      static constexpr Count IndexCount = TriangleCount * 3;
-      static constexpr Count FaceCount = TriangleCount / 2;
+      static constexpr size_t VertexCount = 4;
+      static constexpr size_t TriangleCount = 2;
+      static constexpr size_t LineCount = 4;
+      static constexpr size_t IndexCount = TriangleCount * 3;
+      static constexpr size_t FaceCount = TriangleCount / 2;
 
       /// 3D box unique vertices                                              
       static constexpr PointType Vertices[VertexCount] = {
@@ -226,7 +226,7 @@ GENERATE() Indices(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
       data.Reserve(D::IndexCount);
-      for (Offset i = 0; i < D::TriangleCount; ++i) {
+      for (size_t i = 0; i < D::TriangleCount; ++i) {
          data << D::Indices[i][0];
          data << D::Indices[i][1];
          data << D::Indices[i][2];
@@ -254,7 +254,7 @@ GENERATE() TextureCoords(Mesh* model) {
          // Generate model mapping                                      
          TMany<PointType> data;
          data.Reserve(D::IndexCount);
-         for (Offset i = 0; i < D::TriangleCount; ++i) {
+         for (size_t i = 0; i < D::TriangleCount; ++i) {
             data << (D::Vertices[D::Indices[i][0]] + Half);
             data << (D::Vertices[D::Indices[i][1]] + Half);
             data << (D::Vertices[D::Indices[i][2]] + Half);
@@ -266,7 +266,7 @@ GENERATE() TextureCoords(Mesh* model) {
          // Generate face mapping                                       
          TMany<Sampler2> data;
          data.Reserve(D::IndexCount);
-         for (Offset i = 0; i < D::IndexCount; ++i)
+         for (size_t i = 0; i < D::IndexCount; ++i)
             data << D::FaceMapping[i % (D::IndexCount / D::FaceCount)];
 
          model->template Commit<Traits::Sampler>(Abandon(data));

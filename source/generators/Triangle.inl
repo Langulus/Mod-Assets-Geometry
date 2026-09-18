@@ -33,11 +33,11 @@ template<CT::Triangle T, CT::Topology TOPOLOGY = A::Triangle>
 struct GenerateTriangle {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
-   static constexpr Count Dimensions = T::MemberCount;
+   static constexpr size_t Dimensions = T::MemberCount;
    static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
    /// Triangle unique vertices                                               
-   static constexpr Count VertexCount = 3;
+   static constexpr size_t VertexCount = 3;
    static constexpr PointType TriangleVertices[VertexCount] = {
       PointType { Half, Half, 0},
       PointType {-Half, Half, 0},

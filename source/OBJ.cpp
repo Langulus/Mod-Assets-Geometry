@@ -59,9 +59,9 @@ struct Obj {
    /// Parsed object group                                                    
    struct Group {
       Text name;                 // Group name                          
-      Offset face_count = 0;     // Number of faces                     
-      Offset face_offset = 0;    // First face in fastObjMesh face_* arrays
-      Offset index_offset = 0;   // First index in fastObjMesh indices array
+      size_t face_count = 0;     // Number of faces                     
+      size_t face_offset = 0;    // First face in fastObjMesh face_* arrays
+      size_t index_offset = 0;   // First index in fastObjMesh indices array
    };
 
    /// Parsed object mesh                                                     
@@ -73,9 +73,9 @@ struct Obj {
       TMany<Vec3f> colors;
 
       // Face data: one element for each face                           
-      Count          face_count;
-      TMany<Offset>  face_vertices;
-      TMany<Offset>  face_materials;
+      size_t          face_count;
+      TMany<size_t>  face_vertices;
+      TMany<size_t>  face_materials;
 
       // Indices for each vertex attribute                              
       TMany<Idx>   mPositionIndices;
@@ -102,13 +102,13 @@ struct Obj {
       Group group;
 
       // Current material index                                         
-      Offset material;
+      size_t material;
 
       // Current line in file                                           
-      Offset line;
+      size_t line;
    };
 
-   // Size of buffer to read into                                       
+   // size_t of buffer to read into                                       
    static constexpr size_t BufferSize = 65536;
 
    // Max supported power when parsing float                            
@@ -594,7 +594,7 @@ const char* Obj::parse_face(Data* data, const char* ptr) {
 
       // Push position index                                            
       if (v < 0)
-         p_seq << static_cast<Idx>(data->mesh->positions.GetCount() - static_cast<Count>(-v));
+         p_seq << static_cast<Idx>(data->mesh->positions.GetCount() - static_cast<size_t>(-v));
       else if (v > 0 and v < static_cast<int>(data->mesh->positions.GetCount()))
          p_seq << static_cast<Idx>(v);
       else {
@@ -605,7 +605,7 @@ const char* Obj::parse_face(Data* data, const char* ptr) {
 
       // Push texture coordinate index                                  
       if (t < 0)
-         t_seq << static_cast<Idx>(data->mesh->texcoords.GetCount() - static_cast<Count>(-t));
+         t_seq << static_cast<Idx>(data->mesh->texcoords.GetCount() - static_cast<size_t>(-t));
       else if (t > 0 and t < static_cast<int>(data->mesh->texcoords.GetCount()))
          t_seq << static_cast<Idx>(t);
       else
@@ -613,7 +613,7 @@ const char* Obj::parse_face(Data* data, const char* ptr) {
 
       // Push normal index                                              
       if (n < 0)
-         n_seq << static_cast<Idx>(data->mesh->normals.GetCount() - static_cast<Count>(-n));
+         n_seq << static_cast<Idx>(data->mesh->normals.GetCount() - static_cast<size_t>(-n));
       else if (n > 0 and n < static_cast<int>(data->mesh->normals.GetCount()))
          n_seq << static_cast<Idx>(n);
       else
@@ -624,7 +624,7 @@ const char* Obj::parse_face(Data* data, const char* ptr) {
 
    // Triangulate the face                                              
    // https://stackoverflow.com/questions/23723993                      
-   for (Count i = 2; i < p_seq.GetCount(); ++i) {
+   for (size_t i = 2; i < p_seq.GetCount(); ++i) {
       data->mesh->mPositionIndices << p_seq[0] << p_seq[i - 1] << p_seq[i];
       data->mesh->mTextureIndices  << t_seq[0] << t_seq[i - 1] << t_seq[i];
       data->mesh->mNormalIndices   << n_seq[0] << n_seq[i - 1] << n_seq[i];

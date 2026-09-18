@@ -61,11 +61,11 @@ GENERATE() Positions(Mesh* model) {
       TMany<E> data;
       data.Reserve(count);
 
-      for (Offset x = 0; x <= steps[0]; ++x) {
+      for (size_t x = 0; x <= steps[0]; ++x) {
          const ScalarType real_x = static_cast<ScalarType>(x);
 
          // xsteps*ysteps                                               
-         for (Offset y = 0; y <= steps[1]; ++y) {
+         for (size_t y = 0; y <= steps[1]; ++y) {
             const Vec2 xy {
                -Half + real_x * sep[0],
                -Half + static_cast<ScalarType>(y) * sep[1]
@@ -76,7 +76,7 @@ GENERATE() Positions(Mesh* model) {
 
          if constexpr (Dimensions >= 3) {
             // xsteps*zsteps                                            
-            for (Offset z = 0; z <= steps[2]; ++z) {
+            for (size_t z = 0; z <= steps[2]; ++z) {
                const ScalarType xx = -Half + real_x * sep[0];
                const ScalarType zz = -Half + static_cast<ScalarType>(z) * sep[2];
 
@@ -87,10 +87,10 @@ GENERATE() Positions(Mesh* model) {
 
       if constexpr (Dimensions >= 3) {
          // ysteps*zsteps                                               
-         for (Offset y = 0; y <= steps[1]; ++y) {
+         for (size_t y = 0; y <= steps[1]; ++y) {
             const ScalarType real_y = static_cast<ScalarType>(y);
 
-            for (Offset z = 0; z <= steps[2]; ++z) {
+            for (size_t z = 0; z <= steps[2]; ++z) {
                const Vec2 yz {
                   -Half + real_y * sep[1],
                   -Half + static_cast<ScalarType>(z) * sep[2]
@@ -109,14 +109,14 @@ GENERATE() Positions(Mesh* model) {
       TMany<PointType> data;
       data.Reserve(count);
 
-      for (Offset x = 0; x < steps[0]; ++x) {
+      for (size_t x = 0; x < steps[0]; ++x) {
          const ScalarType xx = static_cast<ScalarType>(x);
 
-         for (Offset y = 0; y < steps[1]; ++y) {
+         for (size_t y = 0; y < steps[1]; ++y) {
             const ScalarType yy = static_cast<ScalarType>(y);
 
             if constexpr (Dimensions >= 3) {
-               for (Offset z = 0; z < steps[2]; ++z) {
+               for (size_t z = 0; z < steps[2]; ++z) {
                   const ScalarType zz = static_cast<ScalarType>(z);
 
                   // A point in XYZ                                     

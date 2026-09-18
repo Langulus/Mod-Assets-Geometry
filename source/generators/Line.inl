@@ -20,7 +20,7 @@ template<CT::Line T, CT::Topology TOPOLOGY = A::Triangle>
 struct GenerateLine {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
-   static constexpr Count Dimensions = T::MemberCount;
+   static constexpr size_t Dimensions = T::MemberCount;
 
    static bool Default(Construct&);
    static auto Detail(const Mesh*, const LOD&) -> Construct;

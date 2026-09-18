@@ -75,7 +75,7 @@ void Mesh::Create(Verb&) {
 ///   @param trait - the trait to generate                                    
 ///   @param index - trait group to generate                                  
 ///   @return true if data was generated                                      
-bool Mesh::Generate(TMeta trait, Offset index) {
+bool Mesh::Generate(TMeta trait, size_t index) {
    auto foundData = GetDataListMap().FindIt(trait);
    if (foundData) {
       if (foundData.GetValue().GetCount() > index)

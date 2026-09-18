@@ -24,15 +24,15 @@ template<CT::Frustum T, CT::Topology TOPOLOGY = A::Triangle>
 struct GenerateFrustum {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
-   static constexpr Count Dimensions = T::MemberCount;
+   static constexpr size_t Dimensions = T::MemberCount;
    static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
    /// Properties for a 3D box                                                
    struct Constants3D {
-      static constexpr Count VertexCount = 8;
-      static constexpr Count TriangleCount = 12;
-      static constexpr Count IndexCount = TriangleCount * 3;
-      static constexpr Count FaceCount = TriangleCount / 2;
+      static constexpr size_t VertexCount = 8;
+      static constexpr size_t TriangleCount = 12;
+      static constexpr size_t IndexCount = TriangleCount * 3;
+      static constexpr size_t FaceCount = TriangleCount / 2;
 
       /// 3D box unique vertices                                              
       static constexpr PointType Vertices[VertexCount] = {
@@ -82,11 +82,11 @@ struct GenerateFrustum {
       ///   +---+                                                             
       ///  1     0                                                            
       ///                                                                     
-      static constexpr Count VertexCount = 4;
-      static constexpr Count TriangleCount = 2;
-      static constexpr Count LineCount = 4;
-      static constexpr Count IndexCount = TriangleCount * 3;
-      static constexpr Count FaceCount = TriangleCount / 2;
+      static constexpr size_t VertexCount = 4;
+      static constexpr size_t TriangleCount = 2;
+      static constexpr size_t LineCount = 4;
+      static constexpr size_t IndexCount = TriangleCount * 3;
+      static constexpr size_t FaceCount = TriangleCount / 2;
 
       /// 3D box unique vertices                                              
       static constexpr PointType Vertices[VertexCount] = {
@@ -179,7 +179,7 @@ GENERATE() Positions(Mesh* model) {
       using E = TTriangle<PointType>;
       TMany<E> data;
       data.Reserve(D::TriangleCount);
-      for (Offset i = 0; i < D::TriangleCount; ++i)
+      for (size_t i = 0; i < D::TriangleCount; ++i)
          data << E {D::Vertices, D::Indices[i]};
       model->Commit<Traits::Place>(Abandon(data));
    }
@@ -188,7 +188,7 @@ GENERATE() Positions(Mesh* model) {
       using E = TLine<PointType>;
       TMany<E> data;
       data.Reserve(D::LineCount);
-      for (Offset i = 0; i < D::LineCount; ++i)
+      for (size_t i = 0; i < D::LineCount; ++i)
          data << E {D::Vertices, D::LineIndices[i]};
       model->Commit<Traits::Place>(Abandon(data));
    }
@@ -224,7 +224,7 @@ GENERATE() Normals(Mesh* model) {
       }
       else if constexpr (Dimensions == 2) {
          // Normals for a 2D rect, always facing the user (-Z)          
-         for (Offset i = 0; i < D::IndexCount; ++i)
+         for (size_t i = 0; i < D::IndexCount; ++i)
             data << b;
       }
 
@@ -240,7 +240,7 @@ GENERATE() Indices(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
       data.Reserve(D::IndexCount);
-      for (Offset i = 0; i < D::TriangleCount; ++i) {
+      for (size_t i = 0; i < D::TriangleCount; ++i) {
          data << D::Indices[i][0];
          data << D::Indices[i][1];
          data << D::Indices[i][2];
@@ -267,7 +267,7 @@ GENERATE() TextureCoords(Mesh* model) {
          // Generate model mapping                                      
          TMany<Sampler3> data;
          data.Reserve(D::IndexCount);
-         for (Offset i = 0; i < D::TriangleCount; ++i) {
+         for (size_t i = 0; i < D::TriangleCount; ++i) {
             data << D::Vertices[D::Indices[i][0]] + Half;
             data << D::Vertices[D::Indices[i][1]] + Half;
             data << D::Vertices[D::Indices[i][2]] + Half;
@@ -279,7 +279,7 @@ GENERATE() TextureCoords(Mesh* model) {
          // Generate face mapping                                       
          TMany<Sampler2> data;
          data.Reserve(D::IndexCount);
-         for (Offset i = 0; i < D::IndexCount; ++i)
+         for (size_t i = 0; i < D::IndexCount; ++i)
             data << D::FaceMapping[i % (D::IndexCount / D::FaceCount)];
 
          model->template Commit<Traits::Sampler>(Abandon(data));

@@ -36,7 +36,7 @@ namespace Langulus::CT
 template<CT::Foliage T, CT::Topology TOPOLOGY = A::Triangle>
 struct GenerateFoliage {
    using PointType = typename T::PointType;
-   static constexpr Count Dimensions = T::MemberCount;
+   static constexpr size_t Dimensions = T::MemberCount;
 
    static bool Default(Construct&);
    static auto Detail(const Mesh*, const LOD&) -> Construct;

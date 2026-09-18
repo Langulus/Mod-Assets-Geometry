@@ -24,15 +24,15 @@ template<CT::Cylinder T, CT::Topology TOPOLOGY = A::Triangle>
 struct GenerateCylinder {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
-   static constexpr Count Dimensions = T::MemberCount;
+   static constexpr size_t Dimensions = T::MemberCount;
    static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
    static_assert(Dimensions >= 3, "Cylinder should be at least 3D");
 
-   static constexpr Count VertexCount = 8;
-   static constexpr Count TriangleCount = 12;
-   static constexpr Count IndexCount = TriangleCount * 3;
-   static constexpr Count FaceCount = TriangleCount / 2;
+   static constexpr size_t VertexCount = 8;
+   static constexpr size_t TriangleCount = 12;
+   static constexpr size_t IndexCount = TriangleCount * 3;
+   static constexpr size_t FaceCount = TriangleCount / 2;
 
    /// 3D cylinder unique vertices                                            
    static constexpr PointType Vertices[VertexCount] = {
@@ -133,7 +133,7 @@ GENERATE() Positions(Mesh* model) {
       using E = TTriangle<PointType>;
       TMany<E> data;
       data.Reserve(TriangleCount);
-      for (Offset i = 0; i < TriangleCount; ++i)
+      for (size_t i = 0; i < TriangleCount; ++i)
          data << E {Vertices, TriangleIndices[i]};
       model->Commit<Traits::Place>(Abandon(data));
    }
@@ -179,7 +179,7 @@ GENERATE() Indices(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
       data.Reserve(IndexCount);
-      for (Offset i = 0; i < TriangleCount; ++i) {
+      for (size_t i = 0; i < TriangleCount; ++i) {
          data << TriangleIndices[i][0];
          data << TriangleIndices[i][1];
          data << TriangleIndices[i][2];
@@ -202,7 +202,7 @@ GENERATE() TextureCoords(Mesh* model) {
          // Generate model mapping                                      
          TMany<Sampler3> data;
          data.Reserve(IndexCount);
-         for (Offset i = 0; i < TriangleCount; ++i) {
+         for (size_t i = 0; i < TriangleCount; ++i) {
             data << Vertices[TriangleIndices[i][0]] + Half;
             data << Vertices[TriangleIndices[i][1]] + Half;
             data << Vertices[TriangleIndices[i][2]] + Half;
@@ -214,7 +214,7 @@ GENERATE() TextureCoords(Mesh* model) {
          // Generate face mapping                                       
          TMany<Sampler2> data;
          data.Reserve(IndexCount);
-         for (Offset i = 0; i < IndexCount; ++i)
+         for (size_t i = 0; i < IndexCount; ++i)
             data << FaceMapping[i % (IndexCount / FaceCount)];
 
          model->template Commit<Traits::Sampler>(Abandon(data));

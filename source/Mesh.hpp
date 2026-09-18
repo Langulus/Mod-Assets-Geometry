@@ -36,7 +36,7 @@ public:
 
    void Refresh();
    void Create(Verb&);
-   bool Generate(TMeta, Offset = 0);
+   bool Generate(TMeta, size_t = 0);
 
    auto GetLOD(const LOD&) const -> Ref<A::Mesh>;
    auto GetLibrary() const -> MeshLibrary*;

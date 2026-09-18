@@ -94,11 +94,11 @@ public:
    LANGULUS_BASES(A::Grid);
 
    using PointType = T;
-   static constexpr Count MemberCount = T::MemberCount;
+   static constexpr size_t MemberCount = T::MemberCount;
    static_assert(MemberCount > 1, "Can't have one-dimensional grid");
 
    T mCellSize {1};
-   TVector<Count, MemberCount> mExtent {5};
+   TVector<size_t, MemberCount> mExtent {5};
 };
 
 
@@ -112,7 +112,7 @@ template<CT::Grid T, CT::Topology TOPOLOGY = A::Line>
 struct GenerateGrid {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
-   static constexpr Count Dimensions = T::MemberCount;
+   static constexpr size_t Dimensions = T::MemberCount;
    static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
    static bool Default(Construct&);

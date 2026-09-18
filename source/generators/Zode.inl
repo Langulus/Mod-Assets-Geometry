@@ -76,12 +76,12 @@ struct TZode : A::Zode {
 
    using PointType = T;
    using ScalarType = TypeOf<T>;
-   static constexpr Count MemberCount = T::MemberCount;
+   static constexpr size_t MemberCount = T::MemberCount;
    static_assert(MemberCount == 3, "Zode must always be three-dimensional");
 
    // A zode (or a zenith node) is a radial segment, and the number of  
    // segments decides the radial size of the zode (360 / ZodeSegments) 
-   static constexpr Count Segments = 4;
+   static constexpr size_t Segments = 4;
    static constexpr Radians RadialSize = Degrees {360 / Segments};
 };
 
@@ -96,7 +96,7 @@ template<CT::Zode T, CT::Topology TOPOLOGY = A::Triangle>
 struct GenerateZode {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
-   static constexpr Count Dimensions = T::MemberCount;
+   static constexpr size_t Dimensions = T::MemberCount;
    static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
    static_assert(Dimensions >= 3, "Zode should be at least 3D");
@@ -198,13 +198,13 @@ GENERATE() Positions(Mesh* model) {
    // Generate the unique points for all segments                       
    TMany<PointType> data;
    data.Reserve(points * T::Segments);
-   for (Offset index = 0; index < T::Segments; ++index) {
+   for (size_t index = 0; index < T::Segments; ++index) {
       data << PointType {orient * Vec4 {0, 0, 0, 1}};
 
-      for (Offset row = 1; row < rows; ++row) {
+      for (size_t row = 1; row < rows; ++row) {
          const auto rowStart = PointType {0, step * static_cast<ScalarType>(row), 0};
 
-         for (Offset point = 0; point <= row; ++point) {
+         for (size_t point = 0; point <= row; ++point) {
             const auto position = PointType {
                orient * Vec4(rowStart + dir * static_cast<ScalarType>(point), 1)
             }.Normalize() * Half;
@@ -226,7 +226,7 @@ GENERATE() Normals(Mesh* model) {
 
    TMany<Normal> data;
    data.Reserve(positions->GetCount());
-   for (Offset i = 0; i < positions->GetCount(); ++i)
+   for (size_t i = 0; i < positions->GetCount(); ++i)
       data << Normal {positions->AsCast<Vec3>(i)};
    model->Commit<Traits::Aim>(Abandon(data));
 }
@@ -322,7 +322,7 @@ GENERATE() TextureCoords(Mesh* model) {
 
    TMany<Sampler3> data;
    data.Reserve(positions->GetCount());
-   for (Offset i = 0; i < positions->GetCount(); ++i)
+   for (size_t i = 0; i < positions->GetCount(); ++i)
       data << Sampler3 {positions->template AsCast<Vec3>(i)};
    model->Commit<Traits::Sampler>(Abandon(data));
 }

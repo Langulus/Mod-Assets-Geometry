@@ -25,16 +25,16 @@ template<CT::Sphere T, CT::Topology TOPOLOGY = A::Triangle>
 struct GenerateSphere {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
-   static constexpr Count Dimensions = T::MemberCount;
+   static constexpr size_t Dimensions = T::MemberCount;
    static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
    static_assert(Dimensions >= 2, "Sphere should be at least 2D");
    
    /// Properties for a 3D sphere                                             
    struct Constants3D {
-      static constexpr Count VertexCount = 12;
-      static constexpr Count TriangleCount = 20;
-      static constexpr Count IndexCount = TriangleCount * 3;
+      static constexpr size_t VertexCount = 12;
+      static constexpr size_t TriangleCount = 20;
+      static constexpr size_t IndexCount = TriangleCount * 3;
 
       static constexpr ScalarType IcosahedronX = 
          ScalarType {1} / (ScalarType {2} * Sqrt(ScalarType {5}));
