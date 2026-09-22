@@ -7,7 +7,7 @@
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
-#include <Langulus/Math/Primitives/Line.hpp>
+#include <Langulus/Primitives/TLine.hpp>
 
 template<CT::Vector>
 struct TGrid;
@@ -16,48 +16,44 @@ using Grid2 = TGrid<Vec2>;
 using Grid3 = TGrid<Vec3>;
 
 
-namespace Langulus
+namespace Langulus::Things
 {
-   namespace A
-   {
-      /// An abstract grid                                                    
-      struct Grid : A::Primitive {
-         LANGULUS(ABSTRACT) true;
-         LANGULUS(CONCRETE) TGrid<Vec3>;
-         LANGULUS_BASES(A::Primitive);
-      };
-   }
+   /// An abstract grid                                                       
+   struct Grid : A::Primitive {
+      LANGULUS(ABSTRACT) true;
+      LANGULUS(CONCRETE) TGrid<Vec3>;
+      LANGULUS_BASES(A::Primitive);
+   };
+}
 
-   namespace CT
-   {
-      /// Concept for distinguishing grids                                    
-      template<class...T>
-      concept Grid = (DerivedFrom<T, A::Grid> and ...);
-   }
+namespace Langulus::CT
+{
+   /// Concept for distinguishing grids                                       
+   template<class...T>
+   concept Grid = (DerivedFrom<T, Things::Grid> and ...);
+}
 
-} // namespace Langulus
-
-///                                                                        |  
-/// 2D/3D grid, centered around origin                                     |  
-///                                                                        |  
-///                                                                        |  
-///             ^ +Y      / +Z                                             |  
-///             |        /                                                 |  
-///     +-------+-------+---> +X                                           |  
-///    /       /       /|                 mExtent is the number of cells   |  
-///   +-------+-------+ |                 you could count, from the center |  
-///  /       /       /| |                 to each other direction          |  
-/// +-------+-------+ | +---                                               |  
-/// | |/    | |/    | |/|  ^                                               |  
-/// | +-----|-*-----|-+ |  | mCellSize.y                                   |  
-/// |/      |/origin|/| |  v                                               |  
-/// +-------+-------+ | +---                                               |  
-/// | |/    | |/    | |/                                                   |  
-/// | +-----|-+-----|-+---                                                 |  
-/// |/      |/      |/   / mCellSize.z                                     |  
-/// +-------+-------+   /                                                  |  
-///         |<----->| mCellSize.x                                          |  
-///                                                                        |  
+///                                                                           
+/// 2D/3D grid, centered around origin                                        
+///                                                                           
+///                                                                           
+///             ^ +Y       +Z                                                 
+///             |        /                                                    
+///     +-------+-------+---> +X                                              
+///    /       /       /|                 mExtent is the number of cells      
+///   +-------+-------+ |                 you could count, from the center    
+///  /       /       /| |                 to each other direction             
+/// +-------+-------+ | +---                                                  
+/// | |/    | |/    | |/|  ^                                                  
+/// | +-----|-O-----|-+ |  | mCellSize.y                                      
+/// |/      |/origin|/| |  v                                                  
+/// +-------+-------+ | +---                                                  
+/// | |/    | |/    | |/                                                      
+/// | +-----|-+-----|-+---+                                                   
+/// |/      |/      |/   / mCellSize.z                                        
+/// +-------+-------+---+                                                     
+///         |<----->|                                                         
+///        mCellSize.x                                                        
 template<CT::Vector T>
 struct TGrid : A::Grid {
 private:

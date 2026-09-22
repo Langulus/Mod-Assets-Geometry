@@ -7,19 +7,19 @@
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
-#include <Langulus/Math/Primitives/Triangle.hpp>
-#include <Langulus/Math/Primitives/Line.hpp>
-#include <Langulus/Math/Matrix.hpp>
-#include <Langulus/Math/Mapping.hpp>
-#include <Langulus/Math/Color.hpp>
-#include <Langulus/Math/Sampler.hpp>
-#include <Langulus/Math/Angle.hpp>
+#include <Langulus/Primitives/TTriangle.hpp>
+#include <Langulus/Primitives/TLine.hpp>
+#include <Langulus/Matrices/TMatrix.hpp>
+#include <Langulus/Mapping.hpp>
+#include <Langulus/Colors/TColor.hpp>
+#include <Langulus/Vectors/TSampler.hpp>
+#include <Langulus/Numbers/TAngle.hpp>
 
 template<CT::Vector T>
 struct TZode;
 
 
-namespace Langulus::A
+namespace Langulus::Things
 {
    /// An abstract zode                                                       
    struct Zode {
@@ -32,7 +32,7 @@ namespace Langulus::CT
 {
    /// Concept for distinguishing zodes                                       
    template<class...T>
-   concept Zode = (DerivedFrom<T, A::Zode> and ...);
+   concept Zode = (DerivedFrom<T, Things::Zode> and ...);
 }
 
 

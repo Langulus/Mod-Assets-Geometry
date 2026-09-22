@@ -8,12 +8,12 @@
 #pragma once
 #include "Box.inl"
 #include <Langulus/Image.hpp>
-#include <Langulus/Math/Scale.hpp>
+#include <Langulus/Vectors/TScale.hpp>
 
 template<CT::Vector T>
 struct TLabel;
 
-namespace Langulus::A
+namespace Langulus::Things
 {
    /// An abstract label                                                      
    struct Label {
@@ -26,28 +26,28 @@ namespace Langulus::CT
 {
    /// Concept for distinguishing labels                                      
    template<class...T>
-   concept Label = (DerivedFrom<T, A::Label> and ...);
+   concept Label = (DerivedFrom<T, Things::Label> and ...);
 }
 
 
-///                                                                        |  
-/// Label geometry generator                                               |  
-///                                                                        |  
-/// origin                                                                 |  
-/// v                                                                      |  
-/// +-------+                                                              |  
-/// |       |-------+-------+-------+-------+ -----> +X                    |  
-/// |   R   |   I   |   G   |   H   |   T   |                              |  
-/// |       |       |       |       |       |   \n                         |  
-/// +-------+-------+       +-------+-------+                              |  
-///                                                                        |  
-/// +-------+-------+       +-------+-------+                              |  
-/// |   O   |   N   | space |   I   |   T   |                              |  
-/// |       |       |       |       |       |                              |  
-/// +-------+-------+       +-------+-------+                              |  
-/// |                                                                      |  
-/// v +Y                                                                   |  
-///                                                                        |  
+///                                                                           
+/// Label geometry generator                                                  
+///                                                                           
+/// origin                                                                    
+/// v                                                                         
+/// o-------+                                                                 
+/// |       |-------+-------+-------+-------+ -----> +X                       
+/// |   R   |   I   |   G   |   H   |   T   |                                 
+/// |       |       |       |       |       |   \n                            
+/// +-------+-------+       +-------+-------+                                 
+///                                                                           
+/// +-------+-------+       +-------+-------+                                 
+/// |   O   |   N   | space |   I   |   T   |                                 
+/// |       |       |       |       |       |                                 
+/// +-------+-------+       +-------+-------+                                 
+/// |                                                                         
+/// v +Y                                                                      
+///                                                                           
 template<CT::Vector T>
 struct TLabel : A::Label {
    LANGULUS(ABSTRACT) false;

@@ -7,15 +7,15 @@
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
-#include <Langulus/Math/Primitives/Triangle.hpp>
-#include <Langulus/Math/Mapping.hpp>
+#include <Langulus/Primitives/TTriangle.hpp>
+#include <Langulus/Mapping.hpp>
 
 
-namespace Langulus::A
+namespace Langulus::Things
 {
    /// An abstract foliage                                                    
    struct Foliage {
-      LANGULUS(ABSTRACT) true;
+      using CTTI_Abstract = Yup;
    };
 }
 
@@ -23,7 +23,7 @@ namespace Langulus::CT
 {
    /// Concept for distinguishing box primitives                              
    template<class...T>
-   concept Foliage = (DerivedFrom<T, A::Foliage> and ...);
+   concept Foliage = (DerivedFrom<T, Things::Foliage> and ...);
 }
 
 

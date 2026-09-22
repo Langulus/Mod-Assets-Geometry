@@ -7,13 +7,13 @@
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
-#include <Langulus/Math/Primitives/Box.hpp>
-#include <Langulus/Math/Primitives/Triangle.hpp>
-#include <Langulus/Math/Primitives/Line.hpp>
-#include <Langulus/Math/Mapping.hpp>
-#include <Langulus/Math/Color.hpp>
-#include <Langulus/Math/Sampler.hpp>
-#include <Langulus/Math/Normal.hpp>
+#include <Langulus/Primitives/TBox.hpp>
+#include <Langulus/Primitives/TTriangle.hpp>
+#include <Langulus/Primitives/TLine.hpp>
+#include <Langulus/Mapping.hpp>
+#include <Langulus/Colors/TColor.hpp>
+#include <Langulus/Vectors/TSampler.hpp>
+#include <Langulus/Vectors/TNormal.hpp>
 
 
 ///                                                                           

@@ -6,14 +6,16 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include "Common.hpp"
-#include <Langulus/Math/Primitives/Box.hpp>
-#include <Langulus/Math/Primitives/Triangle.hpp>
-#include <Langulus/Math/Primitives/Line.hpp>
-#include <Langulus/Math/Primitives/Cylinder.hpp>
-#include <Langulus/Math/Mapping.hpp>
-#include <Langulus/Math/Color.hpp>
+#include <Langulus/Primitives/TBox.hpp>
+#include <Langulus/Primitives/TTriangle.hpp>
+#include <Langulus/Primitives/TLine.hpp>
+#include <Langulus/Primitives/TCylinder.hpp>
+#include <Langulus/Mapping.hpp>
+#include <Langulus/Colors/TColor.hpp>
 #include <Langulus/Material.hpp>
+#include <Langulus/Mesh.hpp>
+
+using namespace Langulus;
 
 //TODO Unfortunately, due to compiler bugs in MSVC and Clang, we can't
 // generalize these generators yet. Some day we will...
@@ -24,7 +26,7 @@
 ///                                                                           
 ///   A mesh asset                                                            
 ///                                                                           
-struct Mesh final : A::Mesh {
+struct Mesh final : Things::Mesh {
    LANGULUS(ABSTRACT) false;
    LANGULUS(PRODUCER) MeshLibrary;
    LANGULUS(FILES) "obj";
@@ -38,7 +40,7 @@ public:
    void Create(Verb&);
    bool Generate(TMeta, size_t = 0);
 
-   auto GetLOD(const LOD&) const -> Ref<A::Mesh>;
+   auto GetLOD(const LOD&) const -> Ref<Things::Mesh>;
    auto GetLibrary() const -> MeshLibrary*;
    static bool AutocompleteDescriptor(Construct&);
 

@@ -7,13 +7,13 @@
 ///                                                                           
 #pragma once
 #include "Mesh.hpp"
-#include <Langulus/Flow/Factory.hpp>
+#include <Langulus/Factory.hpp>
 
 
 ///                                                                           
 ///   Mesh reading, writing, and generation module                            
 ///                                                                           
-struct MeshLibrary final : A::AssetModule {
+struct MeshLibrary final : Things::AssetModule {
    LANGULUS(ABSTRACT) false;
    LANGULUS_BASES(A::AssetModule);
    LANGULUS_VERBS(Verbs::Create);

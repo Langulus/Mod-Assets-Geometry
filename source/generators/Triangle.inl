@@ -7,10 +7,10 @@
 ///                                                                           
 #pragma once
 #include "../Mesh.hpp"
-#include <Langulus/Math/Primitives/Triangle.hpp>
-#include <Langulus/Math/Primitives/Line.hpp>
-#include <Langulus/Math/Mapping.hpp>
-#include <Langulus/Math/Color.hpp>
+#include <Langulus/Primitives/TTriangle.hpp>
+#include <Langulus/Primitives/TLine.hpp>
+#include <Langulus/Mapping.hpp>
+#include <Langulus/Colors/TColor.hpp>
 
 
 ///                                                                           
@@ -24,12 +24,12 @@
 ///   |    / \                                                                
 ///   v   /   \         Each corner is at distance 0.5 from center by         
 ///      /     \        default. The vertices are in the XY plane by          
-///     /   +   \       default (Z=0)                                         
+///     /   o   \       default (Z=0)                                         
 ///    /  origin \                                                            
 ///   +-----------+                                                           
 ///   1           0                                                           
 ///                                                                           
-template<CT::Triangle T, CT::Topology TOPOLOGY = A::Triangle>
+template<CT::Triangle T, CT::Topology TOPOLOGY = Math::Triangle>
 struct GenerateTriangle {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
@@ -44,8 +44,8 @@ struct GenerateTriangle {
       PointType {    0,-Half, 0},
    };
 
-   static bool Default(Construct&);
-   static auto Detail(const Mesh*, const LOD&) -> Construct;
+   static bool Default(Recipe&);
+   static auto Detail(const Mesh*, const LOD&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -64,7 +64,7 @@ struct GenerateTriangle {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Triangle T, CT::Topology TOPOLOGY>
-bool GenerateTriangle<T, TOPOLOGY>::Default(Construct& desc) {
+bool GenerateTriangle<T, TOPOLOGY>::Default(Recipe& desc) {
    auto& d = desc.GetDescriptor();
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
