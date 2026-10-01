@@ -25,7 +25,7 @@
 /// Mesh construction                                                         
 ///   @param producer - the producer                                          
 ///   @param desc - mesh descriptor                                           
-Mesh::Mesh(MeshLibrary* producer, const Many& desc)
+Mesh::Mesh(MeshLibrary* producer, Many const& desc)
    : Resolvable   {this}
    , ProducedFrom {producer, desc} {
    // Get a path from the descriptor                                    
@@ -132,7 +132,7 @@ bool Mesh::AutocompleteDescriptor(Construct& desc) {
 
 /// Populate the mesh view and generator functions, by analyzing descriptor   
 ///   @param desc - the descriptor to parse                                   
-bool Mesh::FromDescriptor(const Many& desc) {
+bool Mesh::FromDescriptor(Many const& desc) {
    const auto primitive = desc.FindType<A::Primitive>();
    if (not primitive)
       return false;
@@ -149,7 +149,7 @@ bool Mesh::FromDescriptor(const Many& desc) {
 
 /// Load mesh via filename/file interface                                     
 ///   @param descriptor - the file to load                                    
-bool Mesh::FromFile(const Many& desc) {
+bool Mesh::FromFile(Many const& desc) {
    Path filename;
    if (not desc.ExtractTrait<Traits::Name, Traits::Path>(filename))
       desc.ExtractDataAs(filename);

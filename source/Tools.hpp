@@ -22,7 +22,7 @@ namespace Tools
    ///   @param vstep - vertex step                                           
    ///   @param vperprim - vertices per primitive                             
    template<class DATA, class INDEX>
-   void Subdivide(pcptr div, const Many* indices, const Many* source, Many* output, const pcptr pcount, const pcptr vstart, const pcptr vstep, const pcptr vperprim) {
+   void Subdivide(pcptr div, Many const* indices, Many const* source, Many* output, const pcptr pcount, const pcptr vstart, const pcptr vstep, const pcptr vperprim) {
       // Can't subdivide points                                          
       if (vperprim == 1) {
          *output = *source;

@@ -23,7 +23,7 @@ private:
    TFactoryUnique<::Mesh> mMeshes;
 
 public:
-   MeshLibrary(Runtime*, const Many&);
+   MeshLibrary(Runtime*, Many const&);
 
    void Create(Verb&);
    void Teardown();
