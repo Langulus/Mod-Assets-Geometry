@@ -7,8 +7,8 @@
 ///                                                                           
 #pragma once
 #include "Box.inl"
-#include <Langulus/Image.hpp>
-#include <Langulus/Vectors/TScale.hpp>
+#include <Langulus/CppAPI/Image.hpp>
+#include <Langulus/Math/Scale.hpp>
 
 template<CT::Vector T>
 struct TLabel;
@@ -35,11 +35,11 @@ namespace Langulus::CT
 ///                                                                           
 /// origin                                                                    
 /// v                                                                         
-/// o-------+                                                                 
+/// O-------+                                                                 
 /// |       |-------+-------+-------+-------+ -----> +X                       
 /// |   R   |   I   |   G   |   H   |   T   |                                 
 /// |       |       |       |       |       |   \n                            
-/// +-------+-------+       +-------+-------+                                 
+/// +-------+-------+-------+-------+-------+                                 
 ///                                                                           
 /// +-------+-------+       +-------+-------+                                 
 /// |   O   |   N   | space |   I   |   T   |                                 
@@ -50,7 +50,7 @@ namespace Langulus::CT
 ///                                                                           
 template<CT::Vector T>
 struct TLabel : A::Label {
-   LANGULUS(ABSTRACT) false;
+   using CTTI_Abstract = No;
    LANGULUS(POD) CT::POD<T>;
    LANGULUS(TYPED) TypeOf<T>;
    LANGULUS_BASES(A::Label);
@@ -156,7 +156,7 @@ bool GenerateLabel<T, TOPOLOGY>::Default(Construct& desc) {
 
    d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
-   desc.SetType<A::Mesh>();
+   desc.SetType<Things::Mesh>();
    return true;
 }
 
@@ -166,7 +166,7 @@ bool GenerateLabel<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return the same descriptor, labels don't have LOD                      
 template<CT::Label T, CT::Topology TOPOLOGY>
 auto GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
-   return Construct::From<A::Mesh>(model->GetDescriptor());
+   return Construct::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for label                                              

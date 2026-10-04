@@ -64,13 +64,13 @@ void MeshLibrary::Create(Verb& verb) {
    verb.ForEachDeep(
       [&](const Construct& construct) {
          // For each construct...                                       
-         if (not construct.CastsTo<A::Mesh>())
+         if (not construct.CastsTo<Things::Mesh>())
             return;
          request = construct;
       },
       [&](const DMeta& type) {
          // For each type...                                            
-         if (not type or not type->CastsTo<A::Mesh>())
+         if (not type or not type->CastsTo<Things::Mesh>())
             return;
          request = Construct {type};
       }

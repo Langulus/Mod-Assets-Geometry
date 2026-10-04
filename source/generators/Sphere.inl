@@ -12,7 +12,7 @@
 #include <Langulus/Primitives/TTriangle.hpp>
 #include <Langulus/Primitives/TLine.hpp>
 #include <Langulus/Mapping.hpp>
-#include <Langulus/Colors/TColor.hpp>
+#include <Langulus/Color.hpp>
 
 
 ///                                                                           
@@ -117,7 +117,7 @@ bool GenerateSphere<T, TOPOLOGY>::Default(Construct& desc) {
 
    d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
-   desc.SetType<A::Mesh>();
+   desc.SetType<Things::Mesh>();
    return true;
 }
 
@@ -132,7 +132,7 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> C
    if (lod.mLODIndex == 0) {
       // On zero LOD index, we're at optimal distance, so we return     
       // the original unmodified geometry                               
-      return Construct::From<A::Mesh>(md);
+      return Construct::From<Things::Mesh>(md);
    }
 
    unsigned tesselation = 0;
@@ -147,7 +147,7 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> C
       // Create the LOD descriptor, based on the current one            
       auto newMesh = md;
       newMesh.SetTrait(Traits::Tesselation {std::round(newTesselation)});
-      return Construct::From<A::Mesh>(Abandon(newMesh));
+      return Construct::From<Things::Mesh>(Abandon(newMesh));
    }
    else if (lod.mLODIndex > 0) {
       // LOD is for a sphere that is very close. At this point the      
@@ -173,12 +173,12 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> C
       // small reorientation                                            
       const auto intersection = lod.mView.GetPosition() - lod.mModel.GetPosition();
       if (intersection.Length() == 0)
-         return Construct::From<A::Mesh>(md);
+         return Construct::From<Things::Mesh>(md);
 
       const auto steppingNormal = (intersection.Normalize() * areasToCover).Round();
 
       // Clone only the descriptor and change type                      
-      auto newMesh = Construct::From<A::Mesh>(TZode<PointType> {});
+      auto newMesh = Construct::From<Things::Mesh>(TZode<PointType> {});
       // Set the place around which the zode is centered                
       newMesh.SetTrait(Traits::Place {steppingNormal});
       // Set the size of the sphere in order to calculate curvature     
@@ -196,7 +196,7 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> C
       return Abandon(newMesh);
    }
 
-   return Construct::From<A::Mesh>(md);
+   return Construct::From<Things::Mesh>(md);
 }
 
 /// Generate positions for a sphere/circle                                    
@@ -323,7 +323,7 @@ GENERATE() Materials(Mesh* model) {
       data << RGB {64,  255,  255};
       data << RGB {255, 64,   255};
 
-      model->template Commit<Traits::Color>(Abandon(data));
+      model->template Commit<Tags::Color>(Abandon(data));
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A cube made out of lines                                       

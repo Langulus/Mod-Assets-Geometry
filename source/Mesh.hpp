@@ -11,9 +11,9 @@
 #include <Langulus/Primitives/TLine.hpp>
 #include <Langulus/Primitives/TCylinder.hpp>
 #include <Langulus/Mapping.hpp>
-#include <Langulus/Colors/TColor.hpp>
-#include <Langulus/Material.hpp>
-#include <Langulus/Mesh.hpp>
+#include <Langulus/Color.hpp>
+#include <Langulus/CppAPI/Material.hpp>
+#include <Langulus/CppAPI/Mesh.hpp>
 
 using namespace Langulus;
 
@@ -27,10 +27,10 @@ using namespace Langulus;
 ///   A mesh asset                                                            
 ///                                                                           
 struct Mesh final : Things::Mesh {
-   LANGULUS(ABSTRACT) false;
-   LANGULUS(PRODUCER) MeshLibrary;
+   using CTTI_Abstract = No;
+   using CTTI_Producer = MeshLibrary;
    LANGULUS(FILES) "obj";
-   LANGULUS_BASES(A::Mesh);
+   LANGULUS_BASES(Things::Mesh);
    LANGULUS_VERBS(Verbs::Create);
 
 public:

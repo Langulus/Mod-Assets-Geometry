@@ -19,7 +19,7 @@
 #include "generators/Triangle.inl"
 #include "generators/Zode.inl"
 
-#include <Langulus/IO.hpp>
+#include <Langulus/CppAPI/IO.hpp>
 
 
 /// Mesh construction                                                         
@@ -98,12 +98,12 @@ bool Mesh::Generate(TMeta trait, size_t index) {
 /// Get level of detail mesh                                                  
 ///   @param lod - the level of detail state to generate LOD from             
 ///   @return the new geometry                                                
-auto Mesh::GetLOD(const LOD& lod) const -> Ref<A::Mesh> {
+auto Mesh::GetLOD(const LOD& lod) const -> Ref<Things::Mesh> {
    if (mLODgenerator) {
       // Generate a request, and fulfill it                             
       Verbs::Create creator {mLODgenerator(this, lod)};
       GetLibrary()->Create(creator);
-      return creator->template As<A::Mesh*>();
+      return creator->template As<Things::Mesh*>();
    }
 
    return const_cast<Mesh*>(this);

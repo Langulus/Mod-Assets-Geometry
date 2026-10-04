@@ -14,7 +14,7 @@
 ///   Mesh reading, writing, and generation module                            
 ///                                                                           
 struct MeshLibrary final : Things::AssetModule {
-   LANGULUS(ABSTRACT) false;
+   using CTTI_Abstract = No;
    LANGULUS_BASES(A::AssetModule);
    LANGULUS_VERBS(Verbs::Create);
 

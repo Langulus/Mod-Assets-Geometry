@@ -5,7 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include <Langulus/Mesh.hpp>
+#include <Langulus/CppAPI/Mesh.hpp>
 #include <Langulus/Testing.hpp>
 
 
@@ -21,7 +21,7 @@ SCENARIO("Loading non-existent file", "[mesh]") {
          );
 
          WHEN("The mesh is created via abstractions") {
-            REQUIRE_THROWS(root.CreateUnit<A::Mesh>("nonexistent.obj"));
+            REQUIRE_THROWS(root.CreateUnit<Things::Mesh>("nonexistent.obj"));
             REQUIRE(root.GetUnits().IsEmpty());
          }
          
@@ -50,22 +50,22 @@ SCENARIO("Mesh creation", "[mesh]") {
          );
 
          WHEN("The mesh is created via abstractions") {
-            auto producedMesh = root.CreateUnit<A::Mesh>(Math::Box2 {});
+            auto producedMesh = root.CreateUnit<Things::Mesh>(Math::Box2 {});
 
             // Update once                                              
             root.Update({});
             root.DumpHierarchy();
 
             REQUIRE(producedMesh.GetCount() == 1);
-            REQUIRE(producedMesh.CastsTo<A::Mesh>(1));
+            REQUIRE(producedMesh.CastsTo<Things::Mesh>(1));
             REQUIRE(producedMesh.IsSparse());
             REQUIRE(root.GetUnits().GetCount() == 1);
 
             THEN("Generate a LOD level, that should be the same") {
-               auto sameMesh = producedMesh.As<A::Mesh>().GetLOD({});
+               auto sameMesh = producedMesh.As<Things::Mesh>().GetLOD({});
                root.DumpHierarchy();
 
-               REQUIRE(sameMesh == producedMesh.As<A::Mesh*>());
+               REQUIRE(sameMesh == producedMesh.As<Things::Mesh*>());
             }
          }
          
@@ -78,7 +78,7 @@ SCENARIO("Mesh creation", "[mesh]") {
             root.DumpHierarchy();
 
             REQUIRE(producedMesh.GetCount() == 1);
-            REQUIRE(producedMesh.CastsTo<A::Mesh>());
+            REQUIRE(producedMesh.CastsTo<Things::Mesh>());
             REQUIRE(producedMesh.IsSparse());
             REQUIRE(root.GetUnits().GetCount() == 1);
          }
@@ -103,14 +103,14 @@ SCENARIO("Loading OBJ file", "[mesh]") {
          );
 
          WHEN("The mesh is created via abstractions") {
-            auto producedMesh = root.CreateUnit<A::Mesh>("maxwell/maxwell.obj");
+            auto producedMesh = root.CreateUnit<Things::Mesh>("maxwell/maxwell.obj");
 
             // Update once                                              
             root.Update({});
             root.DumpHierarchy();
 
             REQUIRE(producedMesh.GetCount() == 1);
-            REQUIRE(producedMesh.CastsTo<A::Mesh>(1));
+            REQUIRE(producedMesh.CastsTo<Things::Mesh>(1));
             REQUIRE(producedMesh.IsSparse());
             REQUIRE(root.GetUnits().GetCount() == 1);
          }
@@ -124,7 +124,7 @@ SCENARIO("Loading OBJ file", "[mesh]") {
             root.DumpHierarchy();
 
             REQUIRE(producedMesh.GetCount() == 1);
-            REQUIRE(producedMesh.CastsTo<A::Mesh>());
+            REQUIRE(producedMesh.CastsTo<Things::Mesh>());
             REQUIRE(producedMesh.IsSparse());
             REQUIRE(root.GetUnits().GetCount() == 1);
          }

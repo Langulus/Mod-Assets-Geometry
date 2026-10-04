@@ -69,7 +69,7 @@ bool GenerateFoliage<T, TOPOLOGY>::Default(Construct& desc) {
    else return false;
 
    d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
-   desc.SetType<A::Mesh>();
+   desc.SetType<Things::Mesh>();
    return true;
 }
 
@@ -80,7 +80,7 @@ bool GenerateFoliage<T, TOPOLOGY>::Default(Construct& desc) {
 ///           to generate the new geometry                                    
 template<CT::Foliage T, CT::Topology TOPOLOGY>
 auto GenerateFoliage<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
-   return Construct::From<A::Mesh>(model->GetDescriptor());
+   return Construct::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for foliage                                            

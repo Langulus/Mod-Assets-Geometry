@@ -10,7 +10,7 @@
 #include <Langulus/Primitives/TTriangle.hpp>
 #include <Langulus/Primitives/TLine.hpp>
 #include <Langulus/Mapping.hpp>
-#include <Langulus/Colors/TColor.hpp>
+#include <Langulus/Color.hpp>
 
 
 ///                                                                           
@@ -88,7 +88,7 @@ bool GenerateTriangle<T, TOPOLOGY>::Default(Recipe& desc) {
 
    d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Model);
-   desc.SetType<A::Mesh>();
+   desc.SetType<Things::Mesh>();
    return true;
 }
 
@@ -99,7 +99,7 @@ bool GenerateTriangle<T, TOPOLOGY>::Default(Recipe& desc) {
 ///           to generate the new geometry                                    
 template<CT::Triangle T, CT::Topology TOPOLOGY>
 auto GenerateTriangle<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
-   return Construct::From<A::Mesh>(model->GetDescriptor());
+   return Construct::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for triangle                                           

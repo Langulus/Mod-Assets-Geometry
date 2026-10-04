@@ -6,7 +6,7 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #include "Mesh.hpp"
-#include <Langulus/IO.hpp>
+#include <Langulus/CppAPI/IO.hpp>
 #include <Langulus/Time.hpp>
 
 
@@ -232,7 +232,7 @@ bool Mesh::ReadOBJ(const A::File& file) {
    Commit<Traits::Place>   (Move(m.positions));
    Commit<Traits::Aim>     (Move(m.normals));
    Commit<Traits::Sampler> (Move(m.texcoords));
-   Commit<Traits::Color>   (Move(m.colors));
+   Commit<Tags::Color>   (Move(m.colors));
    Commit<Traits::Index>   (Traits::Place   {Move(m.mPositionIndices)});
    Commit<Traits::Index>   (Traits::Aim     {Move(m.mNormalIndices)});
    Commit<Traits::Index>   (Traits::Sampler {Move(m.mTextureIndices)});

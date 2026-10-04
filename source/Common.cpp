@@ -5,7 +5,7 @@
 ///                                                                           
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
-#include "Common.hpp"
+#include "Export.hpp"
 #include <Langulus/Primitives/Primitive.hpp>
 #include "generators/Grid.hpp"
 

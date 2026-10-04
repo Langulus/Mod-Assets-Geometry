@@ -27,7 +27,7 @@ bool GenerateGrid<T, TOPOLOGY>::Default(Construct& desc) {
    else return false;
 
    d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
-   desc.SetType<A::Mesh>();
+   desc.SetType<Things::Mesh>();
    return true;
 }
 
@@ -38,7 +38,7 @@ bool GenerateGrid<T, TOPOLOGY>::Default(Construct& desc) {
 ///           to generate the new geometry                                    
 template<CT::Grid T, CT::Topology TOPOLOGY>
 Construct GenerateGrid<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return Construct::From<A::Mesh>(model->GetDescriptor());
+   return Construct::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a grid                                             

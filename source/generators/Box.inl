@@ -11,7 +11,7 @@
 #include <Langulus/Primitives/TTriangle.hpp>
 #include <Langulus/Primitives/TLine.hpp>
 #include <Langulus/Mapping.hpp>
-#include <Langulus/Colors/TColor.hpp>
+#include <Langulus/Color.hpp>
 #include <Langulus/Vectors/TSampler.hpp>
 #include <Langulus/Vectors/TNormal.hpp>
 
@@ -167,7 +167,7 @@ bool GenerateBox<T, TOPOLOGY>::Default(Construct& desc) {
    else return false;
 
    d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
-   desc.SetType<A::Mesh>();
+   desc.SetType<Things::Mesh>();
    return true;
 }
 
@@ -178,7 +178,7 @@ bool GenerateBox<T, TOPOLOGY>::Default(Construct& desc) {
 ///           to generate the new geometry                                    
 template<CT::Box T, CT::Topology TOPOLOGY>
 auto GenerateBox<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
-   return Construct::From<A::Mesh>(model->GetDescriptor());
+   return Construct::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a box                                              
@@ -338,7 +338,7 @@ GENERATE() Materials(Mesh* model) {
       data << RGB {64,  255,  255};
       data << RGB {255, 64,   255};
 
-      model->template Commit<Traits::Color>(Abandon(data));
+      model->template Commit<Tags::Color>(Abandon(data));
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A cube made out of lines                                       

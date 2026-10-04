@@ -11,7 +11,7 @@
 #include <Langulus/Primitives/TTriangle.hpp>
 #include <Langulus/Primitives/TLine.hpp>
 #include <Langulus/Mapping.hpp>
-#include <Langulus/Colors/TColor.hpp>
+#include <Langulus/Color.hpp>
 
 
 ///                                                                           
@@ -157,7 +157,7 @@ bool GenerateFrustum<T, TOPOLOGY>::Default(Construct& desc) {
 
    d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
    d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
-   desc.SetType<A::Mesh>();
+   desc.SetType<Things::Mesh>();
    return true;
 }
 
@@ -168,7 +168,7 @@ bool GenerateFrustum<T, TOPOLOGY>::Default(Construct& desc) {
 ///           to generate the new geometry                                    
 template<CT::Frustum T, CT::Topology TOPOLOGY>
 auto GenerateFrustum<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
-   return Construct::From<A::Mesh>(model->GetDescriptor());
+   return Construct::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a frustum                                          

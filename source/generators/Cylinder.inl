@@ -11,7 +11,7 @@
 #include <Langulus/Primitives/TTriangle.hpp>
 #include <Langulus/Primitives/TLine.hpp>
 #include <Langulus/Mapping.hpp>
-#include <Langulus/Colors/TColor.hpp>
+#include <Langulus/Color.hpp>
 
 
 ///                                                                           
@@ -111,7 +111,7 @@ bool GenerateCylinder<T, TOPOLOGY>::Default(Construct& desc) {
    else return false;
 
    d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
-   desc.SetType<A::Mesh>();
+   desc.SetType<Things::Mesh>();
    return true;
 }
 
@@ -122,7 +122,7 @@ bool GenerateCylinder<T, TOPOLOGY>::Default(Construct& desc) {
 ///           to generate the new geometry                                    
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
 auto GenerateCylinder<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
-   return Construct::From<A::Mesh>(model->GetDescriptor());
+   return Construct::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a cylinder                                         

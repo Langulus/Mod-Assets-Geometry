@@ -6,7 +6,7 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
-#include <Langulus/Mesh.hpp>
+#include <Langulus/CppAPI/Mesh.hpp>
 
 using namespace Langulus;
 using namespace Math;
