@@ -98,8 +98,8 @@ bool GenerateTriangle<T, TOPOLOGY>::Default(Recipe& desc) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Triangle T, CT::Topology TOPOLOGY>
-auto GenerateTriangle<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
-   return Construct::From<Things::Mesh>(model->GetDescriptor());
+auto GenerateTriangle<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
+   return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for triangle                                           

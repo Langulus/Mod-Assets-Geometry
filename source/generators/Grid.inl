@@ -17,7 +17,7 @@
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Grid T, CT::Topology TOPOLOGY>
-bool GenerateGrid<T, TOPOLOGY>::Default(Construct& desc) {
+bool GenerateGrid<T, TOPOLOGY>::Default(Recipe& desc) {
    auto& d = desc.GetDescriptor();
 
    if constexpr (CT::Line<TOPOLOGY>) {
@@ -37,8 +37,8 @@ bool GenerateGrid<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Grid T, CT::Topology TOPOLOGY>
-Construct GenerateGrid<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
-   return Construct::From<Things::Mesh>(model->GetDescriptor());
+Recipe GenerateGrid<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+   return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a grid                                             

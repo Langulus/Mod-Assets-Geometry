@@ -70,8 +70,8 @@ struct GenerateCylinder {
       {7,3,4},  {4,3,1}
    };
 
-   static bool Default(Construct&);
-   static auto Detail(const Mesh*, const LOD&) -> Construct;
+   static bool Default(Recipe&);
+   static auto Detail(const Mesh*, const LOD&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -89,7 +89,7 @@ struct GenerateCylinder {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
-bool GenerateCylinder<T, TOPOLOGY>::Default(Construct& desc) {
+bool GenerateCylinder<T, TOPOLOGY>::Default(Recipe& desc) {
    auto& d = desc.GetDescriptor();
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -121,8 +121,8 @@ bool GenerateCylinder<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
-auto GenerateCylinder<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
-   return Construct::From<Things::Mesh>(model->GetDescriptor());
+auto GenerateCylinder<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
+   return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a cylinder                                         

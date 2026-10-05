@@ -70,8 +70,8 @@ namespace Langulus::CT
 template<CT::Vector T>
 struct TZode : A::Zode {
    using CTTI_Abstract = No;
-   LANGULUS(POD) CT::POD<T>;
-   LANGULUS(TYPED) TypeOf<T>;
+   using CTTI_POD = CT::POD<T>;
+   using CTTI_Typed = TypeOf<T>;
    LANGULUS_BASES(A::Zode);
 
    using PointType = T;
@@ -101,8 +101,8 @@ struct GenerateZode {
 
    static_assert(Dimensions >= 3, "Zode should be at least 3D");
 
-   static bool Default(Construct&);
-   static auto Detail(const Mesh*, const LOD&) -> Construct;
+   static bool Default(Recipe&);
+   static auto Detail(const Mesh*, const LOD&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -121,7 +121,7 @@ struct GenerateZode {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Zode T, CT::Topology TOPOLOGY>
-bool GenerateZode<T, TOPOLOGY>::Default(Construct& desc) {
+bool GenerateZode<T, TOPOLOGY>::Default(Recipe& desc) {
    auto& d = desc.GetDescriptor();
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -155,10 +155,10 @@ bool GenerateZode<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Zode T, CT::Topology TOPOLOGY>
-auto GenerateZode<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
+auto GenerateZode<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
    //TODO if closer, generate less curvy zode
    //TODO if further, generate more curvy zode, or even sphere
-   return Construct::From<Things::Mesh>(model->GetDescriptor());
+   return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a zode                                             

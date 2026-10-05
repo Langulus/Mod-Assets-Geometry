@@ -117,8 +117,8 @@ struct GenerateFrustum {
 
    using D = Conditional<Dimensions == 2, Constants2D, Constants3D>;
 
-   static bool Default(Construct&);
-   static auto Detail(const Mesh*, const LOD&) -> Construct;
+   static bool Default(Recipe&);
+   static auto Detail(const Mesh*, const LOD&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -137,7 +137,7 @@ struct GenerateFrustum {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Frustum T, CT::Topology TOPOLOGY>
-bool GenerateFrustum<T, TOPOLOGY>::Default(Construct& desc) {
+bool GenerateFrustum<T, TOPOLOGY>::Default(Recipe& desc) {
    auto& d = desc.GetDescriptor();
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -167,8 +167,8 @@ bool GenerateFrustum<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Frustum T, CT::Topology TOPOLOGY>
-auto GenerateFrustum<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
-   return Construct::From<Things::Mesh>(model->GetDescriptor());
+auto GenerateFrustum<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
+   return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a frustum                                          

@@ -73,8 +73,8 @@ struct GenerateSphere {
 
    using D = Conditional<Dimensions == 2, Constants2D, Constants3D>;
 
-   static bool Default(Construct&);
-   static auto Detail(const Mesh*, const LOD&) -> Construct;
+   static bool Default(Recipe&);
+   static auto Detail(const Mesh*, const LOD&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -93,7 +93,7 @@ struct GenerateSphere {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Sphere T, CT::Topology TOPOLOGY>
-bool GenerateSphere<T, TOPOLOGY>::Default(Construct& desc) {
+bool GenerateSphere<T, TOPOLOGY>::Default(Recipe& desc) {
    auto& d = desc.GetDescriptor();
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -127,12 +127,12 @@ bool GenerateSphere<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return a newly generated descriptor, you can use it to generate the    
 ///           required level-of-detail geometry                               
 template<CT::Sphere T, CT::Topology TOPOLOGY>
-auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> Construct {
+auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> Recipe {
    auto& md = model->GetDescriptor();
    if (lod.mLODIndex == 0) {
       // On zero LOD index, we're at optimal distance, so we return     
       // the original unmodified geometry                               
-      return Construct::From<Things::Mesh>(md);
+      return Recipe::From<Things::Mesh>(md);
    }
 
    unsigned tesselation = 0;
@@ -147,7 +147,7 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> C
       // Create the LOD descriptor, based on the current one            
       auto newMesh = md;
       newMesh.SetTrait(Traits::Tesselation {std::round(newTesselation)});
-      return Construct::From<Things::Mesh>(Abandon(newMesh));
+      return Recipe::From<Things::Mesh>(Abandon(newMesh));
    }
    else if (lod.mLODIndex > 0) {
       // LOD is for a sphere that is very close. At this point the      
@@ -173,12 +173,12 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> C
       // small reorientation                                            
       const auto intersection = lod.mView.GetPosition() - lod.mModel.GetPosition();
       if (intersection.Length() == 0)
-         return Construct::From<Things::Mesh>(md);
+         return Recipe::From<Things::Mesh>(md);
 
       const auto steppingNormal = (intersection.Normalize() * areasToCover).Round();
 
       // Clone only the descriptor and change type                      
-      auto newMesh = Construct::From<Things::Mesh>(TZode<PointType> {});
+      auto newMesh = Recipe::From<Things::Mesh>(TZode<PointType> {});
       // Set the place around which the zode is centered                
       newMesh.SetTrait(Traits::Place {steppingNormal});
       // Set the size of the sphere in order to calculate curvature     
@@ -196,7 +196,7 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> C
       return Abandon(newMesh);
    }
 
-   return Construct::From<Things::Mesh>(md);
+   return Recipe::From<Things::Mesh>(md);
 }
 
 /// Generate positions for a sphere/circle                                    

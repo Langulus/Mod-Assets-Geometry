@@ -42,11 +42,11 @@ public:
 
    auto GetLOD(const LOD&) const -> Ref<Things::Mesh>;
    auto GetLibrary() const -> MeshLibrary*;
-   static bool AutocompleteDescriptor(Construct&);
+   static bool AutocompleteDescriptor(Recipe&);
 
 private:
    template<template<typename...> class GENERATOR, class PRIMITIVE>
-   static bool AutocompleteInner(Construct&, DMeta, DMeta = {});
+   static bool AutocompleteInner(Recipe&, DMeta, DMeta = {});
 
    bool FromDescriptor(Many const&);
    bool FromFile(Many const&);
@@ -64,6 +64,6 @@ private:
    TUnorderedMap<TMeta, FGenerator> mGenerators;
 
    // LOD generator function                                            
-   using FLOD = Construct(*)(const Mesh*, const LOD&);
+   using FLOD = Recipe(*)(const Mesh*, const LOD&);
    FLOD mLODgenerator {};
 };

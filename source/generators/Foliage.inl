@@ -38,8 +38,8 @@ struct GenerateFoliage {
    using PointType = typename T::PointType;
    static constexpr size_t Dimensions = T::MemberCount;
 
-   static bool Default(Construct&);
-   static auto Detail(const Mesh*, const LOD&) -> Construct;
+   static bool Default(Recipe&);
+   static auto Detail(const Mesh*, const LOD&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -58,7 +58,7 @@ struct GenerateFoliage {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Foliage T, CT::Topology TOPOLOGY>
-bool GenerateFoliage<T, TOPOLOGY>::Default(Construct& desc) {
+bool GenerateFoliage<T, TOPOLOGY>::Default(Recipe& desc) {
    auto& d = desc.GetDescriptor();
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -79,8 +79,8 @@ bool GenerateFoliage<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///           to generate the new geometry                                    
 template<CT::Foliage T, CT::Topology TOPOLOGY>
-auto GenerateFoliage<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
-   return Construct::From<Things::Mesh>(model->GetDescriptor());
+auto GenerateFoliage<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
+   return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for foliage                                            

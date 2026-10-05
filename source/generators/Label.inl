@@ -51,8 +51,8 @@ namespace Langulus::CT
 template<CT::Vector T>
 struct TLabel : A::Label {
    using CTTI_Abstract = No;
-   LANGULUS(POD) CT::POD<T>;
-   LANGULUS(TYPED) TypeOf<T>;
+   using CTTI_POD = CT::POD<T>;
+   using CTTI_Typed = TypeOf<T>;
    LANGULUS_BASES(A::Label);
 
    using PointType = T;
@@ -112,8 +112,8 @@ struct GenerateLabel {
       0,2,1,2,3,1,
    };
 
-   static bool Default(Construct&);
-   static auto Detail(const Mesh*, const LOD&) -> Construct;
+   static bool Default(Recipe&);
+   static auto Detail(const Mesh*, const LOD&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -132,7 +132,7 @@ struct GenerateLabel {
 ///   @return a newly generated descriptor, with missing traits being set to  
 ///           their defaults                                                  
 template<CT::Label T, CT::Topology TOPOLOGY>
-bool GenerateLabel<T, TOPOLOGY>::Default(Construct& desc) {
+bool GenerateLabel<T, TOPOLOGY>::Default(Recipe& desc) {
    auto& d = desc.GetDescriptor();
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -165,8 +165,8 @@ bool GenerateLabel<T, TOPOLOGY>::Default(Construct& desc) {
 ///   @param lod - the LOD state to generate                                  
 ///   @return the same descriptor, labels don't have LOD                      
 template<CT::Label T, CT::Topology TOPOLOGY>
-auto GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Construct {
-   return Construct::From<Things::Mesh>(model->GetDescriptor());
+auto GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
+   return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for label                                              

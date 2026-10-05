@@ -112,7 +112,7 @@ auto Mesh::GetLOD(const LOD& lod) const -> Ref<Things::Mesh> {
 /// Analyze a descriptor, fill in any default properties that are missing     
 /// by calling the appropriate GENERATOR::Default                             
 ///   @param desc - the descriptor to complete                                
-bool Mesh::AutocompleteDescriptor(Construct& desc) {
+bool Mesh::AutocompleteDescriptor(Recipe& desc) {
    // The descriptor should have some primitive defined                 
    const auto primitive = desc->FindType<A::Primitive>();
    if (not primitive)
@@ -207,7 +207,7 @@ bool Mesh::FillGenerators(DMeta primitive) {
 
 ///                                                                           
 template<template<typename...> class GENERATOR, class PRIMITIVE>
-bool Mesh::AutocompleteInner(Construct& out, DMeta primitive, DMeta topology) {
+bool Mesh::AutocompleteInner(Recipe& out, DMeta primitive, DMeta topology) {
    if (not primitive->CastsTo<PRIMITIVE>())
       return false;
    

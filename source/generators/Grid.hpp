@@ -85,8 +85,8 @@ private:
 public:
    LANGULUS(NAME) GenerateToken();
    using CTTI_Abstract = No;
-   LANGULUS(POD) CT::POD<T>;
-   LANGULUS(TYPED) TypeOf<T>;
+   using CTTI_POD = CT::POD<T>;
+   using CTTI_Typed = TypeOf<T>;
    LANGULUS_BASES(A::Grid);
 
    using PointType = T;
@@ -111,8 +111,8 @@ struct GenerateGrid {
    static constexpr size_t Dimensions = T::MemberCount;
    static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
-   static bool Default(Construct&);
-   static auto Detail(const Mesh*, const LOD&) -> Construct;
+   static bool Default(Recipe&);
+   static auto Detail(const Mesh*, const LOD&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);

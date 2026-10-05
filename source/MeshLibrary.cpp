@@ -60,9 +60,9 @@ void MeshLibrary::Teardown() {
 /// Create/destroy meshes                                                     
 ///   @param verb - the creation/destruction verb                             
 void MeshLibrary::Create(Verb& verb) {
-   Construct request;
+   Recipe request;
    verb.ForEachDeep(
-      [&](const Construct& construct) {
+      [&](Recipe const& construct) {
          // For each construct...                                       
          if (not construct.CastsTo<Things::Mesh>())
             return;
@@ -72,7 +72,7 @@ void MeshLibrary::Create(Verb& verb) {
          // For each type...                                            
          if (not type or not type->CastsTo<Things::Mesh>())
             return;
-         request = Construct {type};
+         request = Recipe {type};
       }
    );
 
