@@ -20,8 +20,8 @@ namespace Langulus::Things
 {
    /// An abstract grid                                                       
    struct Grid : A::Primitive {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) TGrid<Vec3>;
+      using CTTI_Abstract = Yup;
+      using CTTI_Concrete = TGrid<Vec3>;
       LANGULUS_BASES(A::Primitive);
    };
 }
@@ -83,7 +83,7 @@ private:
    }
 
 public:
-   LANGULUS(NAME) GenerateToken();
+   using CTTI_Named = Yes<GenerateToken()>;;
    using CTTI_Abstract = No;
    using CTTI_POD = CT::POD<T>;
    using CTTI_Typed = TypeOf<T>;

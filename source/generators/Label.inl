@@ -17,8 +17,8 @@ namespace Langulus::Things
 {
    /// An abstract label                                                      
    struct Label {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) TLabel<Vec3>;
+      using CTTI_Abstract = Yup;
+      using CTTI_Concrete = TLabel<Vec3>;
    };
 }
 

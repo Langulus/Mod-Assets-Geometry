@@ -23,8 +23,8 @@ namespace Langulus::Things
 {
    /// An abstract zode                                                       
    struct Zode {
-      LANGULUS(ABSTRACT) true;
-      LANGULUS(CONCRETE) TZode<Vec3>;
+      using CTTI_Abstract = Yup;
+      using CTTI_Concrete = TZode<Vec3>;
    };
 }
 
