@@ -15,7 +15,7 @@
 ///                                                                           
 struct MeshLibrary final : Things::AssetModule {
    using CTTI_Abstract = No;
-   LANGULUS_BASES(A::AssetModule);
+   LANGULUS_BASES(Things::AssetModule);
    LANGULUS_VERBS(Verbs::Create);
 
 private:
