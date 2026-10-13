@@ -11,7 +11,7 @@ LANGULUS_DEFINE_MODULE(
    MeshLibrary, 9, "AssetsGeometry",
    "Mesh reader, writer and generator", "",
    MeshLibrary, Mesh,
-   Traits::Tesselation
+   Tags::Tesselation
 )
 
 
@@ -32,7 +32,7 @@ MeshLibrary::MeshLibrary(Runtime* runtime, Many const& desc)
 
    // Extract mesh folder, if any                                       
    Path repo = "assets/meshes";
-   if (not desc.ExtractTrait<Traits::Name, Traits::Path>(repo))
+   if (not desc.ExtractTag<Tags::Name, Tags::Path>(repo))
       desc.ExtractDataAs(repo);
 
    try {

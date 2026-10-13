@@ -142,21 +142,21 @@ bool GenerateFrustum<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A frustum made out of triangles                                
-      d.SetDefaultTrait<Traits::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Traits::Sampler>(MetaOf<Sampler2>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.SetDefaultTrait<Tags::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
-         d.SetDefaultTrait<Traits::Aim>(MetaOf<Normal>());
+         d.SetDefaultTrait<Tags::Aim>(MetaOf<Normal>());
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A frustum made out of lines                                    
-      d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else return false;
 
-   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
-   d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
+   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTrait<Tags::MapMode>(MapMode::Cube);
    desc.SetType<Things::Mesh>();
    return true;
 }
@@ -181,7 +181,7 @@ GENERATE() Positions(Mesh* model) {
       data.Reserve(D::TriangleCount);
       for (size_t i = 0; i < D::TriangleCount; ++i)
          data << E {D::Vertices, D::Indices[i]};
-      model->Commit<Traits::Place>(Abandon(data));
+      model->Commit<Tags::Place>(Abandon(data));
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A box (3D) or rectangle (2D) made out of lines                 
@@ -190,12 +190,12 @@ GENERATE() Positions(Mesh* model) {
       data.Reserve(D::LineCount);
       for (size_t i = 0; i < D::LineCount; ++i)
          data << E {D::Vertices, D::LineIndices[i]};
-      model->Commit<Traits::Place>(Abandon(data));
+      model->Commit<Tags::Place>(Abandon(data));
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A box (3D) or rectangle (2D) made out of points                
       TMany<PointType> data = D::Vertices;
-      model->Commit<Traits::Place>(Abandon(data));
+      model->Commit<Tags::Place>(Abandon(data));
    }
    else static_assert(false, "Unsupported topology for box positions");
 }
@@ -228,7 +228,7 @@ GENERATE() Normals(Mesh* model) {
             data << b;
       }
 
-      model->template Commit<Traits::Aim>(Abandon(data));
+      model->template Commit<Tags::Aim>(Abandon(data));
    }
    else static_assert(false, "Unsupported topology for box normals");
 }
@@ -256,7 +256,7 @@ GENERATE() Indices(Mesh* model) {
    }
    else static_assert(false, "Unsupported topology for box indices");
 
-   model->template Commit<Traits::Index>(Abandon(data));
+   model->template Commit<Tags::Index>(Abandon(data));
 }
 
 /// Generate texture coordinates for a frustum                                
@@ -273,7 +273,7 @@ GENERATE() TextureCoords(Mesh* model) {
             data << D::Vertices[D::Indices[i][2]] + Half;
          }
 
-         model->template Commit<Traits::Sampler>(Abandon(data));
+         model->template Commit<Tags::Sampler>(Abandon(data));
       }
       else if (model->GetTextureMapper() == MapMode::Face) {
          // Generate face mapping                                       
@@ -282,7 +282,7 @@ GENERATE() TextureCoords(Mesh* model) {
          for (size_t i = 0; i < D::IndexCount; ++i)
             data << D::FaceMapping[i % (D::IndexCount / D::FaceCount)];
 
-         model->template Commit<Traits::Sampler>(Abandon(data));
+         model->template Commit<Tags::Sampler>(Abandon(data));
       }
       else TODO();
    }

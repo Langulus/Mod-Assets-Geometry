@@ -126,25 +126,25 @@ bool GenerateZode<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // Zode made of triangle list                                     
-      d.SetDefaultTrait<Traits::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Traits::Sampler>(MetaOf<Sampler2>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.SetDefaultTrait<Tags::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
-         d.SetDefaultTrait<Traits::Aim>(MetaOf<Normal>());
+         d.SetDefaultTrait<Tags::Aim>(MetaOf<Normal>());
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // Zode made of lines                                             
-      d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // Zode made of points                                            
-      d.SetDefaultTrait<Traits::Place>(MetaOf<PointType>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<PointType>());
    }
    else return false;
 
-   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
-   d.SetDefaultTrait<Traits::MapMode>(MapMode::Model);
+   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTrait<Tags::MapMode>(MapMode::Model);
    desc.SetType<Things::Mesh>();
    return true;
 }
@@ -165,9 +165,9 @@ auto GenerateZode<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe 
 ///   @param model - the model to fill                                        
 GENERATE() Positions(Mesh* model) {
    PointType offset;
-   model->GetDescriptor().ExtractTrait<Traits::Place>(offset);
+   model->GetDescriptor().ExtractTag<Tags::Place>(offset);
    unsigned tesselation = 0;
-   model->GetDescriptor().ExtractTrait<Traits::Tesselation>(tesselation);
+   model->GetDescriptor().ExtractTag<Tags::Tesselation>(tesselation);
 
    const auto distance = offset.Length();
    offset = offset / distance;
@@ -216,26 +216,26 @@ GENERATE() Positions(Mesh* model) {
       orient *= rotator;
    }
 
-   model->Commit<Traits::Place>(Abandon(data));
+   model->Commit<Tags::Place>(Abandon(data));
 }
 
 /// Generate normals for a zode                                               
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Normals(Mesh* model) {
-   const auto positions = model->GetData<Traits::Place>();
+   const auto positions = model->GetData<Tags::Place>();
 
    TMany<Normal> data;
    data.Reserve(positions->GetCount());
    for (size_t i = 0; i < positions->GetCount(); ++i)
       data << Normal {positions->AsCast<Vec3>(i)};
-   model->Commit<Traits::Aim>(Abandon(data));
+   model->Commit<Tags::Aim>(Abandon(data));
 }
 
 /// Generate indices for a zode                                               
 ///   @param model - the geometry instance to save data in                    
 GENERATE() Indices(Mesh* model) {
    unsigned tesselation = 0;
-   model->GetDescriptor().ExtractTrait<Traits::Tesselation>(tesselation);
+   model->GetDescriptor().ExtractTag<Tags::Tesselation>(tesselation);
    const auto strips = Pow(2u, tesselation);
    TMany<uint32_t> data;
 
@@ -298,7 +298,7 @@ GENERATE() Indices(Mesh* model) {
          }
       }
 
-      model->Commit<Traits::Index>(Abandon(data));
+      model->Commit<Tags::Index>(Abandon(data));
    }
    else if constexpr (CT::Triangle<TOPOLOGY>) {
       // A zode made of a triangle list                                 
@@ -318,13 +318,13 @@ GENERATE() Indices(Mesh* model) {
 /// Generate texture coordinates for a zode                                   
 ///   @param model - the geometry instance to save data in                    
 GENERATE() TextureCoords(Mesh* model) {
-   const auto positions = model->GetData<Traits::Place>();
+   const auto positions = model->GetData<Tags::Place>();
 
    TMany<Sampler3> data;
    data.Reserve(positions->GetCount());
    for (size_t i = 0; i < positions->GetCount(); ++i)
       data << Sampler3 {positions->template AsCast<Vec3>(i)};
-   model->Commit<Traits::Sampler>(Abandon(data));
+   model->Commit<Tags::Sampler>(Abandon(data));
 }
 
 GENERATE() Materials(Mesh*) {

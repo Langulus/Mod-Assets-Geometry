@@ -137,25 +137,25 @@ bool GenerateLabel<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A sphere made out of triangles                                 
-      d.SetDefaultTrait<Traits::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Traits::Sampler>(MetaOf<Sampler2>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.SetDefaultTrait<Tags::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
-         d.SetDefaultTrait<Traits::Aim>(MetaOf<Normal>());
+         d.SetDefaultTrait<Tags::Aim>(MetaOf<Normal>());
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A sphere made out of lines                                     
-      d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A sphere made out of points                                    
-      d.SetDefaultTrait<Traits::Place>(MetaOf<PointType>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<PointType>());
    }
    else return false;
 
-   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
-   d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
+   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTrait<Tags::MapMode>(MapMode::Cube);
    desc.SetType<Things::Mesh>();
    return true;
 }
@@ -227,7 +227,7 @@ GENERATE() Indices(Mesh* model) {
       ++relevantCharIndex;
    }
 
-   model->template Commit<Traits::Index>(Abandon(data));
+   model->template Commit<Tags::Index>(Abandon(data));
 }
 
 /// Generate normals for label                                                
@@ -249,7 +249,7 @@ GENERATE() Normals(Mesh* model) {
       }
    }
 
-   model->template Commit<Traits::Aim>(Abandon(data));
+   model->template Commit<Tags::Aim>(Abandon(data));
 }
 
 /// Generate texture coordinates for label                                    
@@ -275,7 +275,7 @@ GENERATE() TextureCoords(Mesh* model) {
          data << uv.xy() + v * uv.zw();
    }
 
-   model->template Commit<Traits::Sampler>(Abandon(data));
+   model->template Commit<Tags::Sampler>(Abandon(data));
 }
 
 GENERATE() Materials(Mesh*) {

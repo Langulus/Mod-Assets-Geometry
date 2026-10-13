@@ -143,30 +143,30 @@ bool GenerateBox<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
-      d.SetDefaultTrait<Traits::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Traits::Sampler>(MetaOf<Sampler2>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.SetDefaultTrait<Tags::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
          // 3D+ box                                                     
-         d.SetDefaultTrait<Traits::Aim>(MetaOf<Normal>());
-         d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
+         d.SetDefaultTrait<Tags::Aim>(MetaOf<Normal>());
+         d.SetDefaultTrait<Tags::MapMode>(MapMode::Cube);
       }
       else {
          // 2D rectangle                                                
-         d.SetDefaultTrait<Traits::MapMode>(MapMode::Model);
+         d.SetDefaultTrait<Tags::MapMode>(MapMode::Model);
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A box made out of lines                                        
-      d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A box made out of points                                       
-      d.SetDefaultTrait<Traits::Place>(MetaOf<PointType>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<PointType>());
    }
    else return false;
 
-   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
    desc.SetType<Things::Mesh>();
    return true;
 }
@@ -185,7 +185,7 @@ auto GenerateBox<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
 ///   @param model - the model to fill                                        
 GENERATE() Positions(Mesh* model) {
    TMany<PointType> data = D::Vertices;
-   model->Commit<Traits::Place>(Abandon(data));
+   model->Commit<Tags::Place>(Abandon(data));
 }
 
 /// Generate normals for a box                                                
@@ -215,7 +215,7 @@ GENERATE() Normals(Mesh* model) {
          data << b;
       }
 
-      model->template Commit<Traits::Aim>(Abandon(data));
+      model->template Commit<Tags::Aim>(Abandon(data));
    }
 }
 
@@ -242,7 +242,7 @@ GENERATE() Indices(Mesh* model) {
    }
    else static_assert(false, "Unsupported topology for box indices");
 
-   model->template Commit<Traits::Index>(Abandon(data));
+   model->template Commit<Tags::Index>(Abandon(data));
    model->GetView().mIndexCount = static_cast<uint32_t>(data.GetCount());
 }
 
@@ -260,7 +260,7 @@ GENERATE() TextureCoords(Mesh* model) {
             data << (D::Vertices[D::Indices[i][2]] + Half);
          }
 
-         model->template Commit<Traits::Sampler>(Abandon(data));
+         model->template Commit<Tags::Sampler>(Abandon(data));
       }
       else if (model->GetTextureMapper() == MapMode::Face) {
          // Generate face mapping                                       
@@ -269,7 +269,7 @@ GENERATE() TextureCoords(Mesh* model) {
          for (size_t i = 0; i < D::IndexCount; ++i)
             data << D::FaceMapping[i % (D::IndexCount / D::FaceCount)];
 
-         model->template Commit<Traits::Sampler>(Abandon(data));
+         model->template Commit<Tags::Sampler>(Abandon(data));
       }
       else TODO();
    }

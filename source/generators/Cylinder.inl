@@ -94,23 +94,23 @@ bool GenerateCylinder<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
-      d.SetDefaultTrait<Traits::MapMode>(
+      d.SetDefaultTrait<Tags::MapMode>(
          MapMode::Cube);
-      d.SetDefaultTrait<Traits::Place>(
+      d.SetDefaultTrait<Tags::Place>(
          MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Traits::Sampler>(
+      d.SetDefaultTrait<Tags::Sampler>(
          MetaOf<Sampler2>());
-      d.SetDefaultTrait<Traits::Aim>(
+      d.SetDefaultTrait<Tags::Aim>(
          MetaOf<Normal>());
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A cylinder made out of lines                                   
-      d.SetDefaultTrait<Traits::Place>(
+      d.SetDefaultTrait<Tags::Place>(
          MetaOf<TLine<PointType>>());
    }
    else return false;
 
-   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
    desc.SetType<Things::Mesh>();
    return true;
 }
@@ -135,7 +135,7 @@ GENERATE() Positions(Mesh* model) {
       data.Reserve(TriangleCount);
       for (size_t i = 0; i < TriangleCount; ++i)
          data << E {Vertices, TriangleIndices[i]};
-      model->Commit<Traits::Place>(Abandon(data));
+      model->Commit<Tags::Place>(Abandon(data));
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A cylinder made out of lines                                   
@@ -167,7 +167,7 @@ GENERATE() Normals(Mesh* model) {
       data << f << f << f << f << f << f;
       data << b << b << b << b << b << b;
 
-      model->template Commit<Traits::Aim>(Abandon(data));
+      model->template Commit<Tags::Aim>(Abandon(data));
    }
    else static_assert(false, "Unsupported topology for cylinder normals");
 }
@@ -191,7 +191,7 @@ GENERATE() Indices(Mesh* model) {
    }
    else static_assert(false, "Unsupported topology for cylinder indices");
 
-   model->template Commit<Traits::Index>(Abandon(data));
+   model->template Commit<Tags::Index>(Abandon(data));
 }
 
 /// Generate texture coordinates for a cylinder                               
@@ -208,7 +208,7 @@ GENERATE() TextureCoords(Mesh* model) {
             data << Vertices[TriangleIndices[i][2]] + Half;
          }
 
-         model->template Commit<Traits::Sampler>(Abandon(data));
+         model->template Commit<Tags::Sampler>(Abandon(data));
       }
       else if (model->GetTextureMapper() == MapMode::Face) {
          // Generate face mapping                                       
@@ -217,7 +217,7 @@ GENERATE() TextureCoords(Mesh* model) {
          for (size_t i = 0; i < IndexCount; ++i)
             data << FaceMapping[i % (IndexCount / FaceCount)];
 
-         model->template Commit<Traits::Sampler>(Abandon(data));
+         model->template Commit<Tags::Sampler>(Abandon(data));
       }
       else TODO();
    }

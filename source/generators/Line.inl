@@ -47,11 +47,11 @@ bool GenerateLine<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines (duh)                                 
-      d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else return false;
 
-   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
    desc.SetType<Things::Mesh>();
    return true;
 }
@@ -74,7 +74,7 @@ GENERATE() Positions(Mesh* model) {
       using E = TLine<PointType>;
       TMany<E> data;
       data << E {Axes::Origin<ScalarType>, Axes::Forward<ScalarType>};
-      model->Commit<Traits::Place>(Abandon(data));
+      model->Commit<Tags::Place>(Abandon(data));
    }
    else static_assert(false, "Unsupported topology for line positions");
 }

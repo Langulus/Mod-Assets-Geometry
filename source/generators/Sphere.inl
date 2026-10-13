@@ -98,25 +98,25 @@ bool GenerateSphere<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A sphere made out of triangles                                 
-      d.SetDefaultTrait<Traits::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Traits::Sampler>(MetaOf<Sampler2>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.SetDefaultTrait<Tags::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
-         d.SetDefaultTrait<Traits::Aim>(MetaOf<Normal>());
+         d.SetDefaultTrait<Tags::Aim>(MetaOf<Normal>());
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A sphere made out of lines                                     
-      d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A sphere made out of points                                    
-      d.SetDefaultTrait<Traits::Place>(MetaOf<PointType>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<PointType>());
    }
    else return false;
 
-   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
-   d.SetDefaultTrait<Traits::MapMode>(MapMode::Cube);
+   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTrait<Tags::MapMode>(MapMode::Cube);
    desc.SetType<Things::Mesh>();
    return true;
 }
@@ -136,7 +136,7 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> R
    }
 
    unsigned tesselation = 0;
-   md.ExtractTrait<Traits::Tesselation>(tesselation);
+   md.ExtractTag<Tags::Tesselation>(tesselation);
    if (tesselation > 0 and lod.mLODIndex < 0) {
       // Find a lower tesselation of the geosphere, because the LOD     
       // is for an object that is further away                          
@@ -146,7 +146,7 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> R
 
       // Create the LOD descriptor, based on the current one            
       auto newMesh = md;
-      newMesh.SetTrait(Traits::Tesselation {std::round(newTesselation)});
+      newMesh.SetTrait(Tags::Tesselation {std::round(newTesselation)});
       return Recipe::From<Things::Mesh>(Abandon(newMesh));
    }
    else if (lod.mLODIndex > 0) {
@@ -180,13 +180,13 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> R
       // Clone only the descriptor and change type                      
       auto newMesh = Recipe::From<Things::Mesh>(TZode<PointType> {});
       // Set the place around which the zode is centered                
-      newMesh.SetTrait(Traits::Place {steppingNormal});
+      newMesh.SetTrait(Tags::Place {steppingNormal});
       // Set the size of the sphere in order to calculate curvature     
-      newMesh.SetTrait(Traits::Size {lod.mModel.GetScale()});
+      newMesh.SetTrait(Tags::Size {lod.mModel.GetScale()});
       // Set the topology                                               
-      newMesh.SetTrait(Traits::Topology {TypeOf<A::TriangleStrip>()});
+      newMesh.SetTrait(Tags::Topology {TypeOf<A::TriangleStrip>()});
       // Set the tesselation                                            
-      newMesh.SetTrait(Traits::Tesselation {tesselation + static_cast<unsigned>(lod.mLODIndex) / 2});
+      newMesh.SetTrait(Tags::Tesselation {tesselation + static_cast<unsigned>(lod.mLODIndex) / 2});
 
       // The octave gets progressively lower until we reach state       
       //real octave = 0;
@@ -205,7 +205,7 @@ GENERATE() Positions(Mesh* model) {
    // A geosphere/circle made of triangles/lines/points                 
    // This geometry is always indexes, so all positions go              
    TMany<PointType> data = D::Vertices;
-   model->Commit<Traits::Place>(Abandon(data));
+   model->Commit<Tags::Place>(Abandon(data));
 }
 
 /// Generate normals for a sphere/circle                                      
@@ -228,7 +228,7 @@ GENERATE() Normals(Mesh* model) {
       }
       else static_assert(false, "Shouldn't be reached");
 
-      model->template Commit<Traits::Aim>(Abandon(data));
+      model->template Commit<Tags::Aim>(Abandon(data));
    }
    else static_assert(false, "Unsupported topology for sphere/circle normals");
 }
@@ -256,7 +256,7 @@ GENERATE() Indices(Mesh* model) {
    }
    else static_assert(false, "Unsupported topology for sphere/circle indices");
 
-   model->template Commit<Traits::Index>(Abandon(data));
+   model->template Commit<Tags::Index>(Abandon(data));
 }
 
 /// Generate texture coordinates for a sphere/circle                          
@@ -266,7 +266,7 @@ GENERATE() TextureCoords(Mesh* model) {
    data.Reserve(D::VertexCount);
    for (auto& v : D::Vertices)
       data << (v + Half);
-   model->template Commit<Traits::Sampler>(Abandon(data));
+   model->template Commit<Tags::Sampler>(Abandon(data));
 }
 
 GENERATE() Materials(Mesh* model) {

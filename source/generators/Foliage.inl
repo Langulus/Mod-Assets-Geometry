@@ -63,12 +63,12 @@ bool GenerateFoliage<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // Foliage made out of triangles                                  
-      d.SetDefaultTrait<Traits::Place>(
+      d.SetDefaultTrait<Tags::Place>(
          MetaOf<TTriangle<PointType>>());
    }
    else return false;
 
-   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
    desc.SetType<Things::Mesh>();
    return true;
 }

@@ -229,13 +229,13 @@ bool Mesh::ReadOBJ(const A::File& file) {
    m.group_count = m.groups.GetCount();*/
 
    // Save the contents                                                 
-   Commit<Traits::Place>   (Move(m.positions));
-   Commit<Traits::Aim>     (Move(m.normals));
-   Commit<Traits::Sampler> (Move(m.texcoords));
+   Commit<Tags::Place>   (Move(m.positions));
+   Commit<Tags::Aim>     (Move(m.normals));
+   Commit<Tags::Sampler> (Move(m.texcoords));
    Commit<Tags::Color>   (Move(m.colors));
-   Commit<Traits::Index>   (Traits::Place   {Move(m.mPositionIndices)});
-   Commit<Traits::Index>   (Traits::Aim     {Move(m.mNormalIndices)});
-   Commit<Traits::Index>   (Traits::Sampler {Move(m.mTextureIndices)});
+   Commit<Tags::Index>   (Tags::Place   {Move(m.mPositionIndices)});
+   Commit<Tags::Index>   (Tags::Aim     {Move(m.mNormalIndices)});
+   Commit<Tags::Index>   (Tags::Sampler {Move(m.mTextureIndices)});
 
    Logger::Verbose(Logger::Green, "File ", file.GetFilePath(), 
       " loaded in ", SteadyClock::Now() - loadTime);

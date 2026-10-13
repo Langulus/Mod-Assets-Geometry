@@ -22,11 +22,11 @@ bool GenerateGrid<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Line<TOPOLOGY>) {
       // A grid made out of lines                                       
-      d.SetDefaultTrait<Traits::Place>(MetaOf<TLine<PointType>>());
+      d.SetDefaultTrait<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else return false;
 
-   d.SetDefaultTrait<Traits::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
    desc.SetType<Things::Mesh>();
    return true;
 }
@@ -47,7 +47,7 @@ GENERATE() Positions(Mesh* model) {
    // Calculate vertex count - tesselation in this context means        
    // how many times a sector in the grid is divided in half            
    unsigned tesselation = 0;
-   model->GetDescriptor().ExtractTrait<Traits::Tesselation>(tesselation);
+   model->GetDescriptor().ExtractTag<Tags::Tesselation>(tesselation);
    const Vec3u steps {Pow(2u, tesselation)};
    const auto sep = ScalarType {1} / PointType {steps};
 
@@ -101,7 +101,7 @@ GENERATE() Positions(Mesh* model) {
          }
       }
 
-      model->Commit<Traits::Place>(Abandon(data));
+      model->Commit<Tags::Place>(Abandon(data));
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // Generate a grid of points                                      
@@ -130,7 +130,7 @@ GENERATE() Positions(Mesh* model) {
          }
       }
 
-      model->Commit<Traits::Place>(Abandon(data));
+      model->Commit<Tags::Place>(Abandon(data));
    }
 }
 

@@ -72,20 +72,20 @@ void Mesh::Create(Verb&) {
 }
 
 /// Generate data                                                             
-///   @param trait - the trait to generate                                    
-///   @param index - trait group to generate                                  
+///   @param tag - the tag to generate                                    
+///   @param index - tag group to generate                                  
 ///   @return true if data was generated                                      
-bool Mesh::Generate(TMeta trait, size_t index) {
-   auto foundData = GetDataListMap().FindIt(trait);
+bool Mesh::Generate(TMeta tag, size_t index) {
+   auto foundData = GetDataListMap().FindIt(tag);
    if (foundData) {
       if (foundData.GetValue().GetCount() > index)
          return true;
    }
 
-   auto foundGen = mGenerators.FindIt(trait);
+   auto foundGen = mGenerators.FindIt(tag);
    if (foundGen) {
       foundGen.GetValue()(this);
-      foundData = GetDataListMap().FindIt(trait);
+      foundData = GetDataListMap().FindIt(tag);
       if (foundData) {
          if (foundData.GetValue().GetCount() > index)
             return true;
@@ -120,8 +120,8 @@ bool Mesh::AutocompleteDescriptor(Recipe& desc) {
 
    // The descriptor might or might not have the topology defined       
    DMeta topology;
-   desc->ForEachDeep([&](const Traits::Topology& trait) {
-      topology = trait.As<DMeta>();
+   desc->ForEachDeep([&](const Tags::Topology& tag) {
+      topology = tag.As<DMeta>();
    });
 
    return AutocompleteInner<GenerateBox,  Box2 >(desc, primitive, topology)
@@ -137,9 +137,9 @@ bool Mesh::FromDescriptor(Many const& desc) {
    if (not primitive)
       return false;
 
-   desc.ExtractTrait<Traits::Topology >(mView.mTopology);
-   desc.ExtractTrait<Traits::Bilateral>(mView.mBilateral);
-   desc.ExtractTrait<Traits::MapMode  >(mView.mTextureMapping);
+   desc.ExtractTag<Tags::Topology >(mView.mTopology);
+   desc.ExtractTag<Tags::Bilateral>(mView.mBilateral);
+   desc.ExtractTag<Tags::MapMode  >(mView.mTextureMapping);
    
    return FillGenerators<GenerateBox,  Box2 >(primitive)
        or FillGenerators<GenerateBox,  Box3 >(primitive)
@@ -151,7 +151,7 @@ bool Mesh::FromDescriptor(Many const& desc) {
 ///   @param descriptor - the file to load                                    
 bool Mesh::FromFile(Many const& desc) {
    Path filename;
-   if (not desc.ExtractTrait<Traits::Name, Traits::Path>(filename))
+   if (not desc.ExtractTag<Tags::Name, Tags::Path>(filename))
       desc.ExtractDataAs(filename);
 
    if (filename) {
@@ -170,15 +170,15 @@ bool Mesh::FromFile(Many const& desc) {
 template<class GENERATOR>
 void Mesh::FillGeneratorsInner() {
    if constexpr (HasGenerator(GENERATOR::Indices))
-      mGenerators.Insert(MetaOf<Traits::Index>(),      GENERATOR::Indices);
+      mGenerators.Insert(MetaOf<Tags::Index>(),      GENERATOR::Indices);
    if constexpr (HasGenerator(GENERATOR::Positions))
-      mGenerators.Insert(MetaOf<Traits::Place>(),      GENERATOR::Positions);
+      mGenerators.Insert(MetaOf<Tags::Place>(),      GENERATOR::Positions);
    if constexpr (HasGenerator(GENERATOR::Normals))
-      mGenerators.Insert(MetaOf<Traits::Aim>(),        GENERATOR::Normals);
+      mGenerators.Insert(MetaOf<Tags::Aim>(),        GENERATOR::Normals);
    if constexpr (HasGenerator(GENERATOR::TextureCoords))
-      mGenerators.Insert(MetaOf<Traits::Sampler>(),    GENERATOR::TextureCoords);
+      mGenerators.Insert(MetaOf<Tags::Sampler>(),    GENERATOR::TextureCoords);
    if constexpr (HasGenerator(GENERATOR::Materials))
-      mGenerators.Insert(MetaOf<Traits::Material>(),   GENERATOR::Materials);
+      mGenerators.Insert(MetaOf<Tags::Material>(),   GENERATOR::Materials);
    if constexpr (HasGenerator(GENERATOR::Detail))
       mLODgenerator = GENERATOR::Detail;
 }
