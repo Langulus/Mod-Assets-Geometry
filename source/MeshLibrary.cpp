@@ -68,7 +68,7 @@ void MeshLibrary::Create(Verb& verb) {
             return;
          request = construct;
       },
-      [&](const DMeta& type) {
+      [&](DMeta const& type) {
          // For each type...                                            
          if (not type or not type->CastsTo<Things::Mesh>())
             return;
