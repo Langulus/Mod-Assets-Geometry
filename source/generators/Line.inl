@@ -39,7 +39,7 @@ struct GenerateLine {
 
 /// Default line generation                                                   
 ///   @param descriptor - the descriptor to use                               
-///   @return a newly generated descriptor, with missing traits being set to  
+///   @return a newly generated descriptor, with missing tags being set to  
 ///           their defaults                                                  
 template<CT::Line T, CT::Topology TOPOLOGY>
 bool GenerateLine<T, TOPOLOGY>::Default(Recipe& desc) {

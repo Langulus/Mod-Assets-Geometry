@@ -55,7 +55,7 @@ struct GenerateFoliage {
 
 /// Default foliage generation                                                
 ///   @param descriptor - the descriptor to use                               
-///   @return a newly generated descriptor, with missing traits being set to  
+///   @return a newly generated descriptor, with missing tags being set to  
 ///           their defaults                                                  
 template<CT::Foliage T, CT::Topology TOPOLOGY>
 bool GenerateFoliage<T, TOPOLOGY>::Default(Recipe& desc) {

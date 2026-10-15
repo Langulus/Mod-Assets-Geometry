@@ -134,7 +134,7 @@ struct GenerateFrustum {
 
 /// Default frustum generation                                                
 ///   @param descriptor - the descriptor to use                               
-///   @return a newly generated descriptor, with missing traits being set to  
+///   @return a newly generated descriptor, with missing tags being set to  
 ///           their defaults                                                  
 template<CT::Frustum T, CT::Topology TOPOLOGY>
 bool GenerateFrustum<T, TOPOLOGY>::Default(Recipe& desc) {

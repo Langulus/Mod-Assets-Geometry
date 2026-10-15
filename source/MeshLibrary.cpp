@@ -80,9 +80,9 @@ void MeshLibrary::Create(Verb& verb) {
       return;
 
    // Mesh descriptor might be partial, so we attempt to autocomplete it
-   // with default traits, provided by the desired generator. This      
+   // with default tags, provided by the desired generator. This      
    // ensures, that partial requests can match other partial requests,  
-   // if they end up the same after the implicit traits are considered  
+   // if they end up the same after the implicit tags are considered  
    // It's like an additional level of normalization over Neat          
    if (Mesh::AutocompleteDescriptor(request)) {
       VERBOSE_MESHES("Mesh autocompleted to: ", request);

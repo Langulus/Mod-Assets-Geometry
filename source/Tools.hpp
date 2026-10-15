@@ -44,9 +44,9 @@ namespace Tools
       // Subdivide triangles                                             
       if (vperprim == 3) {
          for (auto i = vstart; i < (indices ? indices->GetCount() : source->GetCount()); i += vstep) {
-            const auto& a = idx ? oldarray[idx[i]] : oldarray[i];
-            const auto& b = idx ? oldarray[idx[i + 1]] : oldarray[i + 1];
-            const auto& c = idx ? oldarray[idx[i + 2]] : oldarray[i + 2];
+            auto const& a = idx ? oldarray[idx[i]] : oldarray[i];
+            auto const& b = idx ? oldarray[idx[i + 1]] : oldarray[i + 1];
+            auto const& c = idx ? oldarray[idx[i + 2]] : oldarray[i + 2];
 
             const auto AB = (b - a) / step;
             const auto CB = (c - b) / step;
@@ -60,8 +60,8 @@ namespace Tools
       // Subdivide lines                                                
       else if (vperprim == 2) {
          for (auto i = vstart; i < (indices ? indices->GetCount() : source->GetCount()); i += vstep) {
-            const auto& a = idx ? oldarray[idx[i]] : oldarray[i];
-            const auto& b = idx ? oldarray[idx[i + 1]] : oldarray[i + 1];
+            auto const& a = idx ? oldarray[idx[i]] : oldarray[i];
+            auto const& b = idx ? oldarray[idx[i + 1]] : oldarray[i + 1];
 
             const auto AB = (b - a) / step;
 

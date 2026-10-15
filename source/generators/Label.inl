@@ -129,7 +129,7 @@ struct GenerateLabel {
 
 /// Default label generation                                                  
 ///   @param desc - the descriptor to use                                     
-///   @return a newly generated descriptor, with missing traits being set to  
+///   @return a newly generated descriptor, with missing tags being set to  
 ///           their defaults                                                  
 template<CT::Label T, CT::Topology TOPOLOGY>
 bool GenerateLabel<T, TOPOLOGY>::Default(Recipe& desc) {
@@ -179,8 +179,8 @@ GENERATE() Positions(Mesh* model) {
 
    Vec2 limits;
    Vec2 scanned;
-   for (const auto& c : label.mText) {
-      const auto& glyph = label.mFont->GetGlyph(c);
+   for (auto const& c : label.mText) {
+      auto const& glyph = label.mFont->GetGlyph(c);
       const auto o = scanned - glyph.mKerning + Vec2 {0, 0.5};
 
       // A 2D rectangle for each visible glyph                          
