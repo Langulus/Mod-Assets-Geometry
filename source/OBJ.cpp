@@ -146,15 +146,15 @@ struct Obj {
    static const char* read_mtl_single(const char* p, float* v);
    static const char* read_mtl_triple(const char* p, float v[3]);
    static const char* read_map(Data* data, const char* ptr, Texture* map);
-   static int read_mtllib(Data* data, const A::File& file);
-   static void parse_buffer(Data* data, const char* ptr, const char* end, Ref<A::File::Reader>& stream);
+   static int read_mtllib(Data* data, const Things::File& file);
+   static void parse_buffer(Data* data, const char* ptr, const char* end, Ref<Things::File::Reader>& stream);
 };
 
 
 /// Load OBJ file                                                             
 ///   @param file - [in/out] the file to load from                            
 ///   @return true if model was loaded without any problems                   
-bool Mesh::ReadOBJ(const A::File& file) {
+bool Mesh::ReadOBJ(const Things::File& file) {
    auto loadTime = SteadyClock::Now();
    auto stream = file.NewReader();
 
@@ -248,7 +248,7 @@ bool Mesh::ReadOBJ(const A::File& file) {
 ///   @param end                                                              
 ///   @param stream                                                           
 void Obj::parse_buffer(
-   Data* data, const char* ptr, const char* end, Ref<A::File::Reader>& stream
+   Data* data, const char* ptr, const char* end, Ref<Things::File::Reader>& stream
 ) {
    const char* p;
    p = ptr;
@@ -361,7 +361,7 @@ void Obj::parse_buffer(
 /// @param file 
 /// @param stream 
 /// @return 
-int Obj::read_mtllib(Data* data, const A::File& file) {
+int Obj::read_mtllib(Data* data, const Things::File& file) {
    const char* s;
 
    // Read entire file                                                  

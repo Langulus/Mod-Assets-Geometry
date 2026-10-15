@@ -56,12 +56,12 @@ private:
    template<class GENERATOR>
    void FillGeneratorsInner();
 
-   bool ReadOBJ(const A::File&);
-   //bool WriteOBJ(const A::File&) const;
+   bool ReadOBJ(const Things::File&);
+   //bool WriteOBJ(const Things::File&) const;
 
    // Generator functions for each supported type of data               
    using FGenerator = void(*)(Mesh*);
-   TUnorderedMap<TMeta, FGenerator> mGenerators;
+   TMapUnsorted<TMeta, FGenerator> mGenerators;
 
    // LOD generator function                                            
    using FLOD = Recipe(*)(const Mesh*, const LOD&);
