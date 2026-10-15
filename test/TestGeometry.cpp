@@ -27,7 +27,7 @@ SCENARIO("Loading non-existent file", "[mesh]") {
          
       #if LANGULUS_FEATURE(MANAGED_REFLECTION)
          WHEN("The mesh is created via tokens") {
-            REQUIRE_THROWS(root.CreateUnitToken("Mesh", "nonexistent.obj"));
+            REQUIRE_THROWS(root.CreatePartToken("Mesh", "nonexistent.obj"));
             REQUIRE(root.GetUnits().IsEmpty());
          }
       #endif
@@ -71,7 +71,7 @@ SCENARIO("Mesh creation", "[mesh]") {
          
       #if LANGULUS_FEATURE(MANAGED_REFLECTION)
          WHEN("The mesh is created via tokens") {
-            auto producedMesh = root.CreateUnitToken("Mesh", Math::Box2 {});
+            auto producedMesh = root.CreatePartToken("Mesh", Math::Box2 {});
 
             // Update once                                              
             root.Update({});
@@ -117,7 +117,7 @@ SCENARIO("Loading OBJ file", "[mesh]") {
          
       #if LANGULUS_FEATURE(MANAGED_REFLECTION)
          WHEN("The mesh is created via tokens") {
-            auto producedMesh = root.CreateUnitToken("Mesh", "maxwell/maxwell.obj");
+            auto producedMesh = root.CreatePartToken("Mesh", "maxwell/maxwell.obj");
 
             // Update once                                              
             root.Update({});
