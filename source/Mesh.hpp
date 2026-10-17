@@ -27,11 +27,11 @@ using namespace Langulus;
 ///   A mesh asset                                                            
 ///                                                                           
 struct Mesh final : Things::Mesh {
-   using CTTI_Abstract = No;
-   using CTTI_Producer = MeshLibrary;
-   LANGULUS(FILES) "obj";
-   LANGULUS_BASES(Things::Mesh);
-   LANGULUS_VERBS(Verbs::Create);
+   using CTTI_Abstract  = No;
+   using CTTI_Producer  = MeshLibrary;
+   using CTTI_Files     = Yes<"obj">;
+   using CTTI_Bases     = Things::Mesh;
+   using CTTI_Ability   = Verbs::Create;
 
 public:
    Mesh(MeshLibrary*, Many const&);
