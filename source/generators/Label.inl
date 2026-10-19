@@ -137,25 +137,25 @@ bool GenerateLabel<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A sphere made out of triangles                                 
-      d.SetDefaultTrait<Tags::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Tags::Sampler>(MetaOf<Sampler2>());
+      d.SetDefaultTag<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.SetDefaultTag<Tags::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
-         d.SetDefaultTrait<Tags::Aim>(MetaOf<Normal>());
+         d.SetDefaultTag<Tags::Aim>(MetaOf<Normal>());
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A sphere made out of lines                                     
-      d.SetDefaultTrait<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A sphere made out of points                                    
-      d.SetDefaultTrait<Tags::Place>(MetaOf<PointType>());
+      d.SetDefaultTag<Tags::Place>(MetaOf<PointType>());
    }
    else return false;
 
-   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
-   d.SetDefaultTrait<Tags::MapMode>(MapMode::Cube);
+   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTag<Tags::MapMode>(MapMode::Cube);
    desc.SetType<Things::Mesh>();
    return true;
 }

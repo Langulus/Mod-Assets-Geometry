@@ -143,30 +143,30 @@ bool GenerateBox<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
-      d.SetDefaultTrait<Tags::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Tags::Sampler>(MetaOf<Sampler2>());
+      d.SetDefaultTag<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.SetDefaultTag<Tags::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
          // 3D+ box                                                     
-         d.SetDefaultTrait<Tags::Aim>(MetaOf<Normal>());
-         d.SetDefaultTrait<Tags::MapMode>(MapMode::Cube);
+         d.SetDefaultTag<Tags::Aim>(MetaOf<Normal>());
+         d.SetDefaultTag<Tags::MapMode>(MapMode::Cube);
       }
       else {
          // 2D rectangle                                                
-         d.SetDefaultTrait<Tags::MapMode>(MapMode::Model);
+         d.SetDefaultTag<Tags::MapMode>(MapMode::Model);
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A box made out of lines                                        
-      d.SetDefaultTrait<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A box made out of points                                       
-      d.SetDefaultTrait<Tags::Place>(MetaOf<PointType>());
+      d.SetDefaultTag<Tags::Place>(MetaOf<PointType>());
    }
    else return false;
 
-   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
    desc.SetType<Things::Mesh>();
    return true;
 }

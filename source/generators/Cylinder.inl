@@ -94,23 +94,23 @@ bool GenerateCylinder<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
-      d.SetDefaultTrait<Tags::MapMode>(
+      d.SetDefaultTag<Tags::MapMode>(
          MapMode::Cube);
-      d.SetDefaultTrait<Tags::Place>(
+      d.SetDefaultTag<Tags::Place>(
          MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Tags::Sampler>(
+      d.SetDefaultTag<Tags::Sampler>(
          MetaOf<Sampler2>());
-      d.SetDefaultTrait<Tags::Aim>(
+      d.SetDefaultTag<Tags::Aim>(
          MetaOf<Normal>());
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A cylinder made out of lines                                   
-      d.SetDefaultTrait<Tags::Place>(
+      d.SetDefaultTag<Tags::Place>(
          MetaOf<TLine<PointType>>());
    }
    else return false;
 
-   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
    desc.SetType<Things::Mesh>();
    return true;
 }

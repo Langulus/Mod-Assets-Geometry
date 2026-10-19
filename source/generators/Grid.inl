@@ -14,7 +14,7 @@
 
 /// Default grid generation                                                   
 ///   @param descriptor - the descriptor to use                               
-///   @return a newly generated descriptor, with missing tags being set to  
+///   @return a newly generated descriptor, with missing tags being set to    
 ///           their defaults                                                  
 template<CT::Grid T, CT::Topology TOPOLOGY>
 bool GenerateGrid<T, TOPOLOGY>::Default(Recipe& desc) {
@@ -22,11 +22,11 @@ bool GenerateGrid<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Line<TOPOLOGY>) {
       // A grid made out of lines                                       
-      d.SetDefaultTrait<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else return false;
 
-   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
    desc.SetType<Things::Mesh>();
    return true;
 }

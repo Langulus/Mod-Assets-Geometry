@@ -9,7 +9,7 @@
 #include "../Mesh.hpp"
 #include <Langulus/Primitives/TLine.hpp>
 
-template<CT::Vector>
+template<CT::CustomVector>
 struct TGrid;
 
 using Grid2 = TGrid<Vec2>;
@@ -19,10 +19,10 @@ using Grid3 = TGrid<Vec3>;
 namespace Langulus::Things
 {
    /// An abstract grid                                                       
-   struct Grid : A::Primitive {
-      using CTTI_Abstract = Yup;
-      using CTTI_Concrete = TGrid<Vec3>;
-      LANGULUS_BASES(A::Primitive);
+   struct Grid : Primitive {
+      using CTTI_Abstract  = Yup;
+      using CTTI_Concrete  = TGrid<Vec3>;
+      using CTTI_Bases     = Math::Primitive;
    };
 }
 
@@ -54,11 +54,11 @@ namespace Langulus::CT
 /// +-------+-------+---+                                                     
 ///         |<----->|                                                         
 ///        mCellSize.x                                                        
-template<CT::Vector T>
-struct TGrid : A::Grid {
+template<CT::CustomVector T>
+struct TGrid {
 private:
    static consteval auto GenerateToken() {
-      constexpr auto defaultClassName = RTTI::LastCppNameOf<TGrid>();
+      constexpr auto defaultClassName = LastCppNameOf<TGrid>();
       ::std::array<char, defaultClassName.size() + 1> name {};
       ::std::size_t offset {};
 
@@ -83,11 +83,10 @@ private:
    }
 
 public:
-   using CTTI_Named = Yes<GenerateToken()>;;
-   using CTTI_Abstract = No;
-   using CTTI_POD = CT::POD<T>;
-   using CTTI_Typed = TypeOf<T>;
-   LANGULUS_BASES(A::Grid);
+   using CTTI_Named  = Yes<GenerateToken()>;
+   using CTTI_POD    = Maybe<CT::POD<T>>;
+   using CTTI_Typed  = TypeOf<T>;
+   using CTTI_Bases  = Things::Grid;
 
    using PointType = T;
    static constexpr size_t MemberCount = T::MemberCount;
@@ -104,7 +103,7 @@ public:
 ///   @tparam T - the primitive to use for point type and dimensions          
 ///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
 ///                                                                           
-template<CT::Grid T, CT::Topology TOPOLOGY = A::Line>
+template<CT::Grid T, CT::Topology TOPOLOGY = Math::Line>
 struct GenerateGrid {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;

@@ -98,25 +98,25 @@ bool GenerateSphere<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A sphere made out of triangles                                 
-      d.SetDefaultTrait<Tags::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTrait<Tags::Sampler>(MetaOf<Sampler2>());
+      d.SetDefaultTag<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.SetDefaultTag<Tags::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
-         d.SetDefaultTrait<Tags::Aim>(MetaOf<Normal>());
+         d.SetDefaultTag<Tags::Aim>(MetaOf<Normal>());
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A sphere made out of lines                                     
-      d.SetDefaultTrait<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A sphere made out of points                                    
-      d.SetDefaultTrait<Tags::Place>(MetaOf<PointType>());
+      d.SetDefaultTag<Tags::Place>(MetaOf<PointType>());
    }
    else return false;
 
-   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
-   d.SetDefaultTrait<Tags::MapMode>(MapMode::Cube);
+   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTag<Tags::MapMode>(MapMode::Cube);
    desc.SetType<Things::Mesh>();
    return true;
 }
@@ -146,7 +146,7 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> R
 
       // Create the LOD descriptor, based on the current one            
       auto newMesh = md;
-      newMesh.SetTrait(Tags::Tesselation {std::round(newTesselation)});
+      newMesh.SetTag(Tags::Tesselation {std::round(newTesselation)});
       return Recipe::From<Things::Mesh>(Abandon(newMesh));
    }
    else if (lod.mLODIndex > 0) {
@@ -180,19 +180,19 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> R
       // Clone only the descriptor and change type                      
       auto newMesh = Recipe::From<Things::Mesh>(TZode<PointType> {});
       // Set the place around which the zode is centered                
-      newMesh.SetTrait(Tags::Place {steppingNormal});
+      newMesh.SetTag(Tags::Place {steppingNormal});
       // Set the size of the sphere in order to calculate curvature     
-      newMesh.SetTrait(Tags::Size {lod.mModel.GetScale()});
+      newMesh.SetTag(Tags::Size {lod.mModel.GetScale()});
       // Set the topology                                               
-      newMesh.SetTrait(Tags::Topology {TypeOf<A::TriangleStrip>()});
+      newMesh.SetTag(Tags::Topology {TypeOf<A::TriangleStrip>()});
       // Set the tesselation                                            
-      newMesh.SetTrait(Tags::Tesselation {tesselation + static_cast<unsigned>(lod.mLODIndex) / 2});
+      newMesh.SetTag(Tags::Tesselation {tesselation + static_cast<unsigned>(lod.mLODIndex) / 2});
 
       // The octave gets progressively lower until we reach state       
       //real octave = 0;
       //newContent.Value(TraitID_Octave::Meta(), octave);
       //octave = pcLerp(octave, real(lod.mOctave), lodIndex / real(6));
-      //newContent.SetTrait<TraitID_Octave>(pcptr(octave));
+      //newContent.SetTag<TraitID_Octave>(pcptr(octave));
       return Abandon(newMesh);
    }
 

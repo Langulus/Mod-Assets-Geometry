@@ -47,11 +47,11 @@ bool GenerateLine<T, TOPOLOGY>::Default(Recipe& desc) {
 
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines (duh)                                 
-      d.SetDefaultTrait<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else return false;
 
-   d.SetDefaultTrait<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
    desc.SetType<Things::Mesh>();
    return true;
 }
