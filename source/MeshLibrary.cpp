@@ -62,11 +62,11 @@ void MeshLibrary::Teardown() {
 void MeshLibrary::Create(Verb& verb) {
    Recipe request;
    verb.ForEachDeep(
-      [&](Recipe const& construct) {
-         // For each construct...                                       
-         if (not construct.CastsTo<Things::Mesh>())
+      [&](Recipe const& recipe) {
+         // For each recipe...                                       
+         if (not recipe.CastsTo<Things::Mesh>())
             return;
-         request = construct;
+         request = recipe;
       },
       [&](DMeta const& type) {
          // For each type...                                            

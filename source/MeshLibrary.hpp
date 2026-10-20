@@ -14,19 +14,20 @@
 ///   Mesh reading, writing, and generation module                            
 ///                                                                           
 struct MeshLibrary final : Things::AssetModule {
-   using CTTI_Abstract = No;
-   LANGULUS_BASES(Things::AssetModule);
-   LANGULUS_VERBS(Verbs::Create);
+   using CTTI_Abstract  = No;
+   using CTTI_Bases     = Things::AssetModule;
+   using CTTI_Ability   = Verbs::Create;
 
 private:
    // Mesh library                                                      
-   TFactoryUnique<::Mesh> mMeshes;
+   TFactoryUnique<Mesh> mMeshes;
 
 public:
    MeshLibrary(Runtime*, Many const&);
 
    void Create(Verb&);
-   void Teardown();
-   void RequestGarbageCollection() {}
+
+   void Teardown() override;
+   void RequestGarbageCollection() override {}
 };
 

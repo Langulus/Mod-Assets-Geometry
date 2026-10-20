@@ -67,7 +67,7 @@ struct TLabel : A::Label {
    Real mLineSpacing {};
    Real mBlankSpacing {};
    Real mTabSpacing {};
-   Ref<A::Font> mFont;
+   Ref<Things::Font> mFont;
 };
 
 

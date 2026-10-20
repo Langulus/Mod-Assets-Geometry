@@ -10,8 +10,8 @@
 #include <Langulus/Primitives/TBox.hpp>
 #include <Langulus/Primitives/TTriangle.hpp>
 #include <Langulus/Primitives/TLine.hpp>
-#include <Langulus/Mapping.hpp>
-#include <Langulus/Color.hpp>
+#include <Langulus/Math/Mapping.hpp>
+#include <Langulus/Math/Color.hpp>
 #include <Langulus/Vectors/TSampler.hpp>
 #include <Langulus/Vectors/TNormal.hpp>
 
@@ -19,23 +19,26 @@
 ///                                                                           
 ///    Box/Rect mesh generators                                               
 ///                                                                           
-///   @tparam T - the primitive to use for point type and dimensions          
-///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
+///   @tparam T the primitive to use for point type and dimensions            
+///   @tparam TOPOLOGY are we generating triangles/lines/points?              
 ///                                                                           
-template<CT::Box T, CT::Topology TOPOLOGY = A::Triangle>
+template<CT::Box T, CT::Topology TOPOLOGY = Math::Triangle>
 struct GenerateBox {
-   using PointType = typename T::PointType;
-   using ScalarType = TypeOf<PointType>;
-   static constexpr size_t Dimensions = T::MemberCount;
-   static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
+   using PointType   = typename T::PointType;
+   using ScalarType  = TypeOf<PointType>;
+   using Sampler2    = Math::Sampler2;
+   using Normal3     = Math::Normal3;
+
+   static constexpr size_t     Dimensions = T::MemberCount;
+   static constexpr ScalarType Half       = ScalarType {1} / ScalarType {2};
 
    /// Properties for a 3D box                                                
    struct Constants3D {
-      static constexpr size_t VertexCount = 8;
-      static constexpr size_t TriangleCount = 12;
-      static constexpr size_t LineCount = 12;
-      static constexpr size_t IndexCount = TriangleCount * 3;
-      static constexpr size_t FaceCount = TriangleCount / 2;
+      static constexpr size_t VertexCount    = 8;
+      static constexpr size_t TriangleCount  = 12;
+      static constexpr size_t LineCount      = 12;
+      static constexpr size_t IndexCount     = TriangleCount * 3;
+      static constexpr size_t FaceCount      = TriangleCount / 2;
 
       /// 3D box unique vertices                                              
       static constexpr PointType Vertices[VertexCount] = {
@@ -117,10 +120,10 @@ struct GenerateBox {
       };
    };
 
-   using D = Conditional<Dimensions == 2, Constants2D, Constants3D>;
+   using D = ::std::conditional_t<Dimensions == 2, Constants2D, Constants3D>;
 
    static bool Default(Recipe&);
-   static auto Detail(const Mesh*, const LOD&) -> Recipe;
+   static auto Detail(const Mesh*, const Math::LOD&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -134,72 +137,70 @@ struct GenerateBox {
 
 
 /// Default box generation                                                    
-///   @param descriptor - the descriptor to use                               
-///   @return a newly generated descriptor, with missing tags being set to  
+///   @param d the descriptor to use                                          
+///   @return a newly generated descriptor, with missing tags being set to    
 ///      their defaults                                                       
 template<CT::Box T, CT::Topology TOPOLOGY>
-bool GenerateBox<T, TOPOLOGY>::Default(Recipe& desc) {
-   auto& d = desc.GetDescriptor();
-
+bool GenerateBox<T, TOPOLOGY>::Default(Recipe& d) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
-      d.SetDefaultTag<Tags::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTag<Tags::Sampler>(MetaOf<Sampler2>());
+      d.Set<Tags::Place>(MetaDataOf<Math::TTriangle<PointType>>());
+      d.Set<Tags::Sampler>(MetaDataOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
          // 3D+ box                                                     
-         d.SetDefaultTag<Tags::Aim>(MetaOf<Normal>());
-         d.SetDefaultTag<Tags::MapMode>(MapMode::Cube);
+         d.Set<Tags::Aim>(MetaDataOf<Normal3>());
+         d.Set<Tags::MapMode>(Math::MapMode::Cube);
       }
       else {
          // 2D rectangle                                                
-         d.SetDefaultTag<Tags::MapMode>(MapMode::Model);
+         d.Set<Tags::MapMode>(Math::MapMode::Model);
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A box made out of lines                                        
-      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.Set<Tags::Place>(MetaDataOf<Math::TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A box made out of points                                       
-      d.SetDefaultTag<Tags::Place>(MetaOf<PointType>());
+      d.Set<Tags::Place>(MetaDataOf<PointType>());
    }
    else return false;
 
-   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.Set<Tags::Topology>(MetaOf<TOPOLOGY>());
    desc.SetType<Things::Mesh>();
    return true;
 }
 
 /// Generate box level of detail, giving a LOD state                          
-///   @param model - the box generator                                        
-///   @param lod - the LOD state to generate                                  
+///   @param model the box generator                                          
+///   @param lod the LOD state to generate                                    
 ///   @return a newly generated descriptor, for the LOD model you can use it  
-///           to generate the new geometry                                    
+///      to generate the new geometry                                         
 template<CT::Box T, CT::Topology TOPOLOGY>
-auto GenerateBox<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
+auto GenerateBox<T, TOPOLOGY>::Detail(const Mesh* model, const Math::LOD&) -> Recipe {
    return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a box                                              
-///   @param model - the model to fill                                        
+///   @param model the model to fill                                          
 GENERATE() Positions(Mesh* model) {
    TMany<PointType> data = D::Vertices;
    model->Commit<Tags::Place>(Abandon(data));
 }
 
 /// Generate normals for a box                                                
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Normals(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      constexpr Normal l {Axes::Left<ScalarType>};
-      constexpr Normal r {Axes::Right<ScalarType>};
-      constexpr Normal u {Axes::Up<ScalarType>};
-      constexpr Normal d {Axes::Down<ScalarType>};
-      constexpr Normal f {Axes::Forward<ScalarType>};
-      constexpr Normal b {Axes::Backward<ScalarType>};
+      constexpr Normal3 l {Axes::Left<ScalarType>};
+      constexpr Normal3 r {Axes::Right<ScalarType>};
+      constexpr Normal3 u {Axes::Up<ScalarType>};
+      constexpr Normal3 d {Axes::Down<ScalarType>};
+      constexpr Normal3 f {Axes::Forward<ScalarType>};
+      constexpr Normal3 b {Axes::Backward<ScalarType>};
 
-      TMany<Normal> data;
+      TMany<Normal3> data;
       if constexpr (Dimensions == 3) {
          data.Reserve(D::TriangleCount);
          // Normals for a 3D box                                        
@@ -250,7 +251,7 @@ GENERATE() Indices(Mesh* model) {
 ///   @param model - the geometry instance to save data in                    
 GENERATE() TextureCoords(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      if (model->GetTextureMapper() == MapMode::Model) {
+      if (model->GetTextureMapper() == Math::MapMode::Model) {
          // Generate model mapping                                      
          TMany<PointType> data;
          data.Reserve(D::IndexCount);
@@ -262,7 +263,7 @@ GENERATE() TextureCoords(Mesh* model) {
 
          model->template Commit<Tags::Sampler>(Abandon(data));
       }
-      else if (model->GetTextureMapper() == MapMode::Face) {
+      else if (model->GetTextureMapper() == Math::MapMode::Face) {
          // Generate face mapping                                       
          TMany<Sampler2> data;
          data.Reserve(D::IndexCount);

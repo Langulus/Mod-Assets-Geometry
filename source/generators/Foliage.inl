@@ -8,7 +8,7 @@
 #pragma once
 #include "../Mesh.hpp"
 #include <Langulus/Primitives/TTriangle.hpp>
-#include <Langulus/Mapping.hpp>
+#include <Langulus/Math/Mapping.hpp>
 
 
 namespace Langulus::Things

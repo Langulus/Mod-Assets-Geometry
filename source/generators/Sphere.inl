@@ -11,8 +11,8 @@
 #include <Langulus/Primitives/TSphere.hpp>
 #include <Langulus/Primitives/TTriangle.hpp>
 #include <Langulus/Primitives/TLine.hpp>
-#include <Langulus/Mapping.hpp>
-#include <Langulus/Color.hpp>
+#include <Langulus/Math/Mapping.hpp>
+#include <Langulus/Math/Color.hpp>
 
 
 ///                                                                           

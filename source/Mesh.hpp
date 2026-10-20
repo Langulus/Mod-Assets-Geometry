@@ -10,8 +10,9 @@
 #include <Langulus/Primitives/TTriangle.hpp>
 #include <Langulus/Primitives/TLine.hpp>
 #include <Langulus/Primitives/TCylinder.hpp>
-#include <Langulus/Mapping.hpp>
-#include <Langulus/Color.hpp>
+#include <Langulus/Math/Mapping.hpp>
+#include <Langulus/Math/Color.hpp>
+#include <Langulus/Math/LOD.hpp>
 #include <Langulus/CppAPI/Material.hpp>
 #include <Langulus/CppAPI/Mesh.hpp>
 
@@ -22,6 +23,7 @@ using namespace Langulus;
 //template<CT::Primitive, CT::Topology = A::Triangle, bool = false>
 //struct Generator;
 
+struct MeshLibrary;
 
 ///                                                                           
 ///   A mesh asset                                                            
@@ -40,7 +42,7 @@ public:
    void Create(Verb&);
    bool Generate(TMeta, size_t = 0);
 
-   auto GetLOD(const LOD&) const -> Ref<Things::Mesh>;
+   auto GetLOD(const Math::LOD&) const -> Ref<Things::Mesh>;
    auto GetLibrary() const -> MeshLibrary*;
    static bool AutocompleteDescriptor(Recipe&);
 
@@ -64,6 +66,6 @@ private:
    TMapUnsorted<TMeta, FGenerator> mGenerators;
 
    // LOD generator function                                            
-   using FLOD = Recipe(*)(const Mesh*, const LOD&);
+   using FLOD = Recipe(*)(const Mesh*, const Math::LOD&);
    FLOD mLODgenerator {};
 };
