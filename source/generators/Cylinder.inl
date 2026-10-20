@@ -12,27 +12,33 @@
 #include <Langulus/Primitives/TLine.hpp>
 #include <Langulus/Math/Mapping.hpp>
 #include <Langulus/Math/Color.hpp>
+#include <Langulus/Math/Sampler.hpp>
+#include <Langulus/Math/Normal.hpp>
 
 
 ///                                                                           
 ///    Cylinder mesh generators                                               
 ///                                                                           
-///   @tparam T - the primitive to use for point type and dimensions          
-///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
-///                                                                           
-template<CT::Cylinder T, CT::Topology TOPOLOGY = A::Triangle>
+///   @tparam T the primitive to use for point type and dimensions            
+///   @tparam TOPOLOGY are we generating triangles/lines/points?              
+template<CT::Cylinder T, CT::Topology TOPOLOGY = Math::Triangle>
 struct GenerateCylinder {
-   using PointType = typename T::PointType;
-   using ScalarType = TypeOf<PointType>;
-   static constexpr size_t Dimensions = T::MemberCount;
-   static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
+   using PointType   = typename T::PointType;
+   using ScalarType  = TypeOf<PointType>;
+   using Sampler2    = Math::Sampler2;
+   using Sampler3    = Math::Sampler3;
+   using Normal3     = Math::Normal3;
+   using LOD         = Math::LOD;
+
+   static constexpr size_t     Dimensions = T::MemberCount;
+   static constexpr ScalarType Half       = ScalarType {1} / ScalarType {2};
 
    static_assert(Dimensions >= 3, "Cylinder should be at least 3D");
 
-   static constexpr size_t VertexCount = 8;
-   static constexpr size_t TriangleCount = 12;
-   static constexpr size_t IndexCount = TriangleCount * 3;
-   static constexpr size_t FaceCount = TriangleCount / 2;
+   static constexpr size_t VertexCount    = 8;
+   static constexpr size_t TriangleCount  = 12;
+   static constexpr size_t IndexCount     = TriangleCount * 3;
+   static constexpr size_t FaceCount      = TriangleCount / 2;
 
    /// 3D cylinder unique vertices                                            
    static constexpr PointType Vertices[VertexCount] = {
@@ -85,52 +91,45 @@ struct GenerateCylinder {
 
 
 /// Default cylinder generation                                               
-///   @param descriptor - the descriptor to use                               
-///   @return a newly generated descriptor, with missing tags being set to  
-///           their defaults                                                  
+///   @param descriptor the descriptor to use                                 
+///   @return a newly generated descriptor, with missing tags being set to    
+///      their defaults                                                       
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
-bool GenerateCylinder<T, TOPOLOGY>::Default(Recipe& desc) {
-   auto& d = desc.GetDescriptor();
-
+bool GenerateCylinder<T, TOPOLOGY>::Default(Recipe& d) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
-      d.SetDefaultTag<Tags::MapMode>(
-         MapMode::Cube);
-      d.SetDefaultTag<Tags::Place>(
-         MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTag<Tags::Sampler>(
-         MetaOf<Sampler2>());
-      d.SetDefaultTag<Tags::Aim>(
-         MetaOf<Normal>());
+      d.Set<Tags::MapMode>(MapMode::Cube);
+      d.Set<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.Set<Tags::Sampler>(MetaOf<Sampler2>());
+      d.Set<Tags::Aim>(MetaOf<Normal3>());
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A cylinder made out of lines                                   
-      d.SetDefaultTag<Tags::Place>(
-         MetaOf<TLine<PointType>>());
+      d.Set<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else return false;
 
    d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
-   desc.SetType<Things::Mesh>();
+   d.SetTarget<Things::Mesh>();
    return true;
 }
 
 /// Generate cylinder level of detail, giving a LOD state                     
-///   @param model - the cylinder generator                                   
-///   @param lod - the LOD state to generate                                  
+///   @param model the cylinder generator                                     
+///   @param lod the LOD state to generate                                    
 ///   @return a newly generated descriptor, for the LOD model you can use it  
-///           to generate the new geometry                                    
+///      to generate the new geometry                                         
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
 auto GenerateCylinder<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
    return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a cylinder                                         
-///   @param model - the model to fill                                        
+///   @param model the model to fill                                          
 GENERATE() Positions(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
-      using E = TTriangle<PointType>;
+      using E = Math::TTriangle<PointType>;
       TMany<E> data;
       data.Reserve(TriangleCount);
       for (size_t i = 0; i < TriangleCount; ++i)
@@ -145,20 +144,20 @@ GENERATE() Positions(Mesh* model) {
 }
 
 /// Generate normals for a cylinder                                           
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Normals(Mesh* model) {
    static_assert(Dimensions >= 3,
       "Can't generate normals for cylinder of this many dimensions");
 
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      constexpr Normal l {Axes::Left<ScalarType>};
-      constexpr Normal r {Axes::Right<ScalarType>};
-      constexpr Normal u {Axes::Up<ScalarType>};
-      constexpr Normal d {Axes::Down<ScalarType>};
-      constexpr Normal f {Axes::Forward<ScalarType>};
-      constexpr Normal b {Axes::Backward<ScalarType>};
+      constexpr Normal3 l {Axes::Left<ScalarType>};
+      constexpr Normal3 r {Axes::Right<ScalarType>};
+      constexpr Normal3 u {Axes::Up<ScalarType>};
+      constexpr Normal3 d {Axes::Down<ScalarType>};
+      constexpr Normal3 f {Axes::Forward<ScalarType>};
+      constexpr Normal3 b {Axes::Backward<ScalarType>};
 
-      TMany<Normal> data;
+      TMany<Normal3> data;
       data.Reserve(IndexCount);
       data << l << l << l << l << l << l;
       data << r << r << r << r << r << r;
@@ -173,7 +172,7 @@ GENERATE() Normals(Mesh* model) {
 }
 
 /// Generate indices for a cylinder                                           
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Indices(Mesh* model) {
    TMany<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -195,10 +194,10 @@ GENERATE() Indices(Mesh* model) {
 }
 
 /// Generate texture coordinates for a cylinder                               
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() TextureCoords(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      if (model->GetTextureMapper() == MapMode::Model) {
+      if (model->GetTextureMapper() == Math::MapMode::Model) {
          // Generate model mapping                                      
          TMany<Sampler3> data;
          data.Reserve(IndexCount);
@@ -210,7 +209,7 @@ GENERATE() TextureCoords(Mesh* model) {
 
          model->template Commit<Tags::Sampler>(Abandon(data));
       }
-      else if (model->GetTextureMapper() == MapMode::Face) {
+      else if (model->GetTextureMapper() == Math::MapMode::Face) {
          // Generate face mapping                                       
          TMany<Sampler2> data;
          data.Reserve(IndexCount);

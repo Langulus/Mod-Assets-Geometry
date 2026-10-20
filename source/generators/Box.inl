@@ -21,13 +21,13 @@
 ///                                                                           
 ///   @tparam T the primitive to use for point type and dimensions            
 ///   @tparam TOPOLOGY are we generating triangles/lines/points?              
-///                                                                           
 template<CT::Box T, CT::Topology TOPOLOGY = Math::Triangle>
 struct GenerateBox {
    using PointType   = typename T::PointType;
    using ScalarType  = TypeOf<PointType>;
    using Sampler2    = Math::Sampler2;
    using Normal3     = Math::Normal3;
+   using RGB         = Math::RGB;
 
    static constexpr size_t     Dimensions = T::MemberCount;
    static constexpr ScalarType Half       = ScalarType {1} / ScalarType {2};
@@ -168,7 +168,7 @@ bool GenerateBox<T, TOPOLOGY>::Default(Recipe& d) {
    else return false;
 
    d.Set<Tags::Topology>(MetaOf<TOPOLOGY>());
-   desc.SetType<Things::Mesh>();
+   d.SetTarget<Things::Mesh>();
    return true;
 }
 
