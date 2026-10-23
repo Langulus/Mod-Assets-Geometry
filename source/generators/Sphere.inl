@@ -18,10 +18,9 @@
 ///                                                                           
 ///    Sphere mesh generators                                                 
 ///                                                                           
-///   @tparam T - the primitive to use for point type and dimensions          
-///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
-///                                                                           
-template<CT::Sphere T, CT::Topology TOPOLOGY = A::Triangle>
+///   @tparam T the primitive to use for point type and dimensions            
+///   @tparam TOPOLOGY are we generating triangles/lines/points?              
+template<CT::Sphere T, CT::Topology TOPOLOGY = Triangle>
 struct GenerateSphere {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
@@ -71,7 +70,7 @@ struct GenerateSphere {
       //TODO
    };
 
-   using D = Conditional<Dimensions == 2, Constants2D, Constants3D>;
+   using D = Tif<Dimensions == 2, Constants2D, Constants3D>;
 
    static bool Default(Recipe&);
    static auto Detail(const Mesh*, const LOD&) -> Recipe;
@@ -89,43 +88,40 @@ struct GenerateSphere {
 
 
 /// Default sphere generation                                                 
-///   @param descriptor - the descriptor to use                               
-///   @return a newly generated descriptor, with missing tags being set to  
-///           their defaults                                                  
+///   @param d the descriptor to use                                          
+///   @return a newly generated descriptor, with missing tags being set to    
+///      their defaults                                                       
 template<CT::Sphere T, CT::Topology TOPOLOGY>
-bool GenerateSphere<T, TOPOLOGY>::Default(Recipe& desc) {
-   auto& d = desc.GetDescriptor();
-
+bool GenerateSphere<T, TOPOLOGY>::Default(Recipe& d) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A sphere made out of triangles                                 
-      d.SetDefaultTag<Tags::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTag<Tags::Sampler>(MetaOf<Sampler2>());
+      d.Set<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.Set<Tags::Sampler>(MetaOf<Sampler2>());
 
-      if constexpr (Dimensions >= 3) {
-         d.SetDefaultTag<Tags::Aim>(MetaOf<Normal>());
-      }
+      if constexpr (Dimensions >= 3)
+         d.Set<Tags::Aim>(MetaOf<Normal3>());
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A sphere made out of lines                                     
-      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.Set<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A sphere made out of points                                    
-      d.SetDefaultTag<Tags::Place>(MetaOf<PointType>());
+      d.Set<Tags::Place>(MetaOf<PointType>());
    }
    else return false;
 
-   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
-   d.SetDefaultTag<Tags::MapMode>(MapMode::Cube);
-   desc.SetType<Things::Mesh>();
+   d.Set<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.Set<Tags::MapMode>(MapMode::Cube);
+   d.SetTarget<Things::Mesh>();
    return true;
 }
 
 /// Generate box level of detail, giving a LOD state                          
-///   @param model - the box generator                                        
-///   @param lod - the LOD state to generate                                  
+///   @param model the box generator                                          
+///   @param lod the LOD state to generate                                    
 ///   @return a newly generated descriptor, you can use it to generate the    
-///           required level-of-detail geometry                               
+///      required level-of-detail geometry                                    
 template<CT::Sphere T, CT::Topology TOPOLOGY>
 auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> Recipe {
    auto& md = model->GetDescriptor();
@@ -200,7 +196,7 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> R
 }
 
 /// Generate positions for a sphere/circle                                    
-///   @param model - the model to fill                                        
+///   @param model the model to fill                                          
 GENERATE() Positions(Mesh* model) {
    // A geosphere/circle made of triangles/lines/points                 
    // This geometry is always indexes, so all positions go              
@@ -209,20 +205,20 @@ GENERATE() Positions(Mesh* model) {
 }
 
 /// Generate normals for a sphere/circle                                      
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Normals(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      TMany<Normal> data;
+      TMany<Normal3> data;
       data.Reserve(D::VertexCount);
 
       if constexpr (Dimensions >= 3) {
          // Normals for a 3D sphere - shared for each point             
          for (auto& v : D::Vertices)
-            data << Normal {v};
+            data << Normal3 {v};
       }
       else if constexpr (Dimensions == 2) {
          // Normals for a 2D circle, always facing the user (-Z)        
-         constexpr Normal b {Axes::Backward<ScalarType>};
+         constexpr Normal3 b {Axes::Backward<ScalarType>};
          for (auto& v : D::Vertices)
             data << b;
       }
@@ -234,7 +230,7 @@ GENERATE() Normals(Mesh* model) {
 }
 
 /// Generate indices for a sphere/circle                                      
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Indices(Mesh* model) {
    TMany<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -260,7 +256,7 @@ GENERATE() Indices(Mesh* model) {
 }
 
 /// Generate texture coordinates for a sphere/circle                          
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() TextureCoords(Mesh* model) {
    TMany<PointType> data;
    data.Reserve(D::VertexCount);

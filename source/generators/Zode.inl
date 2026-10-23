@@ -15,7 +15,7 @@
 #include <Langulus/Vectors/TSampler.hpp>
 #include <Langulus/Numbers/TAngle.hpp>
 
-template<CT::Vector T>
+template<CT::CustomVector T>
 struct TZode;
 
 
@@ -67,12 +67,11 @@ namespace Langulus::CT
 /// Tesselation of 2 sums up to 4 strips, 15 points (3*5)                     
 /// Tesselation of 3 sums up to 8 strips, 45 points (3*15)                    
 ///                                                                           
-template<CT::Vector T>
-struct TZode : A::Zode {
-   using CTTI_Abstract = No;
-   using CTTI_POD = CT::POD<T>;
-   using CTTI_Typed = TypeOf<T>;
-   LANGULUS_BASES(A::Zode);
+template<CT::CustomVector T>
+struct TZode {
+   using CTTI_POD    = Maybe<CT::POD<T>>;
+   using CTTI_Typed  = TypeOf<T>;
+   using CTTI_Bases  = Things::Zode;
 
    using PointType = T;
    using ScalarType = TypeOf<T>;
@@ -89,9 +88,8 @@ struct TZode : A::Zode {
 ///                                                                           
 ///    Zode mesh generators                                                   
 ///                                                                           
-///   @tparam T - the primitive to use for point type and dimensions          
-///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
-///                                                                           
+///   @tparam T the primitive to use for point type and dimensions            
+///   @tparam TOPOLOGY are we generating triangles/lines/points?              
 template<CT::Zode T, CT::Topology TOPOLOGY = A::Triangle>
 struct GenerateZode {
    using PointType = typename T::PointType;
@@ -117,43 +115,40 @@ struct GenerateZode {
 
 
 /// Default zode generation                                                   
-///   @param descriptor - the descriptor to use                               
-///   @return a newly generated descriptor, with missing tags being set to  
-///           their defaults                                                  
+///   @param d the descriptor to use                                          
+///   @return a newly generated descriptor, with missing tags being set to    
+///      their defaults                                                       
 template<CT::Zode T, CT::Topology TOPOLOGY>
-bool GenerateZode<T, TOPOLOGY>::Default(Recipe& desc) {
-   auto& d = desc.GetDescriptor();
-
+bool GenerateZode<T, TOPOLOGY>::Default(Recipe& d) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // Zode made of triangle list                                     
-      d.SetDefaultTag<Tags::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTag<Tags::Sampler>(MetaOf<Sampler2>());
+      d.Set<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.Set<Tags::Sampler>(MetaOf<Sampler2>());
 
-      if constexpr (Dimensions >= 3) {
-         d.SetDefaultTag<Tags::Aim>(MetaOf<Normal>());
-      }
+      if constexpr (Dimensions >= 3)
+         d.Set<Tags::Aim>(MetaOf<Normal3>());
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // Zode made of lines                                             
-      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.Set<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // Zode made of points                                            
-      d.SetDefaultTag<Tags::Place>(MetaOf<PointType>());
+      d.Set<Tags::Place>(MetaOf<PointType>());
    }
    else return false;
 
-   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
-   d.SetDefaultTag<Tags::MapMode>(MapMode::Model);
-   desc.SetType<Things::Mesh>();
+   d.Set<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.Set<Tags::MapMode>(MapMode::Model);
+   d.SetTarget<Things::Mesh>();
    return true;
 }
 
 /// Generate zode level of detail, giving a LOD state                         
-///   @param model - the box generator                                        
-///   @param lod - the LOD state to generate                                  
+///   @param model the box generator                                          
+///   @param lod the LOD state to generate                                    
 ///   @return a newly generated descriptor, for the LOD model you can use it  
-///           to generate the new geometry                                    
+///      to generate the new geometry                                         
 template<CT::Zode T, CT::Topology TOPOLOGY>
 auto GenerateZode<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
    //TODO if closer, generate less curvy zode
@@ -162,7 +157,7 @@ auto GenerateZode<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe 
 }
 
 /// Generate positions for a zode                                             
-///   @param model - the model to fill                                        
+///   @param model the model to fill                                          
 GENERATE() Positions(Mesh* model) {
    PointType offset;
    model->GetDescriptor().ExtractTag<Tags::Place>(offset);
@@ -220,7 +215,7 @@ GENERATE() Positions(Mesh* model) {
 }
 
 /// Generate normals for a zode                                               
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Normals(Mesh* model) {
    const auto positions = model->GetData<Tags::Place>();
 
@@ -232,7 +227,7 @@ GENERATE() Normals(Mesh* model) {
 }
 
 /// Generate indices for a zode                                               
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Indices(Mesh* model) {
    unsigned tesselation = 0;
    model->GetDescriptor().ExtractTag<Tags::Tesselation>(tesselation);
@@ -316,7 +311,7 @@ GENERATE() Indices(Mesh* model) {
 }
 
 /// Generate texture coordinates for a zode                                   
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() TextureCoords(Mesh* model) {
    const auto positions = model->GetData<Tags::Place>();
 

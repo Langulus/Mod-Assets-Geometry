@@ -13,9 +13,9 @@
 ///                                                                           
 ///   Mesh reading, writing, and generation module                            
 ///                                                                           
-struct MeshLibrary final : Things::AssetModule {
+struct MeshLibrary final : Things::ArtModule {
    using CTTI_Abstract  = No;
-   using CTTI_Bases     = Things::AssetModule;
+   using CTTI_Bases     = Things::ArtModule;
    using CTTI_Ability   = Verbs::Create;
 
 private:

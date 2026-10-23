@@ -17,6 +17,7 @@
 #include <Langulus/CppAPI/Mesh.hpp>
 
 using namespace Langulus;
+using namespace Math;
 
 //TODO Unfortunately, due to compiler bugs in MSVC and Clang, we can't
 // generalize these generators yet. Some day we will...
@@ -42,7 +43,7 @@ public:
    void Create(Verb&);
    bool Generate(TMeta, size_t = 0);
 
-   auto GetLOD(const Math::LOD&) const -> Ref<Things::Mesh>;
+   auto GetLOD(const LOD&) const -> Ref<Things::Mesh>;
    auto GetLibrary() const -> MeshLibrary*;
    static bool AutocompleteDescriptor(Recipe&);
 
@@ -66,6 +67,6 @@ private:
    TMapUnsorted<TMeta, FGenerator> mGenerators;
 
    // LOD generator function                                            
-   using FLOD = Recipe(*)(const Mesh*, const Math::LOD&);
+   using FLOD = Recipe(*)(const Mesh*, const LOD&);
    FLOD mLODgenerator {};
 };

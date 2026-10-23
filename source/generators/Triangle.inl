@@ -16,8 +16,8 @@
 ///                                                                           
 ///    Triangle mesh generators                                               
 ///                                                                           
-///   @tparam T - the primitive to use for point type and dimensions          
-///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
+///   @tparam T the primitive to use for point type and dimensions            
+///   @tparam TOPOLOGY are we generating triangles/lines/points?              
 ///                                                                           
 ///         2                                                                 
 /// +Y|     + -->+X                                                           
@@ -29,7 +29,7 @@
 ///   +-----------+                                                           
 ///   1           0                                                           
 ///                                                                           
-template<CT::Triangle T, CT::Topology TOPOLOGY = Math::Triangle>
+template<CT::Triangle T, CT::Topology TOPOLOGY = Triangle>
 struct GenerateTriangle {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
@@ -60,67 +60,65 @@ struct GenerateTriangle {
 
 
 /// Default triangle generation                                               
-///   @param descriptor - the descriptor to use                               
-///   @return a newly generated descriptor, with missing tags being set to  
-///           their defaults                                                  
+///   @param d the descriptor to use                                          
+///   @return a newly generated descriptor, with missing tags being set to    
+///      their defaults                                                       
 template<CT::Triangle T, CT::Topology TOPOLOGY>
-bool GenerateTriangle<T, TOPOLOGY>::Default(Recipe& desc) {
-   auto& d = desc.GetDescriptor();
-
+bool GenerateTriangle<T, TOPOLOGY>::Default(Recipe& d) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A solid triangles                                              
-      d.SetDefaultTag<Tags::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTag<Tags::Sampler>(MetaOf<Sampler2>());
+      d.Set<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.Set<Tags::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3) {
-         d.SetDefaultTag<Tags::Aim>(MetaOf<Normal>());
+         d.Set<Tags::Aim>(MetaOf<Normal3>());
       }
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A triangle of lines                                            
-      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.Set<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A triangle of points                                           
-      d.SetDefaultTag<Tags::Place>(MetaOf<PointType>());
+      d.Set<Tags::Place>(MetaOf<PointType>());
    }
    else return false;
 
-   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
-   d.SetDefaultTag<Tags::MapMode>(MapMode::Model);
-   desc.SetType<Things::Mesh>();
+   d.Set<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.Set<Tags::MapMode>(MapMode::Model);
+   d.SetTarget<Things::Mesh>();
    return true;
 }
 
 /// Generate box level of detail, giving a LOD state                          
-///   @param model - the box generator                                        
-///   @param lod - the LOD state to generate                                  
+///   @param model the box generator                                          
+///   @param lod the LOD state to generate                                    
 ///   @return a newly generated descriptor, for the LOD model you can use it  
-///           to generate the new geometry                                    
+///      to generate the new geometry                                         
 template<CT::Triangle T, CT::Topology TOPOLOGY>
 auto GenerateTriangle<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
    return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for triangle                                           
-///   @param model - the model to fill                                        
+///   @param model the model to fill                                          
 GENERATE() Positions(Mesh* model) {
    TMany<PointType> data = TriangleVertices;
    model->Commit<Tags::Place>(Abandon(data));
 }
 
 /// Generate indices for triangle                                             
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Indices(Mesh* model) {
    TMany<uint32_t> data {0, 1, 2};
    model->Commit<Tags::Place>(Abandon(data));
 }
 
 /// Generate normals for triangle                                             
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Normals(Mesh* model) {
-   constexpr Normal n = Axes::Backward<ScalarType>;
-   TMany<Normal> data;
+   constexpr Normal3 n = Axes::Backward<ScalarType>;
+   TMany<Normal3> data;
    data.Reserve(VertexCount);
    for (auto& v : TriangleVertices)
       data << n;
@@ -128,7 +126,7 @@ GENERATE() Normals(Mesh* model) {
 }
 
 /// Generate texture coordinates for a box                                    
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() TextureCoords(Mesh* model) {
    TMany<Sampler2> data;
    data.Reserve(VertexCount);

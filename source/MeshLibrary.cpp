@@ -6,18 +6,18 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #include "MeshLibrary.hpp"
+#include "Export.hpp"
 
 LANGULUS_DEFINE_MODULE(
    MeshLibrary, 9, "AssetsGeometry",
    "Mesh reader, writer and generator", "",
-   MeshLibrary, Mesh,
-   Tags::Tesselation
+   MeshLibrary, Mesh, Tags::Tesselation
 )
 
 
 /// Module construction                                                       
-///   @param runtime - the runtime that owns the module                       
-///   @param desc - instructions for configuring the module                   
+///   @param runtime the runtime that owns the module                         
+///   @param desc instructions for configuring the module                     
 MeshLibrary::MeshLibrary(Runtime* runtime, Many const& desc)
    : Downcastable {this}
    , Module     {runtime} {
@@ -63,7 +63,7 @@ void MeshLibrary::Create(Verb& verb) {
    Recipe request;
    verb.ForEachDeep(
       [&](Recipe const& recipe) {
-         // For each recipe...                                       
+         // For each recipe...                                          
          if (not recipe.CastsTo<Things::Mesh>())
             return;
          request = recipe;
@@ -80,9 +80,9 @@ void MeshLibrary::Create(Verb& verb) {
       return;
 
    // Mesh descriptor might be partial, so we attempt to autocomplete it
-   // with default tags, provided by the desired generator. This      
+   // with default tags, provided by the desired generator. This        
    // ensures, that partial requests can match other partial requests,  
-   // if they end up the same after the implicit tags are considered  
+   // if they end up the same after the implicit tags are considered    
    // It's like an additional level of normalization over Neat          
    if (Mesh::AutocompleteDescriptor(request)) {
       VERBOSE_MESHES("Mesh autocompleted to: ", request);

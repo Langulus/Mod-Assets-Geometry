@@ -13,36 +13,34 @@
 
 
 /// Default grid generation                                                   
-///   @param descriptor - the descriptor to use                               
+///   @param d the descriptor to use                                          
 ///   @return a newly generated descriptor, with missing tags being set to    
-///           their defaults                                                  
+///      their defaults                                                       
 template<CT::Grid T, CT::Topology TOPOLOGY>
-bool GenerateGrid<T, TOPOLOGY>::Default(Recipe& desc) {
-   auto& d = desc.GetDescriptor();
-
+bool GenerateGrid<T, TOPOLOGY>::Default(Recipe& d) {
    if constexpr (CT::Line<TOPOLOGY>) {
       // A grid made out of lines                                       
-      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.Set<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else return false;
 
-   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
-   desc.SetType<Things::Mesh>();
+   d.Set<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetTarget<Things::Mesh>();
    return true;
 }
 
 /// Generate grid level of detail, giving a LOD state                         
-///   @param model - the grid generator                                       
-///   @param lod - the LOD state to generate                                  
+///   @param model the grid generator                                         
+///   @param lod the LOD state to generate                                    
 ///   @return a newly generated descriptor, for the LOD model you can use it  
-///           to generate the new geometry                                    
+///      to generate the new geometry                                         
 template<CT::Grid T, CT::Topology TOPOLOGY>
 Recipe GenerateGrid<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
    return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a grid                                             
-///   @param model - the model to fill                                        
+///   @param model the model to fill                                          
 GENERATE() Positions(Mesh* model) {
    // Calculate vertex count - tesselation in this context means        
    // how many times a sector in the grid is divided in half            
@@ -135,19 +133,19 @@ GENERATE() Positions(Mesh* model) {
 }
 
 /// Generate normals for a grid                                               
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Normals(Mesh*) {
    TODO();
 }
 
 /// Generate indices for a grid                                               
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Indices(Mesh*) {
    TODO();
 }
 
 /// Generate texture coordinates for a grid                                   
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() TextureCoords(Mesh*) {
    TODO();
 }

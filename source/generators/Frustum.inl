@@ -17,10 +17,9 @@
 ///                                                                           
 ///    Frustum mesh generators                                                
 ///                                                                           
-///   @tparam T - the primitive to use for point type and dimensions          
-///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
-///                                                                           
-template<CT::Frustum T, CT::Topology TOPOLOGY = A::Triangle>
+///   @tparam T the primitive to use for point type and dimensions            
+///   @tparam TOPOLOGY are we generating triangles/lines/points?              
+template<CT::Frustum T, CT::Topology TOPOLOGY = Triangle>
 struct GenerateFrustum {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
@@ -133,46 +132,43 @@ struct GenerateFrustum {
 
 
 /// Default frustum generation                                                
-///   @param descriptor - the descriptor to use                               
-///   @return a newly generated descriptor, with missing tags being set to  
-///           their defaults                                                  
+///   @param d the descriptor to use                                          
+///   @return a newly generated descriptor, with missing tags being set to    
+///      their defaults                                                       
 template<CT::Frustum T, CT::Topology TOPOLOGY>
-bool GenerateFrustum<T, TOPOLOGY>::Default(Recipe& desc) {
-   auto& d = desc.GetDescriptor();
-
+bool GenerateFrustum<T, TOPOLOGY>::Default(Recipe& d) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A frustum made out of triangles                                
-      d.SetDefaultTag<Tags::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTag<Tags::Sampler>(MetaOf<Sampler2>());
+      d.Set<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.Set<Tags::Sampler>(MetaOf<Sampler2>());
 
-      if constexpr (Dimensions >= 3) {
-         d.SetDefaultTag<Tags::Aim>(MetaOf<Normal>());
-      }
+      if constexpr (Dimensions >= 3)
+         d.Set<Tags::Aim>(MetaOf<Normal>());
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A frustum made out of lines                                    
-      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.Set<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else return false;
 
-   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
-   d.SetDefaultTag<Tags::MapMode>(MapMode::Cube);
-   desc.SetType<Things::Mesh>();
+   d.Set<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.Set<Tags::MapMode>(MapMode::Cube);
+   d.SetTarget<Things::Mesh>();
    return true;
 }
 
 /// Generate frustum level of detail, giving a LOD state                      
-///   @param model - the frustum generator                                    
-///   @param lod - the LOD state to generate                                  
+///   @param model the frustum generator                                      
+///   @param lod the LOD state to generate                                    
 ///   @return a newly generated descriptor, for the LOD model you can use it  
-///           to generate the new geometry                                    
+///      to generate the new geometry                                         
 template<CT::Frustum T, CT::Topology TOPOLOGY>
 auto GenerateFrustum<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
    return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a frustum                                          
-///   @param model - the model to fill                                        
+///   @param model the model to fill                                          
 GENERATE() Positions(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box (3D) or rectangle (2D) made out of triangles             
@@ -201,17 +197,17 @@ GENERATE() Positions(Mesh* model) {
 }
 
 /// Generate normals for a frustum                                            
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Normals(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      constexpr Normal l {Axes::Left<ScalarType>};
-      constexpr Normal r {Axes::Right<ScalarType>};
-      constexpr Normal u {Axes::Up<ScalarType>};
-      constexpr Normal d {Axes::Down<ScalarType>};
-      constexpr Normal f {Axes::Forward<ScalarType>};
-      constexpr Normal b {Axes::Backward<ScalarType>};
+      constexpr Normal3 l {Axes::Left<ScalarType>};
+      constexpr Normal3 r {Axes::Right<ScalarType>};
+      constexpr Normal3 u {Axes::Up<ScalarType>};
+      constexpr Normal3 d {Axes::Down<ScalarType>};
+      constexpr Normal3 f {Axes::Forward<ScalarType>};
+      constexpr Normal3 b {Axes::Backward<ScalarType>};
 
-      TMany<Normal> data;
+      TMany<Normal3> data;
       data.Reserve(D::IndexCount);
       if constexpr (Dimensions == 3) {
          // Normals for a 3D box                                        
@@ -234,7 +230,7 @@ GENERATE() Normals(Mesh* model) {
 }
 
 /// Generate indices for a frustum                                            
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Indices(Mesh* model) {
    TMany<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
@@ -260,7 +256,7 @@ GENERATE() Indices(Mesh* model) {
 }
 
 /// Generate texture coordinates for a frustum                                
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() TextureCoords(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       if (model->GetTextureMapper() == MapMode::Model) {

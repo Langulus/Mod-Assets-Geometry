@@ -103,7 +103,7 @@ public:
 ///   @tparam T - the primitive to use for point type and dimensions          
 ///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
 ///                                                                           
-template<CT::Grid T, CT::Topology TOPOLOGY = Math::Line>
+template<CT::Grid T, CT::Topology TOPOLOGY = Line>
 struct GenerateGrid {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;

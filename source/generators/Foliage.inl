@@ -30,10 +30,9 @@ namespace Langulus::CT
 ///                                                                           
 ///    Foliage mesh generators                                                
 ///                                                                           
-///   @tparam T - the primitive to use for point type and dimensions          
-///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
-///                                                                           
-template<CT::Foliage T, CT::Topology TOPOLOGY = A::Triangle>
+///   @tparam T the primitive to use for point type and dimensions            
+///   @tparam TOPOLOGY are we generating triangles/lines/points?              
+template<CT::Foliage T, CT::Topology TOPOLOGY = Triangle>
 struct GenerateFoliage {
    using PointType = typename T::PointType;
    static constexpr size_t Dimensions = T::MemberCount;
@@ -54,30 +53,27 @@ struct GenerateFoliage {
 
 
 /// Default foliage generation                                                
-///   @param descriptor - the descriptor to use                               
-///   @return a newly generated descriptor, with missing tags being set to  
-///           their defaults                                                  
+///   @param d the descriptor to use                                          
+///   @return a newly generated descriptor, with missing tags being set to    
+///      their defaults                                                       
 template<CT::Foliage T, CT::Topology TOPOLOGY>
-bool GenerateFoliage<T, TOPOLOGY>::Default(Recipe& desc) {
-   auto& d = desc.GetDescriptor();
-
+bool GenerateFoliage<T, TOPOLOGY>::Default(Recipe& d) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // Foliage made out of triangles                                  
-      d.SetDefaultTag<Tags::Place>(
-         MetaOf<TTriangle<PointType>>());
+      d.Set<Tags::Place>(MetaOf<TTriangle<PointType>>());
    }
    else return false;
 
-   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
-   desc.SetType<Things::Mesh>();
+   d.Set<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetTarget<Things::Mesh>();
    return true;
 }
 
 /// Generate foliage level of detail, giving a LOD state                      
-///   @param model - the foliage generator                                    
-///   @param lod - the LOD state to generate                                  
+///   @param model the foliage generator                                      
+///   @param lod the LOD state to generate                                    
 ///   @return a newly generated descriptor, for the LOD model you can use it  
-///           to generate the new geometry                                    
+///      to generate the new geometry                                         
 template<CT::Foliage T, CT::Topology TOPOLOGY>
 auto GenerateFoliage<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
    return Recipe::From<Things::Mesh>(model->GetDescriptor());

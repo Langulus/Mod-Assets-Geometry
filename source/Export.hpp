@@ -14,7 +14,7 @@ using namespace Math;
 struct MeshLibrary;
 struct Mesh;
 
-LANGULUS_DEFINE_TRAIT(Tesselation, "Tesselation level, usually an integer");
+LANGULUS_DEFINE_TAG(Tesselation, "Tesselation level, usually an integer");
 
 #if 0
    #define VERBOSE_MESHES(...)      Logger::Verbose(Self(), __VA_ARGS__)

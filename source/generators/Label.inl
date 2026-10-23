@@ -10,7 +10,7 @@
 #include <Langulus/CppAPI/Image.hpp>
 #include <Langulus/Math/Scale.hpp>
 
-template<CT::Vector T>
+template<CT::CustomVector T>
 struct TLabel;
 
 namespace Langulus::Things
@@ -48,12 +48,11 @@ namespace Langulus::CT
 /// |                                                                         
 /// v +Y                                                                      
 ///                                                                           
-template<CT::Vector T>
-struct TLabel : A::Label {
-   using CTTI_Abstract = No;
-   using CTTI_POD = CT::POD<T>;
-   using CTTI_Typed = TypeOf<T>;
-   LANGULUS_BASES(A::Label);
+template<CT::CustomVector T>
+struct TLabel {
+   using CTTI_POD    = Maybe<CT::POD<T>>;
+   using CTTI_Typed  = TypeOf<T>;
+   using CTTI_Bases  = Things::Label;
 
    using PointType = T;
    static constexpr size_t MemberCount = T::MemberCount;
@@ -74,16 +73,15 @@ struct TLabel : A::Label {
 ///                                                                           
 ///    Label mesh generators                                                  
 ///                                                                           
-///   @tparam T - the primitive to use for point type and dimensions          
-///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
-///                                                                           
-template<CT::Label T, CT::Topology TOPOLOGY = A::Triangle>
+///   @tparam T the primitive to use for point type and dimensions            
+///   @tparam TOPOLOGY are we generating triangles/lines/points?              
+template<CT::Label T, CT::Topology TOPOLOGY = Triangle>
 struct GenerateLabel {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
    static constexpr size_t Dimensions = T::MemberCount;
 
-   static_assert(CT::Exact<TOPOLOGY, A::Triangle>,
+   static_assert(CT::Exact<TOPOLOGY, Triangle>,
       "Label can be only have triangle topology");
    static_assert(Dimensions >= 2,
       "Label should be at least 2D");
@@ -95,9 +93,9 @@ struct GenerateLabel {
    ///   |/  |                                                                
    ///   +---+                                                                
    ///  1     0                                                               
-   static constexpr size_t VertexCount = 4;
-   static constexpr size_t TriangleCount = 2;
-   static constexpr size_t IndexCount = TriangleCount * 3;
+   static constexpr size_t VertexCount    = 4;
+   static constexpr size_t TriangleCount  = 2;
+   static constexpr size_t IndexCount     = TriangleCount * 3;
 
    /// Glyph's unique vertices                                                
    static constexpr Vec2 GlyphVertices[VertexCount] = {
@@ -128,41 +126,38 @@ struct GenerateLabel {
 
 
 /// Default label generation                                                  
-///   @param desc - the descriptor to use                                     
-///   @return a newly generated descriptor, with missing tags being set to  
-///           their defaults                                                  
+///   @param desc the descriptor to use                                       
+///   @return a newly generated descriptor, with missing tags being set to    
+///      their defaults                                                       
 template<CT::Label T, CT::Topology TOPOLOGY>
-bool GenerateLabel<T, TOPOLOGY>::Default(Recipe& desc) {
-   auto& d = desc.GetDescriptor();
-
+bool GenerateLabel<T, TOPOLOGY>::Default(Recipe& d) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A sphere made out of triangles                                 
-      d.SetDefaultTag<Tags::Place>(MetaOf<TTriangle<PointType>>());
-      d.SetDefaultTag<Tags::Sampler>(MetaOf<Sampler2>());
+      d.Set<Tags::Place>(MetaOf<TTriangle<PointType>>());
+      d.Set<Tags::Sampler>(MetaOf<Sampler2>());
 
-      if constexpr (Dimensions >= 3) {
-         d.SetDefaultTag<Tags::Aim>(MetaOf<Normal>());
-      }
+      if constexpr (Dimensions >= 3)
+         d.Set<Tags::Aim>(MetaOf<Normal>());
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A sphere made out of lines                                     
-      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.Set<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else if constexpr (CT::Point<TOPOLOGY>) {
       // A sphere made out of points                                    
-      d.SetDefaultTag<Tags::Place>(MetaOf<PointType>());
+      d.Set<Tags::Place>(MetaOf<PointType>());
    }
    else return false;
 
-   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
-   d.SetDefaultTag<Tags::MapMode>(MapMode::Cube);
-   desc.SetType<Things::Mesh>();
+   d.Set<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.Set<Tags::MapMode>(MapMode::Cube);
+   d.SetTarget<Things::Mesh>();
    return true;
 }
 
 /// Generate label level of detail, giving a LOD state                        
-///   @param model - the generator                                            
-///   @param lod - the LOD state to generate                                  
+///   @param model the generator                                              
+///   @param lod the LOD state to generate                                    
 ///   @return the same descriptor, labels don't have LOD                      
 template<CT::Label T, CT::Topology TOPOLOGY>
 auto GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
@@ -170,7 +165,7 @@ auto GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe
 }
 
 /// Generate positions for label                                              
-///   @param model - the model to fill                                        
+///   @param model the model to fill                                          
 GENERATE() Positions(Mesh* model) {
    T label;
    model->GetDescriptor().ExtractData(label);
@@ -210,7 +205,7 @@ GENERATE() Positions(Mesh* model) {
 }
 
 /// Generate indices for label                                                
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Indices(Mesh* model) {
    T label;
    model->GetDescriptor().ExtractData(label);
@@ -231,7 +226,7 @@ GENERATE() Indices(Mesh* model) {
 }
 
 /// Generate normals for label                                                
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Normals(Mesh* model) {
    T label;
    model->GetDescriptor().ExtractData(label);
@@ -253,7 +248,7 @@ GENERATE() Normals(Mesh* model) {
 }
 
 /// Generate texture coordinates for label                                    
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() TextureCoords(Mesh* model) {
    T label;
    model->GetDescriptor().ExtractData(label);

@@ -21,14 +21,10 @@
 ///                                                                           
 ///   @tparam T the primitive to use for point type and dimensions            
 ///   @tparam TOPOLOGY are we generating triangles/lines/points?              
-template<CT::Cylinder T, CT::Topology TOPOLOGY = Math::Triangle>
+template<CT::Cylinder T, CT::Topology TOPOLOGY = Triangle>
 struct GenerateCylinder {
    using PointType   = typename T::PointType;
    using ScalarType  = TypeOf<PointType>;
-   using Sampler2    = Math::Sampler2;
-   using Sampler3    = Math::Sampler3;
-   using Normal3     = Math::Normal3;
-   using LOD         = Math::LOD;
 
    static constexpr size_t     Dimensions = T::MemberCount;
    static constexpr ScalarType Half       = ScalarType {1} / ScalarType {2};
@@ -91,21 +87,21 @@ struct GenerateCylinder {
 
 
 /// Default cylinder generation                                               
-///   @param descriptor the descriptor to use                                 
+///   @param d the descriptor to use                                          
 ///   @return a newly generated descriptor, with missing tags being set to    
 ///      their defaults                                                       
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
 bool GenerateCylinder<T, TOPOLOGY>::Default(Recipe& d) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
-      d.Set<Tags::MapMode>(Math::MapMode::Cube);
-      d.Set<Tags::Place>(MetaOf<Math::TTriangle<PointType>>());
+      d.Set<Tags::MapMode>(MapMode::Cube);
+      d.Set<Tags::Place>(MetaOf<TTriangle<PointType>>());
       d.Set<Tags::Sampler>(MetaOf<Sampler2>());
       d.Set<Tags::Aim>(MetaOf<Normal3>());
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A cylinder made out of lines                                   
-      d.Set<Tags::Place>(MetaOf<Math::TLine<PointType>>());
+      d.Set<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else return false;
 
@@ -129,7 +125,7 @@ auto GenerateCylinder<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Rec
 GENERATE() Positions(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cylinder made out of triangles                               
-      using E = Math::TTriangle<PointType>;
+      using E = TTriangle<PointType>;
       TMany<E> data;
       data.Reserve(TriangleCount);
       for (size_t i = 0; i < TriangleCount; ++i)
@@ -197,7 +193,7 @@ GENERATE() Indices(Mesh* model) {
 ///   @param model the geometry instance to save data in                      
 GENERATE() TextureCoords(Mesh* model) {
    if constexpr (CT::Triangle<TOPOLOGY>) {
-      if (model->GetTextureMapper() == Math::MapMode::Model) {
+      if (model->GetTextureMapper() == MapMode::Model) {
          // Generate model mapping                                      
          TMany<Sampler3> data;
          data.Reserve(IndexCount);
@@ -209,7 +205,7 @@ GENERATE() TextureCoords(Mesh* model) {
 
          model->template Commit<Tags::Sampler>(Abandon(data));
       }
-      else if (model->GetTextureMapper() == Math::MapMode::Face) {
+      else if (model->GetTextureMapper() == MapMode::Face) {
          // Generate face mapping                                       
          TMany<Sampler2> data;
          data.Reserve(IndexCount);

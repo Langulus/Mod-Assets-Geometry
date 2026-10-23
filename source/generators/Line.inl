@@ -13,10 +13,9 @@
 ///                                                                           
 ///    Line mesh generators                                                   
 ///                                                                           
-///   @tparam T - the primitive to use for point type and dimensions          
-///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
-///                                                                           
-template<CT::Line T, CT::Topology TOPOLOGY = A::Triangle>
+///   @tparam T the primitive to use for point type and dimensions            
+///   @tparam TOPOLOGY are we generating triangles/lines/points?              
+template<CT::Line T, CT::Topology TOPOLOGY = Triangle>
 struct GenerateLine {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
@@ -38,36 +37,34 @@ struct GenerateLine {
 
 
 /// Default line generation                                                   
-///   @param descriptor - the descriptor to use                               
-///   @return a newly generated descriptor, with missing tags being set to  
-///           their defaults                                                  
+///   @param d the descriptor to use                                          
+///   @return a newly generated descriptor, with missing tags being set to    
+///      their defaults                                                       
 template<CT::Line T, CT::Topology TOPOLOGY>
-bool GenerateLine<T, TOPOLOGY>::Default(Recipe& desc) {
-   auto& d = desc.GetDescriptor();
-
+bool GenerateLine<T, TOPOLOGY>::Default(Recipe& d) {
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines (duh)                                 
-      d.SetDefaultTag<Tags::Place>(MetaOf<TLine<PointType>>());
+      d.Set<Tags::Place>(MetaOf<TLine<PointType>>());
    }
    else return false;
 
-   d.SetDefaultTag<Tags::Topology>(MetaOf<TOPOLOGY>());
-   desc.SetType<Things::Mesh>();
+   d.Set<Tags::Topology>(MetaOf<TOPOLOGY>());
+   d.SetTarget<Things::Mesh>();
    return true;
 }
 
 /// Generate line level of detail, giving a LOD state                         
-///   @param model - the line generator                                       
-///   @param lod - the LOD state to generate                                  
+///   @param model the line generator                                         
+///   @param lod the LOD state to generate                                    
 ///   @return a newly generated descriptor, for the LOD model you can use it  
-///           to generate the new geometry                                    
+///      to generate the new geometry                                         
 template<CT::Line T, CT::Topology TOPOLOGY>
 auto GenerateLine<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
    return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a line                                             
-///   @param model - the model to fill                                        
+///   @param model the model to fill                                          
 GENERATE() Positions(Mesh* model) {
    if constexpr (CT::Line<TOPOLOGY>) {
       // A line made out of lines                                       
@@ -80,19 +77,19 @@ GENERATE() Positions(Mesh* model) {
 }
 
 /// Generate normals for a line                                               
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Normals(Mesh*) {
    TODO();
 }
 
 /// Generate indices for a line                                               
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() Indices(Mesh*) {
    TODO();
 }
 
 /// Generate texture coordinates for a line                                   
-///   @param model - the geometry instance to save data in                    
+///   @param model the geometry instance to save data in                      
 GENERATE() TextureCoords(Mesh*) {
    TODO();
 }
