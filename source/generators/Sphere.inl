@@ -73,7 +73,7 @@ struct GenerateSphere {
    using D = Tif<Dimensions == 2, Constants2D, Constants3D>;
 
    static bool Default(Recipe&);
-   static auto Detail(const Mesh*, const LOD&) -> Recipe;
+   static auto Detail(Mesh const*, LOD const&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -123,7 +123,7 @@ bool GenerateSphere<T, TOPOLOGY>::Default(Recipe& d) {
 ///   @return a newly generated descriptor, you can use it to generate the    
 ///      required level-of-detail geometry                                    
 template<CT::Sphere T, CT::Topology TOPOLOGY>
-auto GenerateSphere<T, TOPOLOGY>::Detail(const Mesh* model, const LOD& lod) -> Recipe {
+auto GenerateSphere<T, TOPOLOGY>::Detail(Mesh const* model, LOD const& lod) -> Recipe {
    auto& md = model->GetDescriptor();
    if (lod.mLODIndex == 0) {
       // On zero LOD index, we're at optimal distance, so we return     

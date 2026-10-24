@@ -6,6 +6,7 @@
 /// SPDX-License-Identifier: GPL-3.0-or-later                                 
 ///                                                                           
 #pragma once
+#include "Export.hpp"
 #include <Langulus/Primitives/TBox.hpp>
 #include <Langulus/Primitives/TTriangle.hpp>
 #include <Langulus/Primitives/TLine.hpp>
@@ -13,8 +14,8 @@
 #include <Langulus/Math/Mapping.hpp>
 #include <Langulus/Math/Color.hpp>
 #include <Langulus/Math/LOD.hpp>
-#include <Langulus/CppAPI/Material.hpp>
-#include <Langulus/CppAPI/Mesh.hpp>
+/*#include <Langulus/CppAPI/Material.hpp>
+#include <Langulus/CppAPI/Mesh.hpp>*/
 
 using namespace Langulus;
 using namespace Math;
@@ -39,11 +40,12 @@ struct Mesh final : Things::Mesh {
 public:
    Mesh(MeshLibrary*, Many const&);
 
-   void Refresh();
    void Create(Verb&);
-   bool Generate(TMeta, size_t = 0);
 
-   auto GetLOD(const LOD&) const -> Ref<Things::Mesh>;
+   void Refresh() override;
+   bool Generate(TMeta, size_t = 0) override;
+
+   auto GetLOD(LOD const&) const -> Ref<Things::Mesh> override;
    auto GetLibrary() const -> MeshLibrary*;
    static bool AutocompleteDescriptor(Recipe&);
 
@@ -59,14 +61,14 @@ private:
    template<class GENERATOR>
    void FillGeneratorsInner();
 
-   bool ReadOBJ(const Things::File&);
-   //bool WriteOBJ(const Things::File&) const;
+   bool ReadOBJ(Things::File const&);
+   //bool WriteOBJ(Things::File const&) const;
 
    // Generator functions for each supported type of data               
    using FGenerator = void(*)(Mesh*);
    TMapUnsorted<TMeta, FGenerator> mGenerators;
 
    // LOD generator function                                            
-   using FLOD = Recipe(*)(const Mesh*, const LOD&);
+   using FLOD = Recipe(*)(Mesh const*, LOD const&);
    FLOD mLODgenerator {};
 };

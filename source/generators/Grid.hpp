@@ -111,7 +111,7 @@ struct GenerateGrid {
    static constexpr ScalarType Half = ScalarType {1} / ScalarType {2};
 
    static bool Default(Recipe&);
-   static auto Detail(const Mesh*, const LOD&) -> Recipe;
+   static auto Detail(Mesh const*, LOD const&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);

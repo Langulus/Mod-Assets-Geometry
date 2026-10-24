@@ -35,7 +35,7 @@ bool GenerateGrid<T, TOPOLOGY>::Default(Recipe& d) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///      to generate the new geometry                                         
 template<CT::Grid T, CT::Topology TOPOLOGY>
-Recipe GenerateGrid<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) {
+Recipe GenerateGrid<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) {
    return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 

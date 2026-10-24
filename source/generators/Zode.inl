@@ -9,11 +9,12 @@
 #include "../Mesh.hpp"
 #include <Langulus/Primitives/TTriangle.hpp>
 #include <Langulus/Primitives/TLine.hpp>
-#include <Langulus/Matrices/TMatrix.hpp>
 #include <Langulus/Math/Mapping.hpp>
 #include <Langulus/Math/Color.hpp>
-#include <Langulus/Vectors/TSampler.hpp>
-#include <Langulus/Numbers/TAngle.hpp>
+#include <Langulus/Math/Sampler.hpp>
+#include <Langulus/Math/Normal.hpp>
+#include <Langulus/Math/Angle.hpp>
+#include <Langulus/Math/Matrix.hpp>
 
 template<CT::CustomVector T>
 struct TZode;
@@ -90,7 +91,7 @@ struct TZode {
 ///                                                                           
 ///   @tparam T the primitive to use for point type and dimensions            
 ///   @tparam TOPOLOGY are we generating triangles/lines/points?              
-template<CT::Zode T, CT::Topology TOPOLOGY = A::Triangle>
+template<CT::Zode T, CT::Topology TOPOLOGY = Triangle>
 struct GenerateZode {
    using PointType = typename T::PointType;
    using ScalarType = TypeOf<PointType>;
@@ -100,7 +101,7 @@ struct GenerateZode {
    static_assert(Dimensions >= 3, "Zode should be at least 3D");
 
    static bool Default(Recipe&);
-   static auto Detail(const Mesh*, const LOD&) -> Recipe;
+   static auto Detail(Mesh const*, LOD const&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -150,7 +151,7 @@ bool GenerateZode<T, TOPOLOGY>::Default(Recipe& d) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///      to generate the new geometry                                         
 template<CT::Zode T, CT::Topology TOPOLOGY>
-auto GenerateZode<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
+auto GenerateZode<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) -> Recipe {
    //TODO if closer, generate less curvy zode
    //TODO if further, generate more curvy zode, or even sphere
    return Recipe::From<Things::Mesh>(model->GetDescriptor());

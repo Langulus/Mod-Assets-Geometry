@@ -12,6 +12,8 @@
 #include <Langulus/Primitives/TLine.hpp>
 #include <Langulus/Math/Mapping.hpp>
 #include <Langulus/Math/Color.hpp>
+#include <Langulus/Math/Normal.hpp>
+#include <Langulus/Math/Sampler.hpp>
 
 
 ///                                                                           
@@ -114,10 +116,10 @@ struct GenerateFrustum {
       };
    };
 
-   using D = Conditional<Dimensions == 2, Constants2D, Constants3D>;
+   using D = Tif<Dimensions == 2, Constants2D, Constants3D>;
 
    static bool Default(Recipe&);
-   static auto Detail(const Mesh*, const LOD&) -> Recipe;
+   static auto Detail(Mesh const*, LOD const&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -163,7 +165,7 @@ bool GenerateFrustum<T, TOPOLOGY>::Default(Recipe& d) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///      to generate the new geometry                                         
 template<CT::Frustum T, CT::Topology TOPOLOGY>
-auto GenerateFrustum<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
+auto GenerateFrustum<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) -> Recipe {
    return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 

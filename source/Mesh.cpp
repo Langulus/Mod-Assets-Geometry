@@ -96,7 +96,7 @@ bool Mesh::Generate(TMeta tag, size_t index) {
 /// Get level of detail mesh                                                  
 ///   @param lod the level of detail state to generate LOD from               
 ///   @return the new geometry                                                
-auto Mesh::GetLOD(const LOD& lod) const -> Ref<Things::Mesh> {
+auto Mesh::GetLOD(LOD const& lod) const -> Ref<Things::Mesh> {
    if (mLODgenerator) {
       // Generate a request, and fulfill it                             
       Verbs::Create creator {mLODgenerator(this, lod)};

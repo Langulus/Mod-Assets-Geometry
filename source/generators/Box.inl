@@ -12,8 +12,8 @@
 #include <Langulus/Primitives/TLine.hpp>
 #include <Langulus/Math/Mapping.hpp>
 #include <Langulus/Math/Color.hpp>
-#include <Langulus/Vectors/TSampler.hpp>
-#include <Langulus/Vectors/TNormal.hpp>
+#include <Langulus/Math/Sampler.hpp>
+#include <Langulus/Math/Normal.hpp>
 
 
 ///                                                                           
@@ -120,7 +120,7 @@ struct GenerateBox {
    using D = ::std::conditional_t<Dimensions == 2, Constants2D, Constants3D>;
 
    static bool Default(Recipe&);
-   static auto Detail(const Mesh*, const LOD&) -> Recipe;
+   static auto Detail(Mesh const*, LOD const&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -175,7 +175,7 @@ bool GenerateBox<T, TOPOLOGY>::Default(Recipe& d) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///      to generate the new geometry                                         
 template<CT::Box T, CT::Topology TOPOLOGY>
-auto GenerateBox<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
+auto GenerateBox<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) -> Recipe {
    return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 

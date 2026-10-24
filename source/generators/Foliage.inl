@@ -38,7 +38,7 @@ struct GenerateFoliage {
    static constexpr size_t Dimensions = T::MemberCount;
 
    static bool Default(Recipe&);
-   static auto Detail(const Mesh*, const LOD&) -> Recipe;
+   static auto Detail(Mesh const*, LOD const&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -75,7 +75,7 @@ bool GenerateFoliage<T, TOPOLOGY>::Default(Recipe& d) {
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///      to generate the new geometry                                         
 template<CT::Foliage T, CT::Topology TOPOLOGY>
-auto GenerateFoliage<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
+auto GenerateFoliage<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) -> Recipe {
    return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 

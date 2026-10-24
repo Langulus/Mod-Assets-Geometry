@@ -81,7 +81,7 @@ struct GenerateLabel {
    using ScalarType = TypeOf<PointType>;
    static constexpr size_t Dimensions = T::MemberCount;
 
-   static_assert(CT::Exact<TOPOLOGY, Triangle>,
+   static_assert(Exact<TOPOLOGY, Triangle>,
       "Label can be only have triangle topology");
    static_assert(Dimensions >= 2,
       "Label should be at least 2D");
@@ -111,7 +111,7 @@ struct GenerateLabel {
    };
 
    static bool Default(Recipe&);
-   static auto Detail(const Mesh*, const LOD&) -> Recipe;
+   static auto Detail(Mesh const*, LOD const&) -> Recipe;
 
    static void Indices(Mesh*);
    static void Positions(Mesh*);
@@ -160,7 +160,7 @@ bool GenerateLabel<T, TOPOLOGY>::Default(Recipe& d) {
 ///   @param lod the LOD state to generate                                    
 ///   @return the same descriptor, labels don't have LOD                      
 template<CT::Label T, CT::Topology TOPOLOGY>
-auto GenerateLabel<T, TOPOLOGY>::Detail(const Mesh* model, const LOD&) -> Recipe {
+auto GenerateLabel<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) -> Recipe {
    return Recipe::From<Things::Mesh>(model->GetDescriptor());
 }
 
