@@ -26,8 +26,8 @@
 ///   @param producer the producer                                            
 ///   @param desc mesh descriptor                                             
 Mesh::Mesh(MeshLibrary* producer, Many const& desc)
-   : /*Resolvable   {this}
-   ,*/ ProducedFrom {producer, desc} {
+   : Downcastable {this}
+   , ProducedFrom {producer, desc} {
    // Get a path from the descriptor                                    
    VERBOSE_MESHES("Initializing...");
 
@@ -64,7 +64,7 @@ void Mesh::Refresh() {
 }
 
 /// Produce geometry data                                                     
-///   @param verb - creation verb to satisfy                                  
+///   @param verb creation verb to satisfy                                    
 void Mesh::Create(Verb&) {
    TODO();
 }
@@ -76,16 +76,16 @@ void Mesh::Create(Verb&) {
 bool Mesh::Generate(TMeta tag, size_t index) {
    auto foundData = GetDataListMap().Find(tag);
    if (foundData) {
-      if (foundData.GetValue().GetCount() > index)
+      if (foundData.GetVal().GetCount() > index)
          return true;
    }
 
    auto foundGen = mGenerators.Find(tag);
    if (foundGen) {
-      foundGen.GetValue()(this);
+      (*foundGen.GetVal())(this);
       foundData = GetDataListMap().Find(tag);
       if (foundData) {
-         if (foundData.GetValue().GetCount() > index)
+         if (foundData.GetVal().GetCount() > index)
             return true;
       }
    }
@@ -112,24 +112,24 @@ auto Mesh::GetLOD(LOD const& lod) const -> Ref<Things::Mesh> {
 ///   @param desc the descriptor to complete                                  
 bool Mesh::AutocompleteDescriptor(Recipe& desc) {
    // The descriptor should have some primitive defined                 
-   const auto primitive = desc->FindType<Math::Primitive>();
+   const auto primitive = desc.FindType<Primitive>();
    if (not primitive)
       return false;
 
    // The descriptor might or might not have the topology defined       
    DMeta topology;
-   desc->ForEachDeep([&](const Tags::Topology& tag) {
+   desc.ForEachDeep([&](Tags::Topology const& tag) {
       topology = tag.As<DMeta>();
    });
 
-   return AutocompleteInner<GenerateBox,  Math::Box2 >(desc, primitive, topology)
-       or AutocompleteInner<GenerateBox,  Math::Box3 >(desc, primitive, topology)
-       or AutocompleteInner<GenerateGrid, Math::Grid2>(desc, primitive, topology)
-       or AutocompleteInner<GenerateGrid, Math::Grid3>(desc, primitive, topology);
+   return AutocompleteInner<GenerateBox,  Box2 >(desc, primitive, topology)
+       or AutocompleteInner<GenerateBox,  Box3 >(desc, primitive, topology)
+       or AutocompleteInner<GenerateGrid, Grid2>(desc, primitive, topology)
+       or AutocompleteInner<GenerateGrid, Grid3>(desc, primitive, topology);
 }
 
 /// Populate the mesh view and generator functions, by analyzing descriptor   
-///   @param desc - the descriptor to parse                                   
+///   @param desc the descriptor to parse                                     
 bool Mesh::FromDescriptor(Many const& desc) {
    const auto primitive = desc.FindType<Math::Primitive>();
    if (not primitive)
@@ -139,14 +139,14 @@ bool Mesh::FromDescriptor(Many const& desc) {
    desc.ExtractTag<Tags::Bilateral>(mView.mBilateral);
    desc.ExtractTag<Tags::MapMode  >(mView.mTextureMapping);
    
-   return FillGenerators<GenerateBox,  Math::Box2 >(primitive)
-       or FillGenerators<GenerateBox,  Math::Box3 >(primitive)
-       or FillGenerators<GenerateGrid, Math::Grid2>(primitive)
-       or FillGenerators<GenerateGrid, Math::Grid3>(primitive);
+   return FillGenerators<GenerateBox,  Box2 >(primitive)
+       or FillGenerators<GenerateBox,  Box3 >(primitive)
+       or FillGenerators<GenerateGrid, Grid2>(primitive)
+       or FillGenerators<GenerateGrid, Grid3>(primitive);
 }
 
 /// Load mesh via filename/file interface                                     
-///   @param descriptor - the file to load                                    
+///   @param descriptor the file to load                                      
 bool Mesh::FromFile(Many const& desc) {
    Path filename;
    if (not desc.ExtractTag<Tags::Name, Tags::Path>(filename))
@@ -156,7 +156,7 @@ bool Mesh::FromFile(Many const& desc) {
       // Load a filename if such was provided                           
       auto fileInterface = GetProducer()->GetFolder()->RelativeFile(filename);
       if (fileInterface)
-         return ReadOBJ(*fileInterface);
+         return ReadOBJ(**fileInterface);
    }
 
    return false;
@@ -168,15 +168,15 @@ bool Mesh::FromFile(Many const& desc) {
 template<class GENERATOR>
 void Mesh::FillGeneratorsInner() {
    if constexpr (HasGenerator(GENERATOR::Indices))
-      mGenerators.Insert(MetaOf<Tags::Index>(),      GENERATOR::Indices);
+      mGenerators.Merge(MetaTagOf<Tags::Index>(),      GENERATOR::Indices);
    if constexpr (HasGenerator(GENERATOR::Positions))
-      mGenerators.Insert(MetaOf<Tags::Place>(),      GENERATOR::Positions);
+      mGenerators.Merge(MetaTagOf<Tags::Place>(),      GENERATOR::Positions);
    if constexpr (HasGenerator(GENERATOR::Normals))
-      mGenerators.Insert(MetaOf<Tags::Aim>(),        GENERATOR::Normals);
+      mGenerators.Merge(MetaTagOf<Tags::Aim>(),        GENERATOR::Normals);
    if constexpr (HasGenerator(GENERATOR::TextureCoords))
-      mGenerators.Insert(MetaOf<Tags::Sampler>(),    GENERATOR::TextureCoords);
+      mGenerators.Merge(MetaTagOf<Tags::Sampler>(),    GENERATOR::TextureCoords);
    if constexpr (HasGenerator(GENERATOR::Materials))
-      mGenerators.Insert(MetaOf<Tags::Material>(),   GENERATOR::Materials);
+      mGenerators.Merge(MetaTagOf<Tags::Material>(),   GENERATOR::Materials);
    if constexpr (HasGenerator(GENERATOR::Detail))
       mLODgenerator = GENERATOR::Detail;
 }
@@ -184,20 +184,20 @@ void Mesh::FillGeneratorsInner() {
 ///                                                                           
 template<template<typename...> class GENERATOR, class PRIMITIVE>
 bool Mesh::FillGenerators(DMeta primitive) {
-   if (not primitive->CastsTo<PRIMITIVE>())
+   if (not primitive.CastsTo(MetaDataOf<PRIMITIVE>()))
       return false;
 
    LglsAssumeDev(mView.mTopology, "Topology not set");
-   if (mView.mTopology->CastsTo<Math::TriangleStrip>())
-      FillGeneratorsInner<GENERATOR<PRIMITIVE, Math::TriangleStrip>>();
-   else if (mView.mTopology->CastsTo<Math::Triangle>())
-      FillGeneratorsInner<GENERATOR<PRIMITIVE, Math::Triangle>>();
-   else if (mView.mTopology->CastsTo<Math::LineStrip>())
-      FillGeneratorsInner<GENERATOR<PRIMITIVE, Math::LineStrip>>();
-   else if (mView.mTopology->CastsTo<Math::Line>())
-      FillGeneratorsInner<GENERATOR<PRIMITIVE, Math::Line>>();
-   else if (mView.mTopology->CastsTo<Math::Point>())
-      FillGeneratorsInner<GENERATOR<PRIMITIVE,Math::Point>>();
+   if (mView.mTopology.CastsTo(MetaDataOf<TriangleStrip>()))
+      FillGeneratorsInner<GENERATOR<PRIMITIVE, TriangleStrip>>();
+   else if (mView.mTopology.CastsTo(MetaDataOf<Triangle>()))
+      FillGeneratorsInner<GENERATOR<PRIMITIVE, Triangle>>();
+   else if (mView.mTopology.CastsTo(MetaDataOf<LineStrip>()))
+      FillGeneratorsInner<GENERATOR<PRIMITIVE, LineStrip>>();
+   else if (mView.mTopology.CastsTo(MetaDataOf<Line>()))
+      FillGeneratorsInner<GENERATOR<PRIMITIVE, Line>>();
+   else if (mView.mTopology.CastsTo(MetaDataOf<Point>()))
+      FillGeneratorsInner<GENERATOR<PRIMITIVE, Point>>();
    else
       LglsError("Unsupported topology: ", mView.mTopology);
    return true;
@@ -206,21 +206,21 @@ bool Mesh::FillGenerators(DMeta primitive) {
 ///                                                                           
 template<template<typename...> class GENERATOR, class PRIMITIVE>
 bool Mesh::AutocompleteInner(Recipe& out, DMeta primitive, DMeta topology) {
-   if (not primitive->CastsTo<PRIMITIVE>())
+   if (not primitive.CastsTo(MetaDataOf<PRIMITIVE>()))
       return false;
    
    if (not topology)
       return GENERATOR<PRIMITIVE>::Default(out);
-   else if (topology->CastsTo<Math::TriangleStrip>())
-      return GENERATOR<PRIMITIVE, Math::TriangleStrip>::Default(out);
-   else if (topology->CastsTo<Math::Triangle>())
-      return GENERATOR<PRIMITIVE, Math::Triangle>::Default(out);
-   else if (topology->CastsTo<Math::LineStrip>())
-      return GENERATOR<PRIMITIVE, Math::LineStrip>::Default(out);
-   else if (topology->CastsTo<Math::Line>())
-      return GENERATOR<PRIMITIVE, Math::Line>::Default(out);
-   else if (topology->CastsTo<Math::Point>())
-      return GENERATOR<PRIMITIVE, Math::Point>::Default(out);
+   else if (topology.CastsTo(MetaDataOf<TriangleStrip>()))
+      return GENERATOR<PRIMITIVE, TriangleStrip>::Default(out);
+   else if (topology.CastsTo(MetaDataOf<Triangle>()))
+      return GENERATOR<PRIMITIVE, Triangle>::Default(out);
+   else if (topology.CastsTo(MetaDataOf<LineStrip>()))
+      return GENERATOR<PRIMITIVE, LineStrip>::Default(out);
+   else if (topology.CastsTo(MetaDataOf<Line>()))
+      return GENERATOR<PRIMITIVE, Line>::Default(out);
+   else if (topology.CastsTo(MetaDataOf<Point>()))
+      return GENERATOR<PRIMITIVE, Point>::Default(out);
    else
       return false;
 }

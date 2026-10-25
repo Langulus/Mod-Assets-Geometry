@@ -137,7 +137,7 @@ bool GenerateLabel<T, TOPOLOGY>::Default(Recipe& d) {
       d.Set<Tags::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3)
-         d.Set<Tags::Aim>(MetaOf<Normal>());
+         d.Set<Tags::Aim>(MetaOf<Normal3>());
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A sphere made out of lines                                     
@@ -161,7 +161,7 @@ bool GenerateLabel<T, TOPOLOGY>::Default(Recipe& d) {
 ///   @return the same descriptor, labels don't have LOD                      
 template<CT::Label T, CT::Topology TOPOLOGY>
 auto GenerateLabel<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) -> Recipe {
-   return Recipe::From<Things::Mesh>(model->GetDescriptor());
+   return Recipe::For<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for label                                              
@@ -230,8 +230,8 @@ GENERATE() Indices(Mesh* model) {
 GENERATE() Normals(Mesh* model) {
    T label;
    model->GetDescriptor().ExtractData(label);
-   constexpr Normal n = Axes::Backward<ScalarType>;
-   TMany<Normal> data;
+   constexpr Normal3 n = Axes::Backward<ScalarType>;
+   TMany<Normal3> data;
    data.Reserve(VertexCount * label.mText.GetCount());
 
    for (auto& c : label.mText) {

@@ -128,7 +128,7 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(Mesh const* model, LOD const& lod) -> R
    if (lod.mLODIndex == 0) {
       // On zero LOD index, we're at optimal distance, so we return     
       // the original unmodified geometry                               
-      return Recipe::From<Things::Mesh>(md);
+      return Recipe::For<Things::Mesh>(md);
    }
 
    unsigned tesselation = 0;
@@ -142,8 +142,8 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(Mesh const* model, LOD const& lod) -> R
 
       // Create the LOD descriptor, based on the current one            
       auto newMesh = md;
-      newMesh.SetTag(Tags::Tesselation {std::round(newTesselation)});
-      return Recipe::From<Things::Mesh>(Abandon(newMesh));
+      newMesh.Set(Tags::Tesselation {std::round(newTesselation)});
+      return Recipe::For<Things::Mesh>(Abandon(newMesh));
    }
    else if (lod.mLODIndex > 0) {
       // LOD is for a sphere that is very close. At this point the      
@@ -169,20 +169,20 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(Mesh const* model, LOD const& lod) -> R
       // small reorientation                                            
       const auto intersection = lod.mView.GetPosition() - lod.mModel.GetPosition();
       if (intersection.Length() == 0)
-         return Recipe::From<Things::Mesh>(md);
+         return Recipe::For<Things::Mesh>(md);
 
       const auto steppingNormal = (intersection.Normalize() * areasToCover).Round();
 
       // Clone only the descriptor and change type                      
-      auto newMesh = Recipe::From<Things::Mesh>(TZode<PointType> {});
+      auto newMesh = Recipe::For<Things::Mesh>(TZode<PointType> {});
       // Set the place around which the zode is centered                
-      newMesh.SetTag(Tags::Place {steppingNormal});
+      newMesh.Set(Tags::Place {steppingNormal});
       // Set the size of the sphere in order to calculate curvature     
-      newMesh.SetTag(Tags::Size {lod.mModel.GetScale()});
+      newMesh.Set(Tags::Size {lod.mModel.GetScale()});
       // Set the topology                                               
-      newMesh.SetTag(Tags::Topology {TypeOf<A::TriangleStrip>()});
+      newMesh.Set(Tags::Topology {MetaDataOf<TriangleStrip>()});
       // Set the tesselation                                            
-      newMesh.SetTag(Tags::Tesselation {tesselation + static_cast<unsigned>(lod.mLODIndex) / 2});
+      newMesh.Set(Tags::Tesselation {tesselation + static_cast<unsigned>(lod.mLODIndex) / 2});
 
       // The octave gets progressively lower until we reach state       
       //real octave = 0;
@@ -192,7 +192,7 @@ auto GenerateSphere<T, TOPOLOGY>::Detail(Mesh const* model, LOD const& lod) -> R
       return Abandon(newMesh);
    }
 
-   return Recipe::From<Things::Mesh>(md);
+   return Recipe::For<Things::Mesh>(md);
 }
 
 /// Generate positions for a sphere/circle                                    

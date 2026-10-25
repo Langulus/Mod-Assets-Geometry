@@ -176,7 +176,7 @@ bool GenerateBox<T, TOPOLOGY>::Default(Recipe& d) {
 ///      to generate the new geometry                                         
 template<CT::Box T, CT::Topology TOPOLOGY>
 auto GenerateBox<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) -> Recipe {
-   return Recipe::From<Things::Mesh>(model->GetDescriptor());
+   return Recipe::For<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a box                                              

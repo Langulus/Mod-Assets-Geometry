@@ -39,7 +39,7 @@ MeshLibrary::MeshLibrary(Runtime* runtime, Many const& desc)
       mFolder = GetRuntime()->GetFolder(repo);
    }
    catch (...) {
-      Logger::Warning(Self(),
+      Logger::Warning(this,
          "Can't access mesh asset library folder `", repo,
          "` - either folder is missing, or there's probably "
          "no file system module available. "

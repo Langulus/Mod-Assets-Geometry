@@ -97,7 +97,7 @@ bool GenerateTriangle<T, TOPOLOGY>::Default(Recipe& d) {
 ///      to generate the new geometry                                         
 template<CT::Triangle T, CT::Topology TOPOLOGY>
 auto GenerateTriangle<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) -> Recipe {
-   return Recipe::From<Things::Mesh>(model->GetDescriptor());
+   return Recipe::For<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for triangle                                           

@@ -35,18 +35,18 @@ namespace Langulus::CT
 
 ///                                                                           
 /// 2D/3D grid, centered around origin                                        
-///                                                                           
-///                                                                           
-///             ^ +Y       +Z                                                 
-///             |        /                                                    
+///                    +Y                                                     
+///                     ↑  +Z                                                 
+///                     | /                                                   
+///                     |/                                                    
 ///     +-------+-------+---> +X                                              
 ///    /       /       /|                 mExtent is the number of cells      
 ///   +-------+-------+ |                 you could count, from the center    
 ///  /       /       /| |                 to each other direction             
 /// +-------+-------+ | +---                                                  
-/// | |/    | |/    | |/|  ^                                                  
+/// | |/    | |/    | |/|  ↑                                                  
 /// | +-----|-O-----|-+ |  | mCellSize.y                                      
-/// |/      |/origin|/| |  v                                                  
+/// |/      |/origin|/| |  ↓                                                  
 /// +-------+-------+ | +---                                                  
 /// | |/    | |/    | |/                                                      
 /// | +-----|-+-----|-+---+                                                   
@@ -62,7 +62,7 @@ private:
       ::std::array<char, defaultClassName.size() + 1> name {};
       ::std::size_t offset {};
 
-      if constexpr (T::MemberCount > 3) {
+      if constexpr (ExtentOf<T> > 3) {
          for (auto i : defaultClassName)
             name[offset++] = i;
          return name;
@@ -74,7 +74,7 @@ private:
 
       // Write size                                                     
       --offset;
-      name[offset++] = '0' + T::MemberCount;
+      name[offset++] = '0' + ExtentOf<T>;
 
       // Write suffix                                                   
       for (auto i : SuffixOf<TypeOf<T>>())
@@ -89,7 +89,7 @@ public:
    using CTTI_Bases  = Things::Grid;
 
    using PointType = T;
-   static constexpr size_t MemberCount = T::MemberCount;
+   static constexpr size_t MemberCount = ExtentOf<T>;
    static_assert(MemberCount > 1, "Can't have one-dimensional grid");
 
    T mCellSize {1};
@@ -100,9 +100,8 @@ public:
 ///                                                                           
 ///    Grid mesh generators                                                   
 ///                                                                           
-///   @tparam T - the primitive to use for point type and dimensions          
-///   @tparam TOPOLOGY - are we generating triangles/lines/points?            
-///                                                                           
+///   @tparam T the primitive to use for point type and dimensions            
+///   @tparam TOPOLOGY are we generating triangles/lines/points?              
 template<CT::Grid T, CT::Topology TOPOLOGY = Line>
 struct GenerateGrid {
    using PointType = typename T::PointType;

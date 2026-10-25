@@ -117,7 +117,7 @@ bool GenerateCylinder<T, TOPOLOGY>::Default(Recipe& d) {
 ///      to generate the new geometry                                         
 template<CT::Cylinder T, CT::Topology TOPOLOGY>
 auto GenerateCylinder<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) -> Recipe {
-   return Recipe::From<Things::Mesh>(model->GetDescriptor());
+   return Recipe::For<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a cylinder                                         

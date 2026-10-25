@@ -145,7 +145,7 @@ bool GenerateFrustum<T, TOPOLOGY>::Default(Recipe& d) {
       d.Set<Tags::Sampler>(MetaOf<Sampler2>());
 
       if constexpr (Dimensions >= 3)
-         d.Set<Tags::Aim>(MetaOf<Normal>());
+         d.Set<Tags::Aim>(MetaOf<Normal3>());
    }
    else if constexpr (CT::Line<TOPOLOGY>) {
       // A frustum made out of lines                                    
@@ -166,7 +166,7 @@ bool GenerateFrustum<T, TOPOLOGY>::Default(Recipe& d) {
 ///      to generate the new geometry                                         
 template<CT::Frustum T, CT::Topology TOPOLOGY>
 auto GenerateFrustum<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) -> Recipe {
-   return Recipe::From<Things::Mesh>(model->GetDescriptor());
+   return Recipe::For<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a frustum                                          

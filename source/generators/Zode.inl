@@ -154,7 +154,7 @@ template<CT::Zode T, CT::Topology TOPOLOGY>
 auto GenerateZode<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) -> Recipe {
    //TODO if closer, generate less curvy zode
    //TODO if further, generate more curvy zode, or even sphere
-   return Recipe::From<Things::Mesh>(model->GetDescriptor());
+   return Recipe::For<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a zode                                             
@@ -220,10 +220,10 @@ GENERATE() Positions(Mesh* model) {
 GENERATE() Normals(Mesh* model) {
    const auto positions = model->GetData<Tags::Place>();
 
-   TMany<Normal> data;
+   TMany<Normal3> data;
    data.Reserve(positions->GetCount());
    for (size_t i = 0; i < positions->GetCount(); ++i)
-      data << Normal {positions->AsCast<Vec3>(i)};
+      data << Normal3 {positions->template AsAt<Vec3>(i)};
    model->Commit<Tags::Aim>(Abandon(data));
 }
 
@@ -319,7 +319,7 @@ GENERATE() TextureCoords(Mesh* model) {
    TMany<Sampler3> data;
    data.Reserve(positions->GetCount());
    for (size_t i = 0; i < positions->GetCount(); ++i)
-      data << Sampler3 {positions->template AsCast<Vec3>(i)};
+      data << Sampler3 {positions->template AsAt<Vec3>(i)};
    model->Commit<Tags::Sampler>(Abandon(data));
 }
 
