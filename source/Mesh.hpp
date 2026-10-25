@@ -28,8 +28,7 @@ using namespace Math;
 struct MeshLibrary;
 
 ///                                                                           
-///   A mesh asset                                                            
-///                                                                           
+///   A mesh art                                                              
 struct Mesh final : Things::Mesh {
    using CTTI_Abstract  = No;
    using CTTI_Producer  = MeshLibrary;

@@ -40,7 +40,7 @@ MeshLibrary::MeshLibrary(Runtime* runtime, Many const& desc)
    }
    catch (...) {
       Logger::Warning(this,
-         "Can't access mesh asset library folder `", repo,
+         "Can't access mesh art library folder `", repo,
          "` - either folder is missing, or there's probably "
          "no file system module available. "
          "Mesh reading/writing won't be available, "
