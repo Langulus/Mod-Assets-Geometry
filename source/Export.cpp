@@ -1,5 +1,5 @@
 ///                                                                           
-/// Langulus::Module::Assets::Geometry                                        
+/// Langulus::Module::Art::Geometry                                           
 /// Copyright (c) 2016 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           

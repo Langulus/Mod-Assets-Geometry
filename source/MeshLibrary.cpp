@@ -1,5 +1,5 @@
 ///                                                                           
-/// Langulus::Module::Assets::Geometry                                        
+/// Langulus::Module::Art::Geometry                                           
 /// Copyright (c) 2016 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
@@ -7,6 +7,7 @@
 ///                                                                           
 #include "MeshLibrary.hpp"
 #include "Export.hpp"
+#include <Langulus/Math/Export.hpp>
 
 LANGULUS_DEFINE_MODULE(
    MeshLibrary, 9, "AssetsGeometry",
@@ -19,8 +20,8 @@ LANGULUS_DEFINE_MODULE(
 ///   @param runtime the runtime that owns the module                         
 ///   @param desc instructions for configuring the module                     
 MeshLibrary::MeshLibrary(Runtime* runtime, Many const& desc)
-   : Downcastable {this}
-   , Module     {runtime} {
+   : Downcastable   {this}
+   , Things::Module {runtime} {
    VERBOSE_MESHES("Initializing...");
 
    // Register types                                                    
@@ -58,25 +59,25 @@ void MeshLibrary::Teardown() {
 }
 
 /// Create/destroy meshes                                                     
-///   @param verb - the creation/destruction verb                             
+///   @param verb the creation/destruction verb                               
 void MeshLibrary::Create(Verb& verb) {
    Recipe request;
    verb.ForEachDeep(
-      [&](Recipe const& recipe) {
+      [&request](Recipe const& recipe) {
          // For each recipe...                                          
-         if (not recipe.CastsTo<Things::Mesh>())
+         if (not recipe.GetTarget().CastsTo(MetaDataOf<Things::Mesh>()))
             return;
          request = recipe;
       },
-      [&](DMeta const& type) {
+      [&request](RTTI::DMeta const& type) {
          // For each type...                                            
-         if (not type or not type->CastsTo<Things::Mesh>())
+         if (not type or not type.CastsTo(MetaDataOf<Things::Mesh>()))
             return;
-         request = Recipe {type};
+         request = Recipe::Of(type);
       }
    );
 
-   if (request.IsUntyped())
+   if (not request.GetTarget())
       return;
 
    // Mesh descriptor might be partial, so we attempt to autocomplete it

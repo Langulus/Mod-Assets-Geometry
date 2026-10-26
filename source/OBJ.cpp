@@ -1,5 +1,5 @@
 ///                                                                           
-/// Langulus::Module::Assets::Geometry                                        
+/// Langulus::Module::Art::Geometry                                           
 /// Copyright (c) 2016 Dimo Markov <team@langulus.com>                        
 /// Part of the Langulus framework, see https://langulus.com                  
 ///                                                                           
@@ -16,9 +16,7 @@
 /// Based on fast_obj v1.2 https://github.com/thisistherk/fast_obj            
 /// Completely rewritten to use Langulus containers and C++20                 
 /// TODO test if actually faster and contribute back if so                    
-///                                                                           
 struct Obj {
-
    using Idx = unsigned;
 
    /// Parsed texture descriptor                                              
@@ -73,7 +71,7 @@ struct Obj {
       TMany<Vec3f> colors;
 
       // Face data: one element for each face                           
-      size_t          face_count;
+      size_t         face_count;
       TMany<size_t>  face_vertices;
       TMany<size_t>  face_materials;
 
@@ -108,7 +106,7 @@ struct Obj {
       size_t line;
    };
 
-   // size_t of buffer to read into                                       
+   // size_t of buffer to read into                                     
    static constexpr size_t BufferSize = 65536;
 
    // Max supported power when parsing float                            
@@ -124,35 +122,35 @@ struct Obj {
        1.0e-10, 1.0e-11, 1.0e-12, 1.0e-13, 1.0e-14, 1.0e-15, 1.0e-16, 1.0e-17, 1.0e-18, 1.0e-19,
    };
 
-   static int is_whitespace(char c);
-   static int is_newline(char c);
-   static int is_digit(char c);
-   static int is_exponent(char c);
-   static const char* skip_name(const char* ptr);
-   static const char* skip_whitespace(const char* ptr);
-   static const char* skip_line(const char* ptr);
+   static int  is_whitespace(char c);
+   static int  is_newline(char c);
+   static int  is_digit(char c);
+   static int  is_exponent(char c);
+   static auto skip_name(const char* ptr) -> const char*;
+   static auto skip_whitespace(const char* ptr) -> const char*;
+   static auto skip_line(const char* ptr) -> const char*;
    static void flush_object(Data* data);
    static void flush_group(Data* data);
-   static const char* parse_int(const char* ptr, int* val);
-   static const char* parse_float(const char* ptr, float* val);
-   static const char* parse_vertex(Data* data, const char* ptr);
-   static const char* parse_texcoord(Data* data, const char* ptr);
-   static const char* parse_normal(Data* data, const char* ptr);
-   static const char* parse_face(Data* data, const char* ptr);
-   static const char* parse_object(Data* data, const char* ptr);
-   static const char* parse_group(Data* data, const char* ptr);
-   static const char* parse_usemtl(Data* data, const char* ptr);
-   static const char* read_mtl_int(const char* p, int* v);
-   static const char* read_mtl_single(const char* p, float* v);
-   static const char* read_mtl_triple(const char* p, float v[3]);
-   static const char* read_map(Data* data, const char* ptr, Texture* map);
-   static int read_mtllib(Data* data, Things::File const& file);
+   static auto parse_int(const char* ptr, int* val) -> const char*;
+   static auto parse_float(const char* ptr, float* val) -> const char*;
+   static auto parse_vertex(Data* data, const char* ptr) -> const char*;
+   static auto parse_texcoord(Data* data, const char* ptr) -> const char*;
+   static auto parse_normal(Data* data, const char* ptr) -> const char*;
+   static auto parse_face(Data* data, const char* ptr) -> const char*;
+   static auto parse_object(Data* data, const char* ptr) -> const char*;
+   static auto parse_group(Data* data, const char* ptr) -> const char*;
+   static auto parse_usemtl(Data* data, const char* ptr) -> const char*;
+   static auto read_mtl_int(const char* p, int* v) -> const char*;
+   static auto read_mtl_single(const char* p, float* v) -> const char*;
+   static auto read_mtl_triple(const char* p, float v[3]) -> const char*;
+   static auto read_map(Data* data, const char* ptr, Texture* map) -> const char*;
+   static int  read_mtllib(Data* data, Things::File const& file);
    static void parse_buffer(Data* data, const char* ptr, const char* end, Ref<Things::File::Reader>& stream);
 };
 
 
 /// Load OBJ file                                                             
-///   @param file - [in/out] the file to load from                            
+///   @param file [in/out] the file to load from                              
 ///   @return true if model was loaded without any problems                   
 bool Mesh::ReadOBJ(Things::File const& file) {
    auto loadTime = SteadyClock::Now();
@@ -173,13 +171,13 @@ bool Mesh::ReadOBJ(Things::File const& file) {
    data.line = 1;
 
    // Create buffer for reading file                                    
-   Text buffer;
-   buffer.Reserve<true>(2 * Obj::BufferSize);
+   Bytes buffer;
+   buffer.Reserve(2 * Obj::BufferSize);
    auto start = buffer.GetRaw();
 
    for (;;) {
       // Read another buffer's worth from file                          
-      auto read = stream->Read(static_cast<Many&>(buffer));
+      auto read = stream->Read(buffer);
       if (read == 0 and start == buffer.GetRaw())
          break;
 
@@ -222,7 +220,7 @@ bool Mesh::ReadOBJ(Things::File const& file) {
    mView.mTextureMapping = m.texcoords.IsEmpty()
       ? Math::MapModeType::Model
       : Math::MapModeType::Custom;
-   mView.mTopology = MetaDataOf<A::Triangle>();
+   mView.mTopology = MetaDataOf<Triangle>();
 
    /*m.material_count = m.materials.GetCount();
    m.object_count = m.objects.GetCount();
@@ -506,8 +504,8 @@ int Obj::read_mtllib(Data* data, Things::File const& file) {
 
 /// Parse three floats for a vertex position, and optionally three floats     
 /// for RGB color                                                             
-///   @param data - the mesh to save data in                                  
-///   @param ptr - text to parse                                              
+///   @param data the mesh to save data in                                    
+///   @param ptr text to parse                                                
 ///   @return pointer to the next statement for parsing                       
 const char* Obj::parse_vertex(Data* data, const char* ptr) {
    Vec3f v;
@@ -535,8 +533,8 @@ const char* Obj::parse_vertex(Data* data, const char* ptr) {
 }
 
 /// Parse two floats for texture coordinates                                  
-///   @param data - the mesh to save data in                                  
-///   @param ptr - text to parse                                              
+///   @param data the mesh to save data in                                    
+///   @param ptr text to parse                                                
 ///   @return pointer to the next statement for parsing                       
 const char* Obj::parse_texcoord(Data* data, const char* ptr) {
    Vec2f v;
@@ -547,8 +545,8 @@ const char* Obj::parse_texcoord(Data* data, const char* ptr) {
 }
 
 /// Parse three floats for normal coordinates                                 
-///   @param data - the mesh to save data in                                  
-///   @param ptr - text to parse                                              
+///   @param data the mesh to save data in                                    
+///   @param ptr text to parse                                                
 ///   @return pointer to the next statement for parsing                       
 const char* Obj::parse_normal(Data* data, const char* ptr) {
    Vec3f v;
@@ -559,12 +557,12 @@ const char* Obj::parse_normal(Data* data, const char* ptr) {
    return ptr;
 }
 
-/// Parses a face ('f') line                                                  
-/// A face in obj files can have more than three vertices, and form a 'fan'   
+/// Parses a face ('f') line.                                                 
+/// A face in OBJ files can have more than three vertices, and form a 'fan'   
 /// topology. We handle those by triangulating and inserting the required     
 /// triangles.                                                                
-///   @param data - [in/out] data store                                       
-///   @param ptr - text to parse                                              
+///   @param data [in/out] data store                                         
+///   @param ptr text to parse                                                
 ///   @return the end of the parsed region                                    
 const char* Obj::parse_face(Data* data, const char* ptr) {
    ptr = skip_whitespace(ptr);
@@ -870,7 +868,7 @@ int Obj::is_exponent(char c) {
 
 /// Skip a name by going to the end of the line, and reverting back to first  
 /// symbol that isn't whitespace                                              
-///   @param ptr - data to scan                                               
+///   @param ptr data to scan                                                 
 ///   @return a pointer to the end of the name                                
 const char* Obj::skip_name(const char* ptr) {
    auto s = ptr;
@@ -881,8 +879,8 @@ const char* Obj::skip_name(const char* ptr) {
    return ptr;
 }
 
-/// Skip all whitespace forward                                               
-///   @param ptr - data to scan                                               
+/// Skip all whitespaces forward                                              
+///   @param ptr data to scan                                                 
 ///   @return a pointer to beginning of next non-whitespace symbol            
 const char* Obj::skip_whitespace(const char* ptr) {
    while (is_whitespace(*ptr))
@@ -891,7 +889,7 @@ const char* Obj::skip_whitespace(const char* ptr) {
 }
 
 /// Skip forward until a new line begins                                      
-///   @param ptr - data to scan                                               
+///   @param ptr data to scan                                                 
 ///   @return a pointer to beginning of next line                             
 const char* Obj::skip_line(const char* ptr) {
    while (not is_newline(*ptr++))
@@ -900,7 +898,7 @@ const char* Obj::skip_line(const char* ptr) {
 }
 
 /// Add the currently staged object to content                                
-///   @param data - mesh data                                                 
+///   @param data mesh data                                                   
 void Obj::flush_object(Data* data) {
    // Add object if not empty                                           
    if (data->object.face_count > 0)
@@ -912,7 +910,7 @@ void Obj::flush_object(Data* data) {
 }
 
 /// Add the currently staged group to content                                 
-///   @param data - mesh data                                                 
+///   @param data mesh data                                                   
 void Obj::flush_group(Data* data) {
    // Add group if not empty                                            
    if (data->group.face_count > 0)
