@@ -173,12 +173,12 @@ bool Mesh::ReadOBJ(Things::File const& file) {
    // Create buffer for reading file                                    
    Bytes buffer;
    buffer.Reserve(2 * Obj::BufferSize);
-   auto start = buffer.GetRaw();
+   auto start = buffer.GetRawAs<char>();
 
    for (;;) {
       // Read another buffer's worth from file                          
       auto read = stream->Read(buffer);
-      if (read == 0 and start == buffer.GetRaw())
+      if (read == 0 and start == buffer.GetRawAs<char>())
          break;
 
       // Ensure buffer ends in a newline                                
@@ -193,7 +193,7 @@ bool Mesh::ReadOBJ(Things::File const& file) {
 
       // Find last new line                                             
       auto last = end;
-      while (last > buffer.GetRaw()) {
+      while (last > buffer.GetRawAs<char>()) {
          last--;
          if (*last == '\n')
             break;
@@ -206,12 +206,12 @@ bool Mesh::ReadOBJ(Things::File const& file) {
       last++;
 
       // Process buffer                                                 
-      Obj::parse_buffer(&data, buffer.GetRaw(), last, stream);
+      Obj::parse_buffer(&data, buffer.GetRawAs<char>(), last, stream);
 
       // Copy overflow for next buffer                                  
       auto bytes = end - last;
-      memmove(buffer.GetRaw(), last, bytes);
-      start = buffer.GetRaw() + bytes;
+      memmove(buffer.GetRawAs<char>(), last, bytes);
+      start = buffer.GetRawAs<char>() + bytes;
    }
 
    // Flush final object/group                                          
@@ -324,7 +324,7 @@ void Obj::parse_buffer(
             if (lib) {
                auto file = stream->GetFile()->RelativeFile(lib);
                if (file)
-                  read_mtllib(data, *file);
+                  read_mtllib(data, **file);
             }
          }
          break;
