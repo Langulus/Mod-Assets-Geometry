@@ -37,7 +37,7 @@ struct Mesh final : Things::Mesh {
    using CTTI_Ability   = Verbs::Create;
 
 public:
-   Mesh(MeshLibrary*, Many const&);
+   Mesh(MeshLibrary*, Neat const&);
 
    void Create(Verb&);
 
@@ -52,8 +52,8 @@ private:
    template<template<typename...> class GENERATOR, class PRIMITIVE>
    static bool AutocompleteInner(Recipe&, DMeta, DMeta = {});
 
-   bool FromDescriptor(Many const&);
-   bool FromFile(Many const&);
+   bool FromDescriptor(Neat const&);
+   bool FromFile(Neat const&);
 
    template<template<typename...> class GENERATOR, class PRIMITIVE>
    bool FillGenerators(DMeta);

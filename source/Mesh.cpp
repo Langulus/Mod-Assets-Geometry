@@ -25,7 +25,7 @@
 /// Mesh construction                                                         
 ///   @param producer the producer                                            
 ///   @param desc mesh descriptor                                             
-Mesh::Mesh(MeshLibrary* producer, Many const& desc)
+Mesh::Mesh(MeshLibrary* producer, Neat const& desc)
    : Downcastable {this}
    , ProducedFrom {producer, desc} {
    // Get a path from the descriptor                                    
@@ -130,7 +130,7 @@ bool Mesh::AutocompleteDescriptor(Recipe& desc) {
 
 /// Populate the mesh view and generator functions, by analyzing descriptor   
 ///   @param desc the descriptor to parse                                     
-bool Mesh::FromDescriptor(Many const& desc) {
+bool Mesh::FromDescriptor(Neat const& desc) {
    const auto primitive = desc.FindType<Math::Primitive>();
    if (not primitive)
       return false;
@@ -147,7 +147,7 @@ bool Mesh::FromDescriptor(Many const& desc) {
 
 /// Load mesh via filename/file interface                                     
 ///   @param descriptor the file to load                                      
-bool Mesh::FromFile(Many const& desc) {
+bool Mesh::FromFile(Neat const& desc) {
    Path filename;
    if (not desc.ExtractTag<Tags::Name, Tags::Path>(filename))
       desc.ExtractDataAs(filename);
@@ -228,5 +228,5 @@ bool Mesh::AutocompleteInner(Recipe& out, DMeta primitive, DMeta topology) {
 /// Get the mesh library                                                      
 ///   @return the library                                                     
 auto Mesh::GetLibrary() const -> MeshLibrary* {
-   return mProducer.template As<MeshLibrary>();
+   return mProducer.template As<MeshLibrary*>();
 }
