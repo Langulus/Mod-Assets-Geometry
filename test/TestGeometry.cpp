@@ -22,13 +22,13 @@ SCENARIO("Loading non-existent file", "[mesh]") {
 
          WHEN("The mesh is created via abstractions") {
             REQUIRE_THROWS(root.CreateUnit<Things::Mesh>("nonexistent.obj"));
-            REQUIRE(root.GetUnits().IsEmpty());
+            REQUIRE(root.GetParts().IsEmpty());
          }
          
       #if LANGULUS_FEATURE(MANAGED_REFLECTION)
          WHEN("The mesh is created via tokens") {
             REQUIRE_THROWS(root.CreatePartToken("Mesh", "nonexistent.obj"));
-            REQUIRE(root.GetUnits().IsEmpty());
+            REQUIRE(root.GetParts().IsEmpty());
          }
       #endif
 
@@ -59,7 +59,7 @@ SCENARIO("Mesh creation", "[mesh]") {
             REQUIRE(producedMesh.GetCount() == 1);
             REQUIRE(producedMesh.CastsTo<Things::Mesh>(1));
             REQUIRE(producedMesh.IsSparse());
-            REQUIRE(root.GetUnits().GetCount() == 1);
+            REQUIRE(root.GetParts().GetCount() == 1);
 
             THEN("Generate a LOD level, that should be the same") {
                auto sameMesh = producedMesh.As<Things::Mesh>().GetLOD({});
@@ -80,7 +80,7 @@ SCENARIO("Mesh creation", "[mesh]") {
             REQUIRE(producedMesh.GetCount() == 1);
             REQUIRE(producedMesh.CastsTo<Things::Mesh>());
             REQUIRE(producedMesh.IsSparse());
-            REQUIRE(root.GetUnits().GetCount() == 1);
+            REQUIRE(root.GetParts().GetCount() == 1);
          }
       #endif
 
@@ -112,7 +112,7 @@ SCENARIO("Loading OBJ file", "[mesh]") {
             REQUIRE(producedMesh.GetCount() == 1);
             REQUIRE(producedMesh.CastsTo<Things::Mesh>(1));
             REQUIRE(producedMesh.IsSparse());
-            REQUIRE(root.GetUnits().GetCount() == 1);
+            REQUIRE(root.GetParts().GetCount() == 1);
          }
          
       #if LANGULUS_FEATURE(MANAGED_REFLECTION)
@@ -126,7 +126,7 @@ SCENARIO("Loading OBJ file", "[mesh]") {
             REQUIRE(producedMesh.GetCount() == 1);
             REQUIRE(producedMesh.CastsTo<Things::Mesh>());
             REQUIRE(producedMesh.IsSparse());
-            REQUIRE(root.GetUnits().GetCount() == 1);
+            REQUIRE(root.GetParts().GetCount() == 1);
          }
       #endif
 

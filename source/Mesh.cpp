@@ -228,5 +228,5 @@ bool Mesh::AutocompleteInner(Recipe& out, DMeta primitive, DMeta topology) {
 /// Get the mesh library                                                      
 ///   @return the library                                                     
 auto Mesh::GetLibrary() const -> MeshLibrary* {
-   return mProducer.template As<MeshLibrary*>();
+   return const_cast<MeshLibrary*>(static_cast<MeshLibrary const*>(mProducer));
 }

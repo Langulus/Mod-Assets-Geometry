@@ -37,7 +37,7 @@ struct Mesh final : Things::Mesh {
    using CTTI_Ability   = Verbs::Create;
 
 public:
-   Mesh(MeshLibrary*, Neat const&);
+   Mesh(MeshLibrary const*, Neat const&);
 
    void Create(Verb&);
 
