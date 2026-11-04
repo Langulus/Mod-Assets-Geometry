@@ -25,7 +25,7 @@
 /// Mesh construction                                                         
 ///   @param producer the producer                                            
 ///   @param desc mesh descriptor                                             
-Mesh::Mesh(MeshLibrary* producer, Neat const& desc)
+Mesh::Mesh(MeshLibrary const* producer, Neat const& desc)
    : Downcastable {this}
    , ProducedFrom {producer, desc} {
    // Get a path from the descriptor                                    
