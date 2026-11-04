@@ -82,7 +82,7 @@ bool Mesh::Generate(TMeta tag, size_t index) {
 
    auto foundGen = mGenerators.Find(tag);
    if (foundGen) {
-      (*foundGen.GetVal())(this);
+      foundGen.GetVal()(this);
       foundData = GetDataListMap().Find(tag);
       if (foundData) {
          if (foundData.GetVal().GetCount() > index)
