@@ -44,7 +44,7 @@ public:
    void Refresh() override;
    bool Generate(TMeta, size_t = 0) override;
 
-   auto GetLOD(LOD const&) const -> Ref<Things::Mesh> override;
+   auto GetLOD(Math::LOD const&) const -> Ref<Things::Mesh> override;
    auto GetLibrary() const -> MeshLibrary*;
    static bool AutocompleteDescriptor(Recipe&);
 
