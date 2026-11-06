@@ -21,6 +21,8 @@
 
 #include <Langulus/CppAPI/IO.hpp>
 
+#include <Langulus/Annies/Functional/Describe.hpp>
+
 
 /// Mesh construction                                                         
 ///   @param producer the producer                                            

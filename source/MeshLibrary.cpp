@@ -11,6 +11,7 @@
 
 #include <Langulus/Annies/Functional/Deepen.hpp>
 #include <Langulus/Annies/Functional/ForEach.hpp>
+#include <Langulus/Annies/Functional/Compare.hpp>
 
 LANGULUS_DEFINE_MODULE(
    MeshLibrary, 9, "AssetsGeometry",

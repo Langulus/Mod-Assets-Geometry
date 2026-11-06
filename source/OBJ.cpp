@@ -9,6 +9,8 @@
 #include <Langulus/CppAPI/IO.hpp>
 #include <Langulus/Time.hpp>
 
+#include <Langulus/Annies/Functional/Compare.hpp>
+
 
 ///                                                                           
 ///   An *.OBJ file representation and interface                              
