@@ -188,7 +188,7 @@ bool Mesh::ReadOBJ(Things::File const& file) {
       }
 
       const auto end = start + read;
-      if (end == buffer.GetRawEnd())
+      if (end == buffer.GetRawAs<char>() + buffer.GetCount())
          break;
 
       // Find last new line                                             

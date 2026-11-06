@@ -9,6 +9,9 @@
 #include "Export.hpp"
 #include <Langulus/Math/Export.hpp>
 
+#include <Langulus/Annies/Functional/Deepen.hpp>
+#include <Langulus/Annies/Functional/ForEach.hpp>
+
 LANGULUS_DEFINE_MODULE(
    MeshLibrary, 9, "AssetsGeometry",
    "Mesh reader, writer and generator", "",
