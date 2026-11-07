@@ -130,15 +130,14 @@ struct GenerateBox {
 };
 
 #define GENERATE() template<CT::Box T, CT::Topology TOPOLOGY> \
-   void GenerateBox<T, TOPOLOGY>::
+   auto GenerateBox<T, TOPOLOGY>::
 
 
 /// Default box generation                                                    
 ///   @param d the descriptor to use                                          
 ///   @return a newly generated descriptor, with missing tags being set to    
 ///      their defaults                                                       
-template<CT::Box T, CT::Topology TOPOLOGY>
-bool GenerateBox<T, TOPOLOGY>::Default(Recipe& d) {
+GENERATE() Default(Recipe& d) -> bool {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
       d.Set<Tags::Place>(MetaDataOf<TTriangle<PointType>>());
@@ -174,21 +173,20 @@ bool GenerateBox<T, TOPOLOGY>::Default(Recipe& d) {
 ///   @param lod the LOD state to generate                                    
 ///   @return a newly generated descriptor, for the LOD model you can use it  
 ///      to generate the new geometry                                         
-template<CT::Box T, CT::Topology TOPOLOGY>
-auto GenerateBox<T, TOPOLOGY>::Detail(Mesh const* model, LOD const&) -> Recipe {
+GENERATE() Detail(Mesh const* model, LOD const&) -> Recipe {
    return Recipe::For<Things::Mesh>(model->GetDescriptor());
 }
 
 /// Generate positions for a box                                              
 ///   @param model the model to fill                                          
-GENERATE() Positions(Mesh* model) {
+GENERATE() Positions(Mesh* model) -> void {
    TMany<PointType> data = D::Vertices;
    model->Commit<Tags::Place>(Abandon(data));
 }
 
 /// Generate normals for a box                                                
 ///   @param model the geometry instance to save data in                      
-GENERATE() Normals(Mesh* model) {
+GENERATE() Normals(Mesh* model) -> void {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       constexpr Normal3 l {Axes::Left<ScalarType>};
       constexpr Normal3 r {Axes::Right<ScalarType>};
@@ -219,7 +217,7 @@ GENERATE() Normals(Mesh* model) {
 
 /// Generate indices for a box                                                
 ///   @param model the geometry instance to save data in                      
-GENERATE() Indices(Mesh* model) {
+GENERATE() Indices(Mesh* model) -> void {
    TMany<uint32_t> data;
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A box made out of triangles                                    
@@ -246,7 +244,7 @@ GENERATE() Indices(Mesh* model) {
 
 /// Generate texture coordinates for a box                                    
 ///   @param model the geometry instance to save data in                      
-GENERATE() TextureCoords(Mesh* model) {
+GENERATE() TextureCoords(Mesh* model) -> void {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       if (model->GetTextureMapper() == MapMode::Model) {
          // Generate model mapping                                      
@@ -282,7 +280,7 @@ GENERATE() TextureCoords(Mesh* model) {
 
 /// Generate material indices for different vertices/faces                    
 ///   @param model the geometry instance to save data in                      
-GENERATE() Materials(Mesh* model) {
+GENERATE() Materials(Mesh* model) -> void {
    if constexpr (CT::Triangle<TOPOLOGY>) {
       // A cube made out of triangles                                   
       TMany<RGB> data;

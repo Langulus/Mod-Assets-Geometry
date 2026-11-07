@@ -22,6 +22,7 @@
 #include <Langulus/CppAPI/IO.hpp>
 
 #include <Langulus/Annies/Functional/Describe.hpp>
+#include <Langulus/Annies/Functional/Compare.hpp>
 
 
 /// Mesh construction                                                         
