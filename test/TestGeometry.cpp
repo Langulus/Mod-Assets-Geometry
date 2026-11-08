@@ -21,7 +21,7 @@ SCENARIO("Loading non-existent file", "[mesh]") {
          );
 
          WHEN("The mesh is created via abstractions") {
-            REQUIRE_THROWS(root.CreateUnit<Things::Mesh>("nonexistent.obj"));
+            REQUIRE_THROWS(root.CreatePart<Things::Mesh>("nonexistent.obj"));
             REQUIRE(root.GetParts().IsEmpty());
          }
          
@@ -50,7 +50,7 @@ SCENARIO("Mesh creation", "[mesh]") {
          );
 
          WHEN("The mesh is created via abstractions") {
-            auto producedMesh = root.CreateUnit<Things::Mesh>(Math::Box2 {});
+            auto producedMesh = root.CreatePart<Things::Mesh>(Math::Box2 {});
 
             // Update once                                              
             root.Update({});
@@ -103,7 +103,7 @@ SCENARIO("Loading OBJ file", "[mesh]") {
          );
 
          WHEN("The mesh is created via abstractions") {
-            auto producedMesh = root.CreateUnit<Things::Mesh>("maxwell/maxwell.obj");
+            auto producedMesh = root.CreatePart<Things::Mesh>("maxwell/maxwell.obj");
 
             // Update once                                              
             root.Update({});
