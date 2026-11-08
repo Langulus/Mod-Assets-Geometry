@@ -171,17 +171,17 @@ bool Mesh::FromFile(Neat const& desc) {
 template<class GENERATOR>
 void Mesh::FillGeneratorsInner() {
    if constexpr (HasGenerator(GENERATOR::Indices))
-      mGenerators.Merge(MetaTagOf<Tags::Index>(),      GENERATOR::Indices);
+      mGenerators.Merge(MetaTagOf<Tags::Index>(),      &GENERATOR::Indices);
    if constexpr (HasGenerator(GENERATOR::Positions))
-      mGenerators.Merge(MetaTagOf<Tags::Place>(),      GENERATOR::Positions);
+      mGenerators.Merge(MetaTagOf<Tags::Place>(),      &GENERATOR::Positions);
    if constexpr (HasGenerator(GENERATOR::Normals))
-      mGenerators.Merge(MetaTagOf<Tags::Aim>(),        GENERATOR::Normals);
+      mGenerators.Merge(MetaTagOf<Tags::Aim>(),        &GENERATOR::Normals);
    if constexpr (HasGenerator(GENERATOR::TextureCoords))
-      mGenerators.Merge(MetaTagOf<Tags::Sampler>(),    GENERATOR::TextureCoords);
+      mGenerators.Merge(MetaTagOf<Tags::Sampler>(),    &GENERATOR::TextureCoords);
    if constexpr (HasGenerator(GENERATOR::Materials))
-      mGenerators.Merge(MetaTagOf<Tags::Material>(),   GENERATOR::Materials);
+      mGenerators.Merge(MetaTagOf<Tags::Material>(),   &GENERATOR::Materials);
    if constexpr (HasGenerator(GENERATOR::Detail))
-      mLODgenerator = GENERATOR::Detail;
+      mLODgenerator = &GENERATOR::Detail;
 }
 
 ///                                                                           

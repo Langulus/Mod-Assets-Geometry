@@ -110,7 +110,9 @@ GENERATE() Positions(Mesh* model) {
 /// Generate indices for triangle                                             
 ///   @param model the geometry instance to save data in                      
 GENERATE() Indices(Mesh* model) {
-   TMany<uint32_t> data {0, 1, 2};
+   TMany<uint32_t> data;
+   data.Reserve(3);
+   data << 0 << 1 << 2;
    model->Commit<Tags::Place>(Abandon(data));
 }
 

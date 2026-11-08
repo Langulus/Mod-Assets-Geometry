@@ -41,8 +41,8 @@ namespace Langulus::CT
 ///                     |/                                                    
 ///     +-------+-------+---> +X                                              
 ///    /       /       /|                 mExtent is the number of cells      
-///   +-------+-------+ |                 you could count, from the center    
-///  /       /       /| |                 to each other direction             
+///   +-------+-------+ |                 you could count from the center     
+///  /       /       /| |                 to any cardinal direction           
 /// +-------+-------+ | +---                                                  
 /// | |/    | |/    | |/|  ↑                                                  
 /// | +-----|-O-----|-+ |  | mCellSize.y                                      
