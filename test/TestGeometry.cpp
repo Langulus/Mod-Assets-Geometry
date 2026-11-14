@@ -7,13 +7,18 @@
 ///                                                                           
 #include <Langulus/CppAPI/Mesh.hpp>
 #include <Langulus/Testing.hpp>
+#include <Langulus/Allocator.hpp>
+#include <Langulus/Primitives/TBox.hpp>
+
+using namespace Langulus;
+using Things::Thing;
 
 
-SCENARIO("Loading non-existent file", "[mesh]") {
-   static Allocator::State memoryState;
+SCENARIO("Loading non-existent file") {
+   static MemoryState memoryState;
 
-   for (int repeat = 0; repeat != 10; ++repeat) {
-      GIVEN(std::string("Init and shutdown cycle #") + std::to_string(repeat)) {
+   GIVEN("Init and shutdown cycles") {
+      for (int repeat = 0; repeat != 10; ++repeat) {
          // Create root entity                                          
          auto root = Thing::Root<false>(
             "FileSystem",
@@ -32,17 +37,17 @@ SCENARIO("Loading non-existent file", "[mesh]") {
          }
       #endif
 
-         // Check for memory leaks after each cycle                     
          REQUIRE(memoryState.Assert());
+         REQUIRE_FALSE(Allocator::CollectGarbage());
       }
    }
 }
 
-SCENARIO("Mesh creation", "[mesh]") {
-   static Allocator::State memoryState;
+SCENARIO("Mesh creation") {
+   static MemoryState memoryState;
 
-   for (int repeat = 0; repeat != 10; ++repeat) {
-      GIVEN(std::string("Init and shutdown cycle #") + std::to_string(repeat)) {
+   GIVEN("Init and shutdown cycles") {
+      for (int repeat = 0; repeat != 10; ++repeat) {
          // Create root entity                                          
          auto root = Thing::Root<false>(
             "FileSystem",
@@ -84,17 +89,17 @@ SCENARIO("Mesh creation", "[mesh]") {
          }
       #endif
 
-         // Check for memory leaks after each cycle                     
          REQUIRE(memoryState.Assert());
+         REQUIRE_FALSE(Allocator::CollectGarbage());
       }
    }
 }
 
-SCENARIO("Loading OBJ file", "[mesh]") {
-   static Allocator::State memoryState;
+SCENARIO("Loading OBJ file") {
+   static MemoryState memoryState;
 
-   for (int repeat = 0; repeat != 10; ++repeat) {
-      GIVEN(std::string("Init and shutdown cycle #") + std::to_string(repeat)) {
+   GIVEN("Init and shutdown cycles") {
+      for (int repeat = 0; repeat != 10; ++repeat) {
          // Create root entity                                          
          auto root = Thing::Root<false>(
             "FileSystem",
@@ -130,8 +135,8 @@ SCENARIO("Loading OBJ file", "[mesh]") {
          }
       #endif
 
-         // Check for memory leaks after each cycle                     
          REQUIRE(memoryState.Assert());
+         REQUIRE_FALSE(Allocator::CollectGarbage());
       }
    }
 }
