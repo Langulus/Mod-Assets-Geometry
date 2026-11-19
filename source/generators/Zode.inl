@@ -282,14 +282,14 @@ GENERATE() Indices(Mesh* model) {
 
             // We add degenerate triangle in order to link strips       
             if (strip < strips - 1) {
-               data << data[-1];
+               data << data[Index::Last];
                data << hiMax;
             }
          }
 
          // We add a degenerate triangle in order to link regions       
          if (index < T::Segments - 1) {
-            data << data[-1];
+            data << data[Index::Last];
             data << segmentStart + verticesPerSegment;
          }
       }
